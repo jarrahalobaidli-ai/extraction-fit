@@ -190,12 +190,15 @@
   .situation strong{color:var(--paper); font-weight:700;}
 
   /* Mission phases */
-  .phases{ display:grid; grid-template-columns: repeat(3,1fr); gap:1px; background: var(--line-strong); border:1px solid var(--line-strong);}
-  .phase{ background: var(--bg-raise); padding: 30px 26px; position:relative;}
-  .phase .range{ font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:0.72rem; color:var(--oxide); margin-bottom:14px;}
-  .phase h3{ font-family:'Oswald',sans-serif; font-weight:800; letter-spacing:0.03em; font-size:1.4rem; margin-bottom:12px; text-transform:uppercase;}
-  .phase p{ color:var(--paper-dim); font-size:0.92rem; }
-  @media (max-width: 720px){ .phases{grid-template-columns:1fr;} }
+  .phases{ display:grid; grid-template-columns: repeat(4,1fr); gap:1px; background: var(--line-strong); border:1px solid var(--line-strong);}
+  .phase{ background: var(--bg-raise); padding: 28px 22px; position:relative;}
+  .phase .range{ font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:0.7rem; color:var(--oxide); margin-bottom:14px;}
+  .phase h3{ font-family:'Oswald',sans-serif; font-weight:800; letter-spacing:0.03em; font-size:1.25rem; margin-bottom:12px; text-transform:uppercase;}
+  .phase p{ color:var(--paper-dim); font-size:0.88rem; }
+  .phase-note{ margin-top:24px; font-size:0.9rem; color:var(--paper-dim); }
+  .phase-note strong{ color:var(--oxide); font-family:'IBM Plex Mono',monospace; letter-spacing:0.06em; }
+  @media (max-width: 900px){ .phases{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width: 520px){ .phases{grid-template-columns:1fr;} }
 
   /* Dossier / credibility */
   .dossier{ display:grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items:start;}
@@ -272,24 +275,30 @@
 <section class="mission">
   <div class="wrap">
     <div class="sec-head"><span class="code">02 / MISSION</span><div class="rule"></div></div>
-    <p style="color:var(--paper-dim); max-width:640px; margin-bottom:38px;">Three phases. Ninety days. Each one closes off the exit behind you before the next begins.</p>
+    <p style="color:var(--paper-dim); max-width:640px; margin-bottom:38px;">Every operation starts with a distress call — Phase 0: MAYDAY, your intake and readiness screening. From there, four phases across thirteen weeks. Each one closes off the exit behind you before the next begins.</p>
     <div class="phases">
       <div class="phase">
-        <span class="range">DAYS 01–30</span>
-        <h3>Sever</h3>
-        <p>Cut the habits and excuses keeping you tethered to the wreckage. Daily standards, no negotiation.</p>
+        <span class="range">WEEKS 01–03</span>
+        <h3>Locate</h3>
+        <p>Find your real starting point. Movement quality, foundational strength, and a full habit audit — accurate data, not aspiration.</p>
       </div>
       <div class="phase">
-        <span class="range">DAYS 31–60</span>
-        <h3>Forge</h3>
-        <p>Build the physical, mental, and relational discipline that replaces what you cut. Weekly checkpoints.</p>
+        <span class="range">WEEKS 04–07</span>
+        <h3>Stabilize</h3>
+        <p>Progressive overload begins. Structural strength and work capacity build while the heaviest habit-formation work locks in.</p>
       </div>
       <div class="phase">
-        <span class="range">DAYS 61–90</span>
-        <h3>Deploy</h3>
-        <p>Carry the standard into real life — work, marriage, fatherhood — under pressure, without supervision.</p>
+        <span class="range">WEEKS 08–11</span>
+        <h3>Golden Hour</h3>
+        <p>The critical window where intervention determines outcome. Peak intensity, hardest mental toughness work, nutrition dialed to goal.</p>
+      </div>
+      <div class="phase">
+        <span class="range">WEEKS 12–13</span>
+        <h3>RTB</h3>
+        <p>Return to Base. Deload, retest benchmarks, lock in the data — and build the sustainment plan most programs never give you.</p>
       </div>
     </div>
+    <p class="phase-note"><strong>ONGOING —</strong> Graduate and you're not done. Sustained Ops keeps the standard alive with monthly accountability.</p>
   </div>
 </section>
 
