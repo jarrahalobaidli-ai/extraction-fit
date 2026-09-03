@@ -173,6 +173,21 @@
     border: 1px solid var(--oxide); transition: all 0.2s ease;
   }
   .btn-primary:hover{ background: transparent; color: var(--oxide); }
+
+  .ops-freq{
+    position:fixed; right:20px; bottom:20px; z-index:999;
+    display:flex; align-items:center; gap:9px;
+    background:var(--oxide); color:var(--bg);
+    padding:13px 20px 13px 15px; border-radius:30px;
+    text-decoration:none; box-shadow:0 8px 24px rgba(0,0,0,0.45);
+    font-family:'IBM Plex Mono',monospace;
+    border:1px solid var(--oxide);
+    transition:transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, color 0.15s ease;
+  }
+  .ops-freq:hover{ transform:translateY(-2px); box-shadow:0 12px 30px rgba(0,0,0,0.55); background:var(--bg); color:var(--oxide); }
+  .ops-freq-icon{ width:20px; height:20px; flex-shrink:0; }
+  .ops-freq-label{ font-size:0.72rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; }
+  @media (max-width:520px){ .ops-freq-label{ display:none; } .ops-freq{ padding:14px; border-radius:50%; } }
   .btn-ghost{
     font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:0.78rem; letter-spacing:0.08em;
     color: var(--paper-dim); border-bottom: 1px solid var(--line-strong); padding-bottom:2px;
@@ -340,6 +355,13 @@
 <footer>
   <span class="code">EXTRACTION // FROM MEDIOCRITY // NO ONE IS COMING</span>
 </footer>
+
+<a class="ops-freq" href="https://wa.me/96599992990?text=Hi%2C%20I%20want%20to%20request%20Extraction." target="_blank" rel="noopener noreferrer" aria-label="Message Extraction on WhatsApp">
+  <svg class="ops-freq-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M16 3C9.373 3 4 8.373 4 15c0 2.53.79 4.877 2.137 6.807L4.6 27.6l5.94-1.556A11.93 11.93 0 0 0 16 27c6.627 0 12-5.373 12-12S22.627 3 16 3Zm0 21.8a9.77 9.77 0 0 1-4.98-1.36l-.357-.212-3.527.924.94-3.436-.232-.353A9.77 9.77 0 0 1 6.2 15C6.2 9.585 10.585 5.2 16 5.2S25.8 9.585 25.8 15 21.415 24.8 16 24.8Zm5.373-7.36c-.294-.147-1.74-.858-2.01-.956-.27-.098-.467-.147-.664.147-.196.294-.76.956-.933 1.152-.171.196-.343.22-.637.073-.294-.147-1.24-.457-2.362-1.457-.873-.779-1.463-1.741-1.635-2.035-.171-.294-.018-.453.129-.6.132-.132.294-.343.441-.514.147-.171.196-.294.294-.49.098-.196.049-.367-.024-.514-.073-.147-.664-1.6-.91-2.192-.24-.577-.484-.499-.664-.508l-.566-.01c-.196 0-.514.073-.784.367-.27.294-1.03 1.007-1.03 2.456s1.054 2.848 1.201 3.045c.147.196 2.075 3.168 5.028 4.44.703.303 1.251.484 1.679.62.705.224 1.347.192 1.854.117.566-.085 1.74-.712 1.985-1.4.245-.688.245-1.278.171-1.4-.073-.123-.269-.196-.563-.343Z" fill="currentColor"/>
+  </svg>
+  <span class="ops-freq-label">Ops Freq</span>
+</a>
 
 </body>
 </html>
