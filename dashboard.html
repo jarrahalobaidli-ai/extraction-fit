@@ -240,7 +240,7 @@ function starterExtractionProgram() {
   return {
     id: uid(),
     name: "The Extraction Protocol — Foundation Block",
-    description: "Weeks 1–3 of the flagship 90-day program: LOCATE phase — establish real baseline before loading up.",
+    description: "Weeks 1–3 of the flagship 90-day manual: LOCATE phase — establish real baseline before loading up.",
     weeks: [
       week("Week 1 — LOCATE", [
         day("Day 1 — Lower + core", [
@@ -337,10 +337,10 @@ const RTL_LANGS = ["ar"];
 const DASH_T = {
   en: {
     tagline: "Find your bearing",
-    v1_tag: "v1 — program delivery",
+    v1_tag: "v1 — manual delivery",
     nav_overview: "Overview",
     nav_clients: "Clients",
-    nav_programs: "Programs",
+    nav_programs: "Manuals",
     nav_reference: "Quick reference",
     nav_nutrition: "Nutrition",
     nav_payments: "Payments",
@@ -348,7 +348,7 @@ const DASH_T = {
     overview_title: "Overview",
     overview_sub: "Extraction, at a glance.",
     stat_clients: "Clients",
-    stat_programs: "Programs",
+    stat_programs: "Manuals",
     stat_collected: "Collected",
     stat_outstanding: "Outstanding",
     stat_programs_sub: "in your library",
@@ -365,13 +365,13 @@ const DASH_T = {
     clients_active: "active",
     add_client: "+ Add client",
     clients_empty_title: "No clients yet",
-    clients_empty_body: "Add your first client to start assigning programs.",
+    clients_empty_body: "Add your first client to start assigning manuals.",
 
-    programs_title: "Programs",
+    programs_title: "Manuals",
     programs_in_library: "in your library",
-    new_program: "+ New program",
-    programs_empty_title: "No programs yet",
-    programs_empty_body: "Build a program to start assigning it to clients.",
+    new_program: "+ New manual",
+    programs_empty_title: "No manuals yet",
+    programs_empty_body: "Build a manual to start assigning it to clients.",
 
     reference_title: "Quick reference",
     reference_sub: "Pick what the client has access to — see the swaps, or build the whole 3-week block in one click.",
@@ -394,10 +394,10 @@ const DASH_T = {
   },
   tr: {
     tagline: "Yönünü bul",
-    v1_tag: "v1 — program teslimi",
+    v1_tag: "v1 — kılavuz teslimi",
     nav_overview: "Genel Bakış",
     nav_clients: "Danışanlar",
-    nav_programs: "Programlar",
+    nav_programs: "Kılavuzlar",
     nav_reference: "Hızlı Referans",
     nav_nutrition: "Beslenme",
     nav_payments: "Ödemeler",
@@ -405,7 +405,7 @@ const DASH_T = {
     overview_title: "Genel Bakış",
     overview_sub: "Extraction, tek bakışta.",
     stat_clients: "Danışanlar",
-    stat_programs: "Programlar",
+    stat_programs: "Kılavuzlar",
     stat_collected: "Tahsil Edilen",
     stat_outstanding: "Bekleyen",
     stat_programs_sub: "kütüphanende",
@@ -422,13 +422,13 @@ const DASH_T = {
     clients_active: "aktif",
     add_client: "+ Danışan ekle",
     clients_empty_title: "Henüz danışan yok",
-    clients_empty_body: "Program atamaya başlamak için ilk danışanını ekle.",
+    clients_empty_body: "Kılavuz atamaya başlamak için ilk danışanını ekle.",
 
-    programs_title: "Programlar",
+    programs_title: "Kılavuzlar",
     programs_in_library: "kütüphanende",
-    new_program: "+ Yeni program",
-    programs_empty_title: "Henüz program yok",
-    programs_empty_body: "Danışanlara atamak için bir program oluştur.",
+    new_program: "+ Yeni kılavuz",
+    programs_empty_title: "Henüz kılavuz yok",
+    programs_empty_body: "Danışanlara atamak için bir kılavuz oluştur.",
 
     reference_title: "Hızlı Referans",
     reference_sub: "Danışanın erişimi olan ekipmanı seç — alternatifleri gör, ya da tek tıkla 3 haftalık bloğun tamamını oluştur.",
@@ -454,7 +454,7 @@ const DASH_T = {
     v1_tag: "الإصدار 1 — تسليم البرنامج",
     nav_overview: "نظرة عامة",
     nav_clients: "العملاء",
-    nav_programs: "البرامج",
+    nav_programs: "الأدلة",
     nav_reference: "مرجع سريع",
     nav_nutrition: "التغذية",
     nav_payments: "المدفوعات",
@@ -462,7 +462,7 @@ const DASH_T = {
     overview_title: "نظرة عامة",
     overview_sub: "Extraction، بلمحة واحدة.",
     stat_clients: "العملاء",
-    stat_programs: "البرامج",
+    stat_programs: "الأدلة",
     stat_collected: "المُحصَّل",
     stat_outstanding: "المستحق",
     stat_programs_sub: "في مكتبتك",
@@ -481,11 +481,11 @@ const DASH_T = {
     clients_empty_title: "لا يوجد عملاء بعد",
     clients_empty_body: "أضف أول عميل لك لبدء تعيين البرامج.",
 
-    programs_title: "البرامج",
+    programs_title: "الأدلة",
     programs_in_library: "في مكتبتك",
-    new_program: "+ برنامج جديد",
-    programs_empty_title: "لا توجد برامج بعد",
-    programs_empty_body: "أنشئ برنامجاً لتبدأ بتعيينه للعملاء.",
+    new_program: "+ دليل جديد",
+    programs_empty_title: "لا توجد أدلة بعد",
+    programs_empty_body: "أنشئ دليلاً لتبدأ بتعيينه للعملاء.",
 
     reference_title: "مرجع سريع",
     reference_sub: "اختر المعدات المتاحة للعميل — شاهد البدائل، أو أنشئ الخطة الكاملة لثلاثة أسابيع بنقرة واحدة.",
@@ -587,7 +587,7 @@ function TrainerDashboard() {
     setClients((prev) =>
       prev.map((c) => (c.id === clientId ? { ...c, programId, phase: programId ? "Week 1" : null } : c))
     );
-    showToast(programId ? "Program assigned" : "Program unassigned");
+    showToast(programId ? "Manual assigned" : "Manual unassigned");
   }
 
   function updateClientNutrition(clientId, nutrition) {
@@ -614,13 +614,13 @@ function TrainerDashboard() {
     });
     setShowBuilder(false);
     setEditingProgram(null);
-    showToast("Program saved");
+    showToast("Manual saved");
   }
 
   function deleteProgram(id) {
     setPrograms((prev) => prev.filter((p) => p.id !== id));
     setClients((prev) => prev.map((c) => (c.programId === id ? { ...c, programId: null, phase: null } : c)));
-    showToast("Program deleted");
+    showToast("Manual deleted");
   }
 
   function generateProgram(level, type) {
@@ -942,12 +942,12 @@ function ReferenceView({ onGenerate, t }) {
       </div>
 
       <div style={S.card}>
-        <div style={S.cardLabel}>Build the full program</div>
+        <div style={S.cardLabel}>Build the full manual</div>
         <p style={{ ...S.rowSub, marginBottom: 10 }}>
-          Generates the complete 90-day Extraction Protocol — all 4 phases, 13 weeks, 3 days/week — using only {level.toLowerCase()}. Every exercise is sequenced with sets, reps, and progression from LOCATE through the RTB retest. Lands in your Programs library, ready to assign or edit.
+          Generates the complete 90-day Extraction Protocol — all 4 phases, 13 weeks, 3 days/week — using only {level.toLowerCase()}. Every exercise is sequenced with sets, reps, and progression from LOCATE through the RTB retest. Lands in your Manuals library, ready to assign or edit.
         </p>
         <button className="ex-btn-primary" style={S.btnPrimary} onClick={() => onGenerate(level, "protocol")}>
-          Build 90-day program for {level}
+          Build 90-day manual for {level}
         </button>
       </div>
 
@@ -2149,7 +2149,7 @@ function ClientDetail({ client, programs, onBack, onAssign, onPhaseChange, custo
       </div>
 
       <div style={S.card}>
-        <div style={S.cardLabel}>Assigned program</div>
+        <div style={S.cardLabel}>Assigned manual</div>
         <select style={S.select} value={client.programId || ""} onChange={(e) => onAssign(e.target.value || null)}>
           <option value="">— none —</option>
           {programs.map((p) => (
@@ -2347,15 +2347,15 @@ function ProgramBuilderModal({ initial, onClose, onSave }) {
 
   function submit() {
     if (!name.trim()) {
-      setError("Enter a program name first");
+      setError("Enter a manual name first");
       return;
     }
     onSave({ id: initial?.id || uid(), name: name.trim(), description: description.trim(), weeks });
   }
 
   return (
-    <Modal onClose={onClose} title={initial ? "Edit program" : "New program"} wide>
-      <label style={S.label}>Program name</label>
+    <Modal onClose={onClose} title={initial ? "Edit manual" : "New manual"} wide>
+      <label style={S.label}>Manual name</label>
       <input
         style={S.input}
         value={name}
@@ -2368,7 +2368,7 @@ function ProgramBuilderModal({ initial, onClose, onSave }) {
       />
       {error && <div style={S.error}>{error}</div>}
       <label style={S.label}>Description (optional)</label>
-      <input style={S.input} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="One line about this program" />
+      <input style={S.input} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="One line about this manual" />
 
       <div style={{ marginTop: 18 }}>
         {weeks.map((wk) => (
@@ -2433,7 +2433,7 @@ function ProgramBuilderModal({ initial, onClose, onSave }) {
 
       <div style={S.modalActions}>
         <button className="ex-btn-ghost" style={S.btnGhost} onClick={onClose}>Cancel</button>
-        <button className="ex-btn-primary" style={S.btnPrimary} onClick={submit}>Save program</button>
+        <button className="ex-btn-primary" style={S.btnPrimary} onClick={submit}>Save manual</button>
       </div>
     </Modal>
   );
