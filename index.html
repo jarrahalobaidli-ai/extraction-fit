@@ -4,28 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Extraction — The Extraction Protocol</title>
+<link rel="icon" type="image/png" href="assets/extraction-mark.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Black+Ops+One&family=Oswald:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #1B1C18;
-    --bg-raise: #222319;
-    --paper: #E7E2D3;
-    --paper-dim: #B9B3A0;
-    --oxide: #9A3324;
-    --olive: #4B5320;
-    --olive-soft: #6b7440;
-    --brass: #B08D57;
-    --line: rgba(231,226,211,0.14);
-    --line-strong: rgba(231,226,211,0.28);
+    --bg: #0C0C0A;
+    --bg-raise: #17140F;
+    --paper: #F5DFB8;
+    --paper-dim: #A6926F;
+    --oxide: #C0451D;
+    --oxide-dim: #7A2C12;
+    --line: rgba(245,223,184,0.14);
+    --line-strong: rgba(245,223,184,0.30);
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   html{scroll-behavior:smooth;}
   body{
     background: var(--bg);
     background-image:
-      radial-gradient(ellipse at top left, rgba(75,83,32,0.12), transparent 55%),
-      radial-gradient(ellipse at bottom right, rgba(154,51,36,0.08), transparent 55%);
+      radial-gradient(ellipse at top left, rgba(192,69,29,0.10), transparent 55%),
+      radial-gradient(ellipse at bottom right, rgba(192,69,29,0.07), transparent 55%);
     color: var(--paper);
     font-family: 'Inter', sans-serif;
     line-height: 1.6;
@@ -36,78 +35,107 @@
     font-size: 0.72rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--brass);
+    color: var(--oxide);
   }
   .display{
-    font-family: 'Black Ops One', sans-serif;
+    font-family: 'Anton', sans-serif;
     font-weight: 400;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.01em;
   }
   .heading{
     font-family: 'Oswald', sans-serif;
-    font-weight: 600;
-    letter-spacing: 0.02em;
+    font-weight: 700;
+    letter-spacing: 0.03em;
     text-transform: uppercase;
   }
   a{color:inherit;text-decoration:none;}
   .wrap{max-width: 980px; margin: 0 auto; padding: 0 28px;}
 
+  /* Hazard rule */
+  .hazard{
+    height: 6px;
+    background: repeating-linear-gradient(
+      -45deg,
+      var(--oxide), var(--oxide) 10px,
+      var(--bg) 10px, var(--bg) 20px
+    );
+  }
+
   /* Ticker */
   .ticker{
-    background: var(--olive);
-    color: var(--paper);
+    background: var(--bg-raise);
+    color: var(--paper-dim);
     font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
     font-size: 0.7rem;
-    letter-spacing: 0.14em;
-    padding: 7px 0;
+    letter-spacing: 0.16em;
+    padding: 9px 0;
     overflow: hidden;
     white-space: nowrap;
     border-bottom: 1px solid var(--line-strong);
   }
+  .ticker span.dot{ color: var(--oxide); }
   .ticker-inner{display:inline-block; padding-left:100%; animation: ticker 26s linear infinite;}
   @keyframes ticker{ from{transform:translateX(0);} to{transform:translateX(-100%);} }
 
   /* Nav */
   nav{
     display:flex; justify-content:space-between; align-items:center;
-    padding: 20px 28px; max-width: 980px; margin: 0 auto;
+    padding: 18px 28px; max-width: 980px; margin: 0 auto;
     border-bottom: 1px solid var(--line);
   }
-  .logo{font-family:'Black Ops One',sans-serif; font-size:1.3rem; letter-spacing:0.05em;}
+  .lockup{ display:flex; align-items:center; gap:12px; }
+  .lockup img{ width:38px; height:38px; display:block; filter: drop-shadow(0 0 6px rgba(192,69,29,0.35)); }
+  .logo{font-family:'Oswald',sans-serif; font-weight:800; font-size:1.25rem; letter-spacing:0.06em; text-transform:uppercase;}
   .logo span{color: var(--oxide);}
   nav .cta-small{
-    font-family:'IBM Plex Mono', monospace; font-size:0.72rem; letter-spacing:0.1em;
-    border: 1px solid var(--brass); color: var(--brass); padding: 8px 16px;
+    font-family:'IBM Plex Mono', monospace; font-weight:600; font-size:0.72rem; letter-spacing:0.1em;
+    border: 1px solid var(--oxide); color: var(--oxide); padding: 9px 18px;
     text-transform: uppercase; transition: all 0.2s ease;
   }
-  nav .cta-small:hover{background:var(--brass); color:var(--bg);}
+  nav .cta-small:hover{background:var(--oxide); color:var(--bg);}
 
   /* Hero */
   .hero{
-    padding: 90px 28px 70px;
+    padding: 70px 28px 70px;
     max-width: 980px; margin: 0 auto;
     position: relative;
+  }
+  .hero-mark{
+    position: absolute;
+    top: 50%; right: -60px;
+    width: 560px; height: 560px;
+    transform: translateY(-50%);
+    background-image: url('assets/extraction-mark.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    opacity: 0.06;
+    pointer-events: none;
   }
   .doc-frame{
     border: 1px solid var(--line-strong);
     padding: 40px clamp(20px,5vw,56px);
     position: relative;
-    background: linear-gradient(180deg, rgba(255,255,255,0.015), transparent 40%);
+    background: linear-gradient(180deg, rgba(245,223,184,0.02), transparent 40%);
   }
-  .doc-frame::before, .doc-frame::after{
-    content:''; position:absolute; width:14px; height:14px;
-    border-color: var(--brass); border-style: solid;
+  .doc-frame::before, .doc-frame::after,
+  .corners::before, .corners::after{
+    content:''; position:absolute; width:16px; height:16px;
+    border-color: var(--oxide); border-style: solid;
   }
-  .doc-frame::before{ top:-1px; left:-1px; border-width:2px 0 0 2px; }
-  .doc-frame::after{ bottom:-1px; right:-1px; border-width:0 2px 2px 0; }
+  .doc-frame::before{ top:-1px; left:-1px; border-width:3px 0 0 3px; }
+  .doc-frame::after{ bottom:-1px; right:-1px; border-width:0 3px 3px 0; }
   .classification{
     display:flex; justify-content:space-between; align-items:center;
     margin-bottom: 34px; flex-wrap: wrap; gap: 10px;
   }
   .hero h1{
-    font-size: clamp(2.6rem, 7vw, 4.6rem);
-    line-height: 0.98;
+    font-family:'Anton', sans-serif;
+    font-size: clamp(3rem, 8vw, 5.4rem);
+    line-height: 0.95;
     margin: 10px 0 22px;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
   }
   .hero h1 .accent{color: var(--oxide);}
   .hero .sub{
@@ -133,48 +161,48 @@
     100%{opacity:0.9; transform: rotate(-16deg) scale(1);}
   }
   .stamp span{
-    font-family:'Oswald',sans-serif; font-weight:700; color: var(--oxide);
-    font-size: 0.82rem; text-align:center; letter-spacing:0.08em; line-height:1.3;
+    font-family:'Black Ops One',sans-serif; font-weight:400; color: var(--oxide);
+    font-size: 0.78rem; text-align:center; letter-spacing:0.06em; line-height:1.35;
     text-transform: uppercase;
   }
   .cta-row{display:flex; gap:16px; flex-wrap:wrap; align-items:center;}
   .btn-primary{
-    background: var(--oxide); color: var(--paper);
-    font-family:'Oswald',sans-serif; font-weight:600; text-transform:uppercase;
-    letter-spacing: 0.06em; padding: 16px 30px; font-size:0.92rem;
+    background: var(--oxide); color: var(--bg);
+    font-family:'Oswald',sans-serif; font-weight:800; text-transform:uppercase;
+    letter-spacing: 0.07em; padding: 17px 32px; font-size:0.94rem;
     border: 1px solid var(--oxide); transition: all 0.2s ease;
   }
   .btn-primary:hover{ background: transparent; color: var(--oxide); }
   .btn-ghost{
-    font-family:'IBM Plex Mono',monospace; font-size:0.78rem; letter-spacing:0.08em;
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:0.78rem; letter-spacing:0.08em;
     color: var(--paper-dim); border-bottom: 1px solid var(--line-strong); padding-bottom:2px;
   }
 
   /* Section shell */
   section{ padding: 68px 28px; border-top: 1px solid var(--line); }
   .sec-head{ display:flex; align-items:baseline; gap:16px; margin-bottom:38px; }
-  .sec-head .code{ font-family:'IBM Plex Mono',monospace; color:var(--brass); font-size:0.85rem;}
+  .sec-head .code{ font-family:'IBM Plex Mono',monospace; font-weight:700; color:var(--oxide); font-size:0.85rem;}
   .sec-head h2{ font-size: clamp(1.5rem, 3.6vw, 2.1rem); }
   .sec-head .rule{flex:1; height:1px; background:var(--line-strong); margin-left:6px;}
 
   /* Situation */
   .situation p{ max-width: 640px; color: var(--paper-dim); font-size:1.02rem; margin-bottom:16px;}
-  .situation strong{color:var(--paper); font-weight:600;}
+  .situation strong{color:var(--paper); font-weight:700;}
 
   /* Mission phases */
   .phases{ display:grid; grid-template-columns: repeat(3,1fr); gap:1px; background: var(--line-strong); border:1px solid var(--line-strong);}
-  .phase{ background: var(--bg-raise); padding: 30px 26px; }
-  .phase .range{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--brass); margin-bottom:14px;}
-  .phase h3{ font-size:1.3rem; margin-bottom:12px; }
+  .phase{ background: var(--bg-raise); padding: 30px 26px; position:relative;}
+  .phase .range{ font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:0.72rem; color:var(--oxide); margin-bottom:14px;}
+  .phase h3{ font-family:'Oswald',sans-serif; font-weight:800; letter-spacing:0.03em; font-size:1.4rem; margin-bottom:12px; text-transform:uppercase;}
   .phase p{ color:var(--paper-dim); font-size:0.92rem; }
   @media (max-width: 720px){ .phases{grid-template-columns:1fr;} }
 
   /* Dossier / credibility */
   .dossier{ display:grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items:start;}
-  .dossier-item{ border-left: 2px solid var(--olive-soft); padding: 4px 0 4px 18px; margin-bottom: 22px;}
-  .dossier-item .k{ font-family:'IBM Plex Mono',monospace; font-size:0.68rem; color:var(--brass); letter-spacing:0.1em; text-transform:uppercase; display:block; margin-bottom:4px;}
+  .dossier-item{ border-left: 2px solid var(--oxide); padding: 4px 0 4px 18px; margin-bottom: 22px;}
+  .dossier-item .k{ font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:0.68rem; color:var(--oxide); letter-spacing:0.1em; text-transform:uppercase; display:block; margin-bottom:4px;}
   .dossier-item .v{ font-size:1.02rem; }
-  .dossier-quote{ font-family:'Oswald',sans-serif; font-size:1.35rem; line-height:1.4; color:var(--paper); font-weight:500;}
+  .dossier-quote{ font-family:'Oswald',sans-serif; font-size:1.35rem; line-height:1.4; color:var(--paper); font-weight:600;}
   .dossier-quote .oxide{color:var(--oxide);}
   @media (max-width: 720px){ .dossier{grid-template-columns:1fr;} }
 
@@ -183,18 +211,19 @@
     border: 1px solid var(--line-strong);
     padding: 44px clamp(20px,5vw,50px);
     display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:30px;
-    background: linear-gradient(180deg, rgba(75,83,32,0.08), transparent);
+    background: linear-gradient(180deg, rgba(192,69,29,0.08), transparent);
+    position:relative;
   }
-  .offer .price{ font-family:'IBM Plex Mono',monospace; font-size:2.6rem; color:var(--paper);}
-  .offer .price .cents{font-size:1.1rem; color:var(--paper-dim);}
-  .offer .price-label{ display:block; font-size:0.7rem; color:var(--brass); letter-spacing:0.1em; margin-bottom:8px; font-family:'IBM Plex Mono',monospace; text-transform:uppercase;}
+  .offer .price{ font-family:'Anton',sans-serif; font-size:3rem; color:var(--paper); letter-spacing:0.01em;}
+  .offer .price .cents{font-family:'IBM Plex Mono',monospace; font-size:1.1rem; color:var(--paper-dim);}
+  .offer .price-label{ display:block; font-size:0.7rem; color:var(--oxide); letter-spacing:0.1em; margin-bottom:8px; font-family:'IBM Plex Mono',monospace; font-weight:700; text-transform:uppercase;}
   .includes{ list-style:none; margin-top:18px; }
   .includes li{ font-size:0.9rem; color:var(--paper-dim); padding: 5px 0; }
   .includes li::before{ content:'—'; color:var(--oxide); margin-right:10px;}
 
   /* Footer */
   footer{ padding: 40px 28px 60px; text-align:center; }
-  footer .code{ font-family:'IBM Plex Mono',monospace; font-size:0.7rem; color: var(--paper-dim); letter-spacing:0.1em;}
+  footer .code{ font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:0.7rem; color: var(--paper-dim); letter-spacing:0.12em;}
 
   @media (prefers-reduced-motion: reduce){
     .ticker-inner{animation:none;}
@@ -204,14 +233,19 @@
 </head>
 <body>
 
-<div class="ticker"><div class="ticker-inner">NO ONE IS COMING &nbsp;•&nbsp; 90 DAYS &nbsp;•&nbsp; EXTRACTION IS EARNED, NOT GRANTED &nbsp;•&nbsp; DISCIPLINE EQUALS DISTANCE FROM WRECKAGE &nbsp;•&nbsp; NO ONE IS COMING &nbsp;•&nbsp; 90 DAYS &nbsp;•&nbsp; EXTRACTION IS EARNED, NOT GRANTED &nbsp;•&nbsp; DISCIPLINE EQUALS DISTANCE FROM WRECKAGE &nbsp;•&nbsp;</div></div>
+<div class="hazard"></div>
+<div class="ticker"><div class="ticker-inner">NO ONE IS COMING <span class="dot">•</span> 90 DAYS <span class="dot">•</span> EXTRACTION IS EARNED, NOT GRANTED <span class="dot">•</span> DISCIPLINE EQUALS DISTANCE FROM WRECKAGE <span class="dot">•</span> NO ONE IS COMING <span class="dot">•</span> 90 DAYS <span class="dot">•</span> EXTRACTION IS EARNED, NOT GRANTED <span class="dot">•</span> DISCIPLINE EQUALS DISTANCE FROM WRECKAGE <span class="dot">•</span></div></div>
 
 <nav>
-  <div class="logo">EXTRACT<span>ION</span></div>
+  <div class="lockup">
+    <img src="assets/extraction-mark.png" alt="Extraction">
+    <div class="logo">EXTRACT<span>ION</span></div>
+  </div>
   <a href="#offer" class="cta-small">Request Extraction</a>
 </nav>
 
 <div class="hero">
+  <div class="hero-mark"></div>
   <div class="doc-frame">
     <div class="stamp"><span>Extraction<br>Authorized</span></div>
     <div class="classification">
@@ -242,17 +276,17 @@
     <div class="phases">
       <div class="phase">
         <span class="range">DAYS 01–30</span>
-        <h3 class="heading">Sever</h3>
+        <h3>Sever</h3>
         <p>Cut the habits and excuses keeping you tethered to the wreckage. Daily standards, no negotiation.</p>
       </div>
       <div class="phase">
         <span class="range">DAYS 31–60</span>
-        <h3 class="heading">Forge</h3>
+        <h3>Forge</h3>
         <p>Build the physical, mental, and relational discipline that replaces what you cut. Weekly checkpoints.</p>
       </div>
       <div class="phase">
         <span class="range">DAYS 61–90</span>
-        <h3 class="heading">Deploy</h3>
+        <h3>Deploy</h3>
         <p>Carry the standard into real life — work, marriage, fatherhood — under pressure, without supervision.</p>
       </div>
     </div>
@@ -291,6 +325,8 @@
     </div>
   </div>
 </section>
+
+<div class="hazard"></div>
 
 <footer>
   <span class="code">EXTRACTION // FROM MEDIOCRITY // NO ONE IS COMING</span>
