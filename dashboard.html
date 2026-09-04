@@ -801,6 +801,14 @@ function OperatorDashboard() {
     } catch (e) {}
   }
 
+  async function updateClientDaysPerWeek(clientId, daysPerWeek) {
+    setClients((prev) => prev.map((c) => (c.id === clientId ? { ...c, daysPerWeek } : c)));
+    const current = clients.find((c) => c.id === clientId);
+    try {
+      await window.sb.from("clients").update({ data: extrasOf({ ...current, daysPerWeek }) }).eq("id", clientId);
+    } catch (e) {}
+  }
+
   function addCustomQuote(text, author) {
     setCustomQuotes((prev) => [...prev, { id: uid(), text: text.trim(), author: author.trim() || "Unknown" }]);
     showToast("Quote added");
@@ -935,6 +943,7 @@ function OperatorDashboard() {
             onBack={() => setSelectedClientId(null)}
             onAssign={(pid) => assignProgram(selectedClient.id, pid)}
             onPhaseChange={(phase) => updateClientPhase(selectedClient.id, phase)}
+            onDaysPerWeekChange={(d) => updateClientDaysPerWeek(selectedClient.id, d)}
             customQuotes={customQuotes}
           />
         )}
@@ -2619,7 +2628,7 @@ function DailyIntro({ dayNumber, customQuotes }) {
   );
 }
 
-function ClientDetail({ client, programs, onBack, onAssign, onPhaseChange, customQuotes }) {
+function ClientDetail({ client, programs, onBack, onAssign, onPhaseChange, onDaysPerWeekChange, customQuotes }) {
   const program = programs.find((p) => p.id === client.programId);
   const suggested = suggestedProgramFor(client, programs);
   return (
@@ -2636,6 +2645,16 @@ function ClientDetail({ client, programs, onBack, onAssign, onPhaseChange, custo
             </p>
           </div>
         </div>
+      </div>
+
+      <div style={S.card}>
+        <div style={S.cardLabel}>Days per week</div>
+        <select style={S.select} value={client.daysPerWeek || ""} onChange={(e) => onDaysPerWeekChange(e.target.value)}>
+          <option value="">— not set —</option>
+          {DAYS_PER_WEEK_OPTIONS.map((d) => (
+            <option key={d} value={d}>{d} days/week</option>
+          ))}
+        </select>
       </div>
 
       {suggested && suggested.id !== client.programId && (
