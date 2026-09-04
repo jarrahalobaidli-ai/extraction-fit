@@ -127,7 +127,7 @@ const T = {
 /* ---------- translations ---------- */
 const TR8N = {
   en: {
-    tagline: "MAYDAY Report — intake & readiness screening",
+    tagline: "MAYDAY Sitrep — intake & readiness screening",
     step_contact: "Contact",
     step_physical: "Physical",
     step_mental: "Mental",
@@ -194,7 +194,7 @@ const TR8N = {
     flagnote: "Unchecked items don't block submission — they're flagged for the coach to review before accepting you into the Protocol.",
 
     review_title: "Review before you send it",
-    review_sub: "This is the report Extraction receives — a 9-line intake, medic-handoff style.",
+    review_sub: "This is the Sitrep Extraction receives — a 9-line intake, medic-handoff style.",
 
     nine_title: "MAYDAY — 9-LINE INTAKE REPORT",
     nine_1_label: "Callsign / contact",
@@ -219,25 +219,25 @@ const TR8N = {
 
     btn_back: "← Back",
     btn_continue: "Continue →",
-    btn_submit: "Submit MAYDAY Report",
+    btn_submit: "Submit MAYDAY Sitrep",
     btn_coachaccess: "Coach access — view submissions",
 
     confirmed_title: "MAYDAY RECEIVED",
-    confirmed_body: "Your report has been saved on this device. To make sure Extraction actually sees it, send it directly using one of the options below.",
-    btn_copy: "Copy report",
+    confirmed_body: "Your Sitrep has been saved on this device. To make sure Extraction actually sees it, send it directly using one of the options below.",
+    btn_copy: "Copy Sitrep",
     btn_copied: "Copied ✓",
-    btn_email: "Email report",
-    btn_whatsapp: "Send via WhatsApp",
-    btn_submitanother: "Submit another report",
+    btn_email: "Send SITREP to TAC-Mail",
+    btn_whatsapp: "Push through TAC-Freq",
+    btn_submitanother: "Submit another Sitrep",
 
     coach_title: "SUBMITTED REPORTS",
-    coach_note: "Reports are only stored on this device/browser. If a client filled this out on their own device, ask them to use Copy, Email, or WhatsApp on the confirmation screen so their report actually reaches you.",
+    coach_note: "Sitreps are only stored on this device/browser. If a client filled this out on their own device, ask them to use Copy, TAC-Mail, or TAC-Freq on the confirmation screen so their Sitrep actually reaches you.",
     btn_refresh: "Refresh",
     btn_backtoform: "← Back to form",
     btn_sortprecedence: "Sort by precedence",
     btn_sortnewest: "Sort by newest",
     loading: "Loading…",
-    noreports: "No MAYDAY reports submitted yet.",
+    noreports: "No MAYDAY Sitreps submitted yet.",
     received_prefix: "Received",
 
     eq_fullgym: "Full gym",
@@ -249,7 +249,7 @@ const TR8N = {
     flag_financial: "financial",
     flag_code: "code of conduct",
 
-    report_header: "MAYDAY -- 9-LINE INTAKE REPORT",
+    report_header: "MAYDAY -- 9-LINE INTAKE SITREP",
     report_precedence: "Precedence",
     report_line_id: "ID",
     report_line_m: "M (why now)",
@@ -260,7 +260,7 @@ const TR8N = {
     report_line_t: "T (objective)",
     report_line_sec: "SEC (support)",
     report_line_haz: "HAZ (status/flags)",
-    email_subject_prefix: "MAYDAY Report — ",
+    email_subject_prefix: "MAYDAY Sitrep — ",
     new_applicant: "New applicant",
     field_required: "This is required",
   },
@@ -363,11 +363,11 @@ const TR8N = {
 
     confirmed_title: "MAYDAY ALINDI",
     confirmed_body: "Raporun bu cihaza kaydedildi. Extraction'ın gerçekten görmesi için aşağıdaki seçeneklerden biriyle doğrudan gönder.",
-    btn_copy: "Raporu kopyala",
+    btn_copy: "Copy Sitrep",
     btn_copied: "Kopyalandı ✓",
-    btn_email: "E-posta ile gönder",
-    btn_whatsapp: "WhatsApp ile gönder",
-    btn_submitanother: "Başka bir rapor gönder",
+    btn_email: "Send SITREP to TAC-Mail",
+    btn_whatsapp: "Push through TAC-Freq",
+    btn_submitanother: "Submit another Sitrep",
 
     coach_title: "GÖNDERİLEN RAPORLAR",
     coach_note: "Raporlar yalnızca bu cihazda/tarayıcıda saklanır. Bir danışan bunu kendi cihazında doldurduysa, raporunun sana gerçekten ulaşması için onay ekranındaki Kopyala, E-posta veya WhatsApp seçeneklerini kullanmasını iste.",
@@ -502,11 +502,11 @@ const TR8N = {
 
     confirmed_title: "تم استلام MAYDAY",
     confirmed_body: "تم حفظ تقريرك على هذا الجهاز. للتأكد من وصوله فعلياً إلى Extraction، أرسله مباشرة باستخدام أحد الخيارات أدناه.",
-    btn_copy: "نسخ التقرير",
+    btn_copy: "Copy Sitrep",
     btn_copied: "تم النسخ ✓",
-    btn_email: "إرسال بالبريد الإلكتروني",
-    btn_whatsapp: "إرسال عبر واتساب",
-    btn_submitanother: "إرسال تقرير آخر",
+    btn_email: "Send SITREP to TAC-Mail",
+    btn_whatsapp: "Push through TAC-Freq",
+    btn_submitanother: "Submit another Sitrep",
 
     coach_title: "التقارير المُرسلة",
     coach_note: "التقارير محفوظة فقط على هذا الجهاز/المتصفح. إذا قام العميل بتعبئة النموذج على جهازه الخاص، اطلب منه استخدام خيار النسخ أو البريد الإلكتروني أو واتساب في شاشة التأكيد حتى يصلك تقريره فعلياً.",
@@ -1057,10 +1057,21 @@ function Confirmed({ lang, setLang, t, rtl, form, onRestart }) {
           {copied ? t.btn_copied : t.btn_copy}
         </button>
         <a href={emailHref} style={{ textDecoration: "none" }}>
-          <button className="ex-btn-ghost" style={{ ...S.btnGhost, width: "100%" }}>{t.btn_email}</button>
+          <button className="ex-btn-ghost" style={{ ...S.btnGhost, width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M3 6.5C3 5.67157 3.67157 5 4.5 5H19.5C20.3284 5 21 5.67157 21 6.5V17.5C21 18.3284 20.3284 19 19.5 19H4.5C3.67157 19 3 18.3284 3 17.5V6.5Z" stroke="currentColor" strokeWidth="1.5"/>
+              <path d="M4 6.5L12 13L20 6.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            {t.btn_email}
+          </button>
         </a>
         <a href={whatsappHref} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
-          <button className="ex-btn-ghost" style={{ ...S.btnGhost, width: "100%" }}>{t.btn_whatsapp}</button>
+          <button className="ex-btn-ghost" style={{ ...S.btnGhost, width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+            <svg width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M16 3C9.373 3 4 8.373 4 15c0 2.53.79 4.877 2.137 6.807L4.6 27.6l5.94-1.556A11.93 11.93 0 0 0 16 27c6.627 0 12-5.373 12-12S22.627 3 16 3Zm0 21.8a9.77 9.77 0 0 1-4.98-1.36l-.357-.212-3.527.924.94-3.436-.232-.353A9.77 9.77 0 0 1 6.2 15C6.2 9.585 10.585 5.2 16 5.2S25.8 9.585 25.8 15 21.415 24.8 16 24.8Zm5.373-7.36c-.294-.147-1.74-.858-2.01-.956-.27-.098-.467-.147-.664.147-.196.294-.76.956-.933 1.152-.171.196-.343.22-.637.073-.294-.147-1.24-.457-2.362-1.457-.873-.779-1.463-1.741-1.635-2.035-.171-.294-.018-.453.129-.6.132-.132.294-.343.441-.514.147-.171.196-.294.294-.49.098-.196.049-.367-.024-.514-.073-.147-.664-1.6-.91-2.192-.24-.577-.484-.499-.664-.508l-.566-.01c-.196 0-.514.073-.784.367-.27.294-1.03 1.007-1.03 2.456s1.054 2.848 1.201 3.045c.147.196 2.075 3.168 5.028 4.44.703.303 1.251.484 1.679.62.705.224 1.347.192 1.854.117.566-.085 1.74-.712 1.985-1.4.245-.688.245-1.278.171-1.4-.073-.123-.269-.196-.563-.343Z" fill="currentColor"/>
+            </svg>
+            {t.btn_whatsapp}
+          </button>
         </a>
       </div>
 
