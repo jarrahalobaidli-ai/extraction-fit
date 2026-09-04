@@ -125,13 +125,13 @@ function equipmentLabelFromCode(value) {
   return EQUIPMENT_CODE_LABELS[value] || value;
 }
 
-// The three manual "tracks" Cadre builds live in. Every client's equipment maps to exactly
+// The three manual "tracks" Commander builds live in. Every client's equipment maps to exactly
 // one modality; "Bands only" clients fold into Bodyweight Training (closest equipment fit —
 // still uses the general movement-pattern substitutions, just grouped under one manual family
 // so the library stays at three tracks instead of four).
 const MODALITY_BY_EQUIPMENT = {
   "Full gym": { level: "Full gym", modality: "Full Gym Bodybuilding" },
-  "Dumbbells, kettlebells + functional tools": { level: "Dumbbells, kettlebells + functional tools", modality: "Functional Training" },
+  "Dumbbells, kettlebells + functional tools": { level: "Dumbbells, kettlebells + functional tools", modality: "functional program" },
   "Bodyweight only": { level: "Bodyweight only", modality: "Bodyweight Training" },
   "Bands only": { level: "Bodyweight only", modality: "Bodyweight Training" },
 };
@@ -281,9 +281,9 @@ function starterExtractionProgram() {
   return {
     id: uid(),
     name: "The Extraction Protocol — Foundation Block",
-    description: "Weeks 1–3 of the flagship 90-day manual: LOCATE phase — establish real baseline before loading up.",
+    description: "Weeks 1–3 of the flagship 90-day manual: Find Your Bearing phase — establish real baseline before loading up.",
     weeks: [
-      week("Week 1 — LOCATE", [
+      week("Week 1 — Find Your Bearing", [
         day("Day 1 — Lower + core", [
           ["Back squat", "4", "6", "Leave 2 reps in reserve — this week is about clean movement, not maxing"],
           ["Romanian deadlift", "3", "8", ""],
@@ -302,7 +302,7 @@ function starterExtractionProgram() {
           ["Plank", "3", "45s", ""],
         ]),
       ]),
-      week("Week 2 — LOCATE", [
+      week("Week 2 — Find Your Bearing", [
         day("Day 1 — Lower + core", [
           ["Back squat", "4", "6", "Add 5–10lb from week 1 if form was clean"],
           ["Romanian deadlift", "3", "8", ""],
@@ -321,9 +321,9 @@ function starterExtractionProgram() {
           ["Plank", "3", "50s", ""],
         ]),
       ]),
-      week("Week 3 — LOCATE", [
+      week("Week 3 — Find Your Bearing", [
         day("Day 1 — Lower + core", [
-          ["Back squat", "5", "5", "Small load bump — this is the last week before STABILIZE"],
+          ["Back squat", "5", "5", "Small load bump — this is the last week before Golden Hour"],
           ["Romanian deadlift", "4", "6", ""],
           ["Walking lunge", "3", "12/leg", ""],
           ["Hanging leg raise", "3", "15", ""],
@@ -441,14 +441,14 @@ const DASH_T = {
     inbox_convert: "Add to Clients",
     inbox_dismiss: "Dismiss",
     sign_out: "Sign out",
-    login_title: "Cadre Access",
+    login_title: "Commander Access",
     login_sub: "Sign in to run the dashboard.",
     login_email_label: "TAC-M",
     login_email_placeholder: "you@example.com",
     login_send: "Target designated - send it",
     login_sent: "Check your email for the sign-in link.",
     denied_title: "Not authorized",
-    denied_body: "This account isn't set up as Cadre.",
+    denied_body: "This account isn't set up as Commander.",
   },
   tr: {
     tagline: "Yönünü bul",
@@ -622,7 +622,7 @@ function OperatorDashboard() {
   const [customQuotes, setCustomQuotes] = useState([]);
   const saveTimer = useRef(null);
 
-  // ---------- Cadre (coach) auth — magic link via Supabase ----------
+  // ---------- Commander (coach) auth — magic link via Supabase ----------
   useEffect(() => {
     if (!window.sb) { setAuthChecked(true); return; }
     window.sb.auth.getSession().then(({ data }) => {
@@ -989,7 +989,7 @@ function OperatorDashboard() {
   );
 }
 
-/* ---------- Cadre access: gate screens ---------- */
+/* ---------- Commander access: gate screens ---------- */
 function GateScreen({ t, children }) {
   return (
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: T.color.bg }}>
@@ -1164,30 +1164,30 @@ function GlobalStyle() {
 
 /* ---------- build a complete 90-day program (all 4 phases) for a given equipment level ---------- */
 const WEEK_SCHEME = [
-  // LOCATE — weeks 1-3 — steady state to build the aerobic base
-  { phase: "LOCATE", main: ["4", "6"], acc: ["3", "8"], carrySets: "3", carryDist: "30m", coreDur: "12", note: "",
+  // Find Your Bearing — weeks 1-3 — steady state to build the aerobic base
+  { phase: "Find Your Bearing", main: ["4", "6"], acc: ["3", "8"], carrySets: "3", carryDist: "30m", coreDur: "12", note: "",
     cond: { type: "Steady state", sets: "1", reps: "15 min continuous", notes: "Hold a conversational, sustainable pace" } },
-  { phase: "LOCATE", main: ["4", "6"], acc: ["3", "8"], carrySets: "3", carryDist: "40m", coreDur: "12", note: "",
+  { phase: "Find Your Bearing", main: ["4", "6"], acc: ["3", "8"], carrySets: "3", carryDist: "40m", coreDur: "12", note: "",
     cond: { type: "Steady state", sets: "1", reps: "18 min continuous", notes: "Hold a conversational, sustainable pace" } },
-  { phase: "LOCATE", main: ["5", "5"], acc: ["4", "6"], carrySets: "4", carryDist: "40m", coreDur: "15", note: "End of LOCATE — technique should be locked in before load climbs",
+  { phase: "Find Your Bearing", main: ["5", "5"], acc: ["4", "6"], carrySets: "4", carryDist: "40m", coreDur: "15", note: "End of Find Your Bearing — technique should be locked in before load climbs",
     cond: { type: "Steady state", sets: "1", reps: "20 min continuous", notes: "Base-building complete — note your average pace for later comparison" } },
-  // STABILIZE — weeks 4-7 — alternate steady state and HIIT to build both engines
-  { phase: "STABILIZE", main: ["5", "5"], acc: ["4", "6"], carrySets: "4", carryDist: "45m", coreDur: "15", note: "STABILIZE begins — heavier loads, same technique standard",
+  // Golden Hour — weeks 4-7 — alternate steady state and HIIT to build both engines
+  { phase: "Golden Hour", main: ["5", "5"], acc: ["4", "6"], carrySets: "4", carryDist: "45m", coreDur: "15", note: "Golden Hour begins — heavier loads, same technique standard",
     cond: { type: "HIIT", sets: "6", reps: "20s on / 40s off", notes: "All-out effort on every work interval" } },
-  { phase: "STABILIZE", main: ["5", "5"], acc: ["4", "6"], carrySets: "4", carryDist: "45m", coreDur: "18", note: "",
+  { phase: "Golden Hour", main: ["5", "5"], acc: ["4", "6"], carrySets: "4", carryDist: "45m", coreDur: "18", note: "",
     cond: { type: "Steady state", sets: "1", reps: "22 min continuous", notes: "Aim for a slightly faster pace than Week 3" } },
-  { phase: "STABILIZE", main: ["5", "4"], acc: ["4", "6"], carrySets: "5", carryDist: "50m", coreDur: "18", note: "",
+  { phase: "Golden Hour", main: ["5", "4"], acc: ["4", "6"], carrySets: "5", carryDist: "50m", coreDur: "18", note: "",
     cond: { type: "HIIT", sets: "7", reps: "20s on / 40s off", notes: "" } },
-  { phase: "STABILIZE", main: ["5", "4"], acc: ["4", "6"], carrySets: "5", carryDist: "50m", coreDur: "20", note: "End of STABILIZE — should feel noticeably stronger than week 1",
+  { phase: "Golden Hour", main: ["5", "4"], acc: ["4", "6"], carrySets: "5", carryDist: "50m", coreDur: "20", note: "End of Golden Hour — should feel noticeably stronger than week 1",
     cond: { type: "Steady state", sets: "1", reps: "25 min continuous", notes: "End-of-phase aerobic check" } },
-  // GOLDEN HOUR — weeks 8-11 — HIIT and full conditioning rounds at peak effort
-  { phase: "GOLDEN HOUR", main: ["5", "3"], acc: ["4", "5"], carrySets: "5", carryDist: "55m", coreDur: "20", note: "GOLDEN HOUR begins — peak effort, push closer to true max",
+  // Hold the Line — weeks 8-11 — HIIT and full conditioning rounds at peak effort
+  { phase: "Hold the Line", main: ["5", "3"], acc: ["4", "5"], carrySets: "5", carryDist: "55m", coreDur: "20", note: "Hold the Line begins — peak effort, push closer to true max",
     cond: { type: "HIIT", sets: "8", reps: "20s on / 40s off", notes: "Peak HIIT volume begins" } },
-  { phase: "GOLDEN HOUR", main: ["5", "3"], acc: ["4", "5"], carrySets: "5", carryDist: "55m", coreDur: "25", note: "",
+  { phase: "Hold the Line", main: ["5", "3"], acc: ["4", "5"], carrySets: "5", carryDist: "55m", coreDur: "25", note: "",
     cond: { type: "Rounds", sets: "1", reps: "AMRAP 12", notes: "Score = total rounds + reps completed" } },
-  { phase: "GOLDEN HOUR", main: ["6", "2"], acc: ["4", "5"], carrySets: "6", carryDist: "60m", coreDur: "25", note: "",
+  { phase: "Hold the Line", main: ["6", "2"], acc: ["4", "5"], carrySets: "6", carryDist: "60m", coreDur: "25", note: "",
     cond: { type: "HIIT", sets: "9", reps: "15s on / 45s off", notes: "Shorter work window, same max effort" } },
-  { phase: "GOLDEN HOUR", main: ["6", "2"], acc: ["4", "5"], carrySets: "6", carryDist: "60m", coreDur: "30", note: "Peak week — hardest session of the entire block",
+  { phase: "Hold the Line", main: ["6", "2"], acc: ["4", "5"], carrySets: "6", carryDist: "60m", coreDur: "30", note: "Peak week — hardest session of the entire block",
     cond: { type: "Rounds", sets: "1", reps: "AMRAP 15", notes: "Hardest conditioning test of the block" } },
   // RTB — weeks 12-13 — deload, then retest against Week 1's steady-state benchmark
   { phase: "RTB", main: ["3", "8"], acc: ["2", "10"], carrySets: "3", carryDist: "30m", coreDur: "20", note: "RTB deload — cut load roughly 40%, focus on movement quality and recovery",
@@ -1315,7 +1315,7 @@ function buildFullProgram(level, daysPerWeek) {
     const condName = CONDITIONING_TYPES[w.cond.type][level];
     const days = buildRegularDays(dpw, w, find, condName, day);
     if (w.note) days[0].exercises[0].notes = days[0].exercises[0].notes || w.note;
-    if (w.phase === "STABILIZE" && i === 6) {
+    if (w.phase === "Golden Hour" && i === 6) {
       const last = days[days.length - 1];
       const lastEx = last.exercises[last.exercises.length - 1];
       lastEx.notes = lastEx.notes ? `${lastEx.notes} — SITREP: log bodyweight, waist, recovery` : "SITREP: log bodyweight, waist, recovery";
@@ -1328,7 +1328,7 @@ function buildFullProgram(level, daysPerWeek) {
   return {
     id: uid(),
     name: manualNameFor(level, dpw),
-    description: `Full 90-day, 4-phase block (LOCATE → STABILIZE → GOLDEN HOUR → RTB), ${dpw} days/week, built entirely around ${modality.toLowerCase()} (${level.toLowerCase()}).`,
+    description: `Full 90-day, 4-phase block (Find Your Bearing → Golden Hour → Hold the Line → RTB), ${dpw} days/week, built entirely around ${modality.toLowerCase()} (${level.toLowerCase()}).`,
     weeks,
   };
 }
@@ -1421,7 +1421,7 @@ function ReferenceView({ onGenerate, t }) {
       <div style={S.card}>
         <div style={S.cardLabel}>Build the full manual — {modalityName(level)}</div>
         <p style={{ ...S.rowSub, marginBottom: 10 }}>
-          Generates the complete 90-day Extraction Protocol — all 4 phases, 13 weeks — using only {level.toLowerCase()}. Every exercise is sequenced with sets, reps, and progression from LOCATE through the RTB retest. Lands in your Manuals library, ready to assign or edit.
+          Generates the complete 90-day Extraction Protocol — all 4 phases, 13 weeks — using only {level.toLowerCase()}. Every exercise is sequenced with sets, reps, and progression from Find Your Bearing through the RTB retest. Lands in your Manuals library, ready to assign or edit.
         </p>
         <div style={{ display: "flex", gap: 8, marginBottom: 10, flexWrap: "wrap" }}>
           {DAYS_PER_WEEK_OPTIONS.map((d) => (
