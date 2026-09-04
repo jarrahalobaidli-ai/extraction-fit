@@ -117,7 +117,7 @@ function renderLogin(prefillSent) {
     <label for="email">TAC-M</label>
     <input id="email" type="email" placeholder="you@example.com" />
     <div id="login-err" class="err"></div>
-    <button id="send-link">Send magic link</button>`;
+    <button id="send-link">Target designated - send it</button>`;
   document.getElementById("send-link").addEventListener("click", sendMagicLink);
   document.getElementById("email").addEventListener("keydown", (e) => {
     if (e.key === "Enter") sendMagicLink();
