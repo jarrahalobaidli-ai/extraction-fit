@@ -113,6 +113,45 @@ const emptyWeek = (num) => ({ id: uid(), label: `Week ${num}`, days: [emptyDay("
 /* ---------- equipment substitution reference (original, general movement-pattern knowledge) ---------- */
 const EQUIPMENT_LEVELS = ["Full gym", "Dumbbells, kettlebells + functional tools", "Bodyweight only", "Bands only"];
 
+// Maps the raw equipment code stored on a MAYDAY submission (from intake.html) to the
+// same display strings used everywhere else in this dashboard.
+const EQUIPMENT_CODE_LABELS = {
+  eq_fullgym: "Full gym",
+  eq_dbkb: "Dumbbells, kettlebells + functional tools",
+  eq_bodyweight: "Bodyweight only",
+  eq_bands: "Bands only",
+};
+function equipmentLabelFromCode(value) {
+  return EQUIPMENT_CODE_LABELS[value] || value;
+}
+
+// The three manual "tracks" Cadre builds live in. Every client's equipment maps to exactly
+// one modality; "Bands only" clients fold into Bodyweight Training (closest equipment fit —
+// still uses the general movement-pattern substitutions, just grouped under one manual family
+// so the library stays at three tracks instead of four).
+const MODALITY_BY_EQUIPMENT = {
+  "Full gym": { level: "Full gym", modality: "Full Gym Bodybuilding" },
+  "Dumbbells, kettlebells + functional tools": { level: "Dumbbells, kettlebells + functional tools", modality: "Functional Training" },
+  "Bodyweight only": { level: "Bodyweight only", modality: "Bodyweight Training" },
+  "Bands only": { level: "Bodyweight only", modality: "Bodyweight Training" },
+};
+const MODALITY_LEVELS = ["Full gym", "Dumbbells, kettlebells + functional tools", "Bodyweight only"];
+const DAYS_PER_WEEK_OPTIONS = ["3", "4", "5", "6"];
+function modalityName(level) {
+  return (MODALITY_BY_EQUIPMENT[level] && MODALITY_BY_EQUIPMENT[level].modality) || level;
+}
+function manualNameFor(level, daysPerWeek) {
+  return `${modalityName(level)} — ${daysPerWeek} Days/Week`;
+}
+// Finds the manual in the library that matches a client's equipment + chosen days/week.
+function suggestedProgramFor(client, programs) {
+  if (!client || !client.equipment || !client.daysPerWeek) return null;
+  const map = MODALITY_BY_EQUIPMENT[client.equipment];
+  if (!map) return null;
+  const wantName = manualNameFor(map.level, client.daysPerWeek);
+  return programs.find((p) => p.name === wantName) || null;
+}
+
 const MOVEMENT_PATTERNS = [
   {
     pattern: "Squat",
@@ -631,6 +670,7 @@ function OperatorDashboard() {
       programId: row.manual_id,
       phase: row.phase,
       joined: row.joined,
+      daysPerWeek: (row.data && row.data.daysPerWeek) || null,
       ...(row.data || {}),
     };
   }
@@ -641,6 +681,7 @@ function OperatorDashboard() {
     const extras = {};
     if (client && client.nutrition !== undefined) extras.nutrition = client.nutrition;
     if (client && client.invoices !== undefined) extras.invoices = client.invoices;
+    if (client && client.daysPerWeek !== undefined && client.daysPerWeek !== null) extras.daysPerWeek = client.daysPerWeek;
     return extras;
   }
 
@@ -703,7 +744,12 @@ function OperatorDashboard() {
     try {
       const { data: row, error } = await window.sb
         .from("clients")
-        .insert({ name: data.name, email: data.email, equipment: data.equipment })
+        .insert({
+          name: data.name,
+          email: data.email,
+          equipment: data.equipment,
+          data: extrasOf({ daysPerWeek: data.daysPerWeek }),
+        })
         .select()
         .single();
       if (error) throw error;
@@ -790,8 +836,8 @@ function OperatorDashboard() {
     } catch (e) {}
   }
 
-  async function generateProgram(level, type) {
-    const built = type === "hybrid" ? buildHybridProgram(level) : buildFullProgram(level);
+  async function generateProgram(level, type, daysPerWeek) {
+    const built = type === "hybrid" ? buildHybridProgram(level) : buildFullProgram(level, daysPerWeek);
     try {
       const { data: row, error } = await window.sb
         .from("manuals")
@@ -809,9 +855,16 @@ function OperatorDashboard() {
 
   async function convertSubmission(sub) {
     try {
+      const equipmentLabel = equipmentLabelFromCode(sub.equipment);
+      const daysPerWeek = sub.answers && sub.answers.daysPerWeek ? String(sub.answers.daysPerWeek) : null;
       const { data: row, error } = await window.sb
         .from("clients")
-        .insert({ name: sub.name, email: sub.email, equipment: sub.equipment })
+        .insert({
+          name: sub.name,
+          email: sub.email,
+          equipment: equipmentLabel,
+          data: extrasOf({ daysPerWeek }),
+        })
         .select()
         .single();
       if (error) throw error;
@@ -1133,7 +1186,95 @@ const WEEK_SCHEME = [
   { phase: "RTB", retest: true, note: "RTB Debrief — retest week. Compare every number against Week 1." },
 ];
 
-function buildFullProgram(level) {
+// Builds the N regular (non-retest) training days for a given week, for a given weekly
+// frequency. Every day-count shares the same 13-week progression scheme (WEEK_SCHEME) —
+// only how that week's volume is spread across sessions changes.
+function buildRegularDays(daysPerWeek, w, find, condName, day) {
+  const [ms, mr] = w.main;
+  const [as, ar] = w.acc;
+  const coreReps = ar === "5" ? "10" : "12";
+
+  const lowerCore = () =>
+    day("Lower + core", [
+      [find("Squat"), ms, mr, w.note],
+      [find("Hinge"), ms, mr, ""],
+      [find("Loaded carry"), w.carrySets, w.carryDist, ""],
+      [find("Core / anti-extension"), as, coreReps, ""],
+    ]);
+  const upperPushPull = () =>
+    day("Upper push/pull", [
+      [find("Horizontal push"), ms, mr, ""],
+      [find("Horizontal pull"), ms, mr, ""],
+      [find("Vertical push"), as, ar, ""],
+      [find("Vertical pull"), as, "max", "Log actual reps achieved"],
+      [find("Rotational / shoulder flow"), "2", "8/side", "Shoulder health and rotational control — light, controlled tempo"],
+    ]);
+  const conditioningCarry = (label) =>
+    day(label || `Conditioning (${w.cond.type}) + carry`, [
+      [find("Loaded carry"), w.carrySets, w.carryDist, "Heaviest/hardest carry of the week"],
+      [condName, w.cond.sets, w.cond.reps, w.cond.notes],
+      [find("Core / anti-extension"), "3", `${w.coreDur}s`, ""],
+    ]);
+  const push = (label, note) =>
+    day(label || "Push", [
+      [find("Horizontal push"), ms, mr, note || ""],
+      [find("Vertical push"), as, ar, ""],
+      [find("Rotational / shoulder flow"), "2", "8/side", "Shoulder health and rotational control"],
+    ]);
+  const pull = (label, note) =>
+    day(label || "Pull", [
+      [find("Horizontal pull"), ms, mr, note || ""],
+      [find("Vertical pull"), as, "max", "Log actual reps achieved"],
+      [find("Core / anti-extension"), as, coreReps, ""],
+    ]);
+  const legsCarry = (label, note) =>
+    day(label || "Legs + carry", [
+      [find("Squat"), ms, mr, note || ""],
+      [find("Hinge"), ms, mr, ""],
+      [find("Loaded carry"), w.carrySets, w.carryDist, ""],
+    ]);
+  const fullBodyAccessory = () =>
+    day("Full-body accessory + mobility", [
+      [find("Squat"), as, ar, "Lighter, higher-rep — accessory volume, not a max effort"],
+      [find("Horizontal pull"), as, ar, ""],
+      [find("Rotational / shoulder flow"), "2", "8/side", "Shoulder health and rotational control"],
+      [find("Core / anti-extension"), "2", "12", ""],
+    ]);
+
+  if (daysPerWeek === "4") {
+    return [lowerCore(), upperPushPull(), conditioningCarry(), fullBodyAccessory()];
+  }
+  if (daysPerWeek === "5") {
+    return [
+      lowerCore(),
+      push(),
+      pull(),
+      conditioningCarry(),
+      day("Full-body accessory", [
+        [find("Squat"), as, ar, "Lighter, higher-rep accessory volume"],
+        [find("Hinge"), as, ar, ""],
+        [find("Horizontal push"), as, ar, ""],
+        [find("Horizontal pull"), as, ar, ""],
+        [find("Loaded carry"), "1", w.carryDist, "Easy pace — active recovery finisher"],
+      ]),
+    ];
+  }
+  if (daysPerWeek === "6") {
+    return [
+      push("Push A"),
+      pull("Pull A"),
+      legsCarry("Legs + carry A"),
+      push("Push B", "Second push session — same movement, moderate volume"),
+      pull("Pull B", "Second pull session — same movement, moderate volume"),
+      conditioningCarry("Legs B + carry + conditioning"),
+    ];
+  }
+  // default: 3 days/week
+  return [lowerCore(), upperPushPull(), conditioningCarry()];
+}
+
+function buildFullProgram(level, daysPerWeek) {
+  const dpw = daysPerWeek || "3";
   const find = (pattern) => MOVEMENT_PATTERNS.find((p) => p.pattern === pattern).options[level];
   const day = (label, rows) => ({
     id: uid(),
@@ -1146,51 +1287,39 @@ function buildFullProgram(level) {
     if (w.retest) {
       const steadyState = CONDITIONING_TYPES["Steady state"][level];
       return week(`Week ${i + 1} — RTB (retest)`, [
-        day("Day 1 — Retest lower + core", [
+        day("Retest lower + core", [
           [find("Squat"), "1", "heaviest set of 5", "Compare load directly against Week 1"],
           [find("Hinge"), "1", "heaviest set of 5", ""],
           [find("Core / anti-extension"), "1", "max hold/reps", ""],
         ]),
-        day("Day 2 — Retest upper", [
+        day("Retest upper", [
           [find("Horizontal push"), "1", "heaviest set of 5", "Compare load directly against Week 1"],
           [find("Horizontal pull"), "1", "heaviest set of 5", ""],
           [find("Vertical pull"), "1", "max", "Compare rep count against Week 1"],
         ]),
-        day("Day 3 — Retest conditioning", [
+        day("Retest conditioning", [
           [steadyState, "1", "15 min continuous", "Retest — compare pace/output directly against Week 1's 15-minute piece"],
-          [find("Loaded carry"), "1", "max distance in 60s", "RTB Debrief: log bodyweight, waist, and how the block felt overall"],
+          [find("Loaded carry"), "1", "max distance in 60s", "RTB Debrief: log bodyweight, waist, and how the block felt overall — deload/retest week runs at reduced frequency regardless of your normal training days"],
         ]),
       ]);
     }
-    const [ms, mr] = w.main;
-    const [as, ar] = w.acc;
     const condName = CONDITIONING_TYPES[w.cond.type][level];
-    return week(`Week ${i + 1} — ${w.phase}`, [
-      day("Day 1 — Lower + core", [
-        [find("Squat"), ms, mr, w.note],
-        [find("Hinge"), ms, mr, ""],
-        [find("Loaded carry"), w.carrySets, w.carryDist, ""],
-        [find("Core / anti-extension"), as, ar === "5" ? "10" : "12", ""],
-      ]),
-      day("Day 2 — Upper push/pull", [
-        [find("Horizontal push"), ms, mr, ""],
-        [find("Horizontal pull"), ms, mr, ""],
-        [find("Vertical push"), as, ar, ""],
-        [find("Vertical pull"), as, "max", "Log actual reps achieved"],
-        [find("Rotational / shoulder flow"), "2", "8/side", "Shoulder health and rotational control — light, controlled tempo"],
-      ]),
-      day(`Day 3 — Conditioning (${w.cond.type}) + carry`, [
-        [find("Loaded carry"), w.carrySets, w.carryDist, "Heaviest/hardest carry of the week"],
-        [condName, w.cond.sets, w.cond.reps, w.cond.notes],
-        [find("Core / anti-extension"), "3", `${w.coreDur}s`, w.phase === "STABILIZE" && i === 6 ? "SITREP: log bodyweight, waist, recovery" : ""],
-      ]),
-    ]);
+    const days = buildRegularDays(dpw, w, find, condName, day);
+    if (w.note) days[0].exercises[0].notes = days[0].exercises[0].notes || w.note;
+    if (w.phase === "STABILIZE" && i === 6) {
+      const last = days[days.length - 1];
+      const lastEx = last.exercises[last.exercises.length - 1];
+      lastEx.notes = lastEx.notes ? `${lastEx.notes} — SITREP: log bodyweight, waist, recovery` : "SITREP: log bodyweight, waist, recovery";
+    }
+    days.forEach((d, di) => { d.label = `Day ${di + 1} — ${d.label}`; });
+    return week(`Week ${i + 1} — ${w.phase}`, days);
   });
 
+  const modality = modalityName(level);
   return {
     id: uid(),
-    name: `The Extraction Protocol — ${level}`,
-    description: `Full 90-day, 4-phase block (LOCATE → STABILIZE → GOLDEN HOUR → RTB) built entirely around ${level.toLowerCase()}.`,
+    name: manualNameFor(level, dpw),
+    description: `Full 90-day, 4-phase block (LOCATE → STABILIZE → GOLDEN HOUR → RTB), ${dpw} days/week, built entirely around ${modality.toLowerCase()} (${level.toLowerCase()}).`,
     weeks,
   };
 }
@@ -1257,6 +1386,7 @@ function buildHybridProgram(level) {
 /* ---------- Quick reference: program fast based on available equipment ---------- */
 function ReferenceView({ onGenerate, t }) {
   const [level, setLevel] = useState(EQUIPMENT_LEVELS[0]);
+  const [daysPerWeek, setDaysPerWeek] = useState(DAYS_PER_WEEK_OPTIONS[0]);
   return (
     <div>
       <div style={S.headerRow}>
@@ -1280,12 +1410,24 @@ function ReferenceView({ onGenerate, t }) {
       </div>
 
       <div style={S.card}>
-        <div style={S.cardLabel}>Build the full manual</div>
+        <div style={S.cardLabel}>Build the full manual — {modalityName(level)}</div>
         <p style={{ ...S.rowSub, marginBottom: 10 }}>
-          Generates the complete 90-day Extraction Protocol — all 4 phases, 13 weeks, 3 days/week — using only {level.toLowerCase()}. Every exercise is sequenced with sets, reps, and progression from LOCATE through the RTB retest. Lands in your Manuals library, ready to assign or edit.
+          Generates the complete 90-day Extraction Protocol — all 4 phases, 13 weeks — using only {level.toLowerCase()}. Every exercise is sequenced with sets, reps, and progression from LOCATE through the RTB retest. Lands in your Manuals library, ready to assign or edit.
         </p>
-        <button className="ex-btn-primary" style={S.btnPrimary} onClick={() => onGenerate(level, "protocol")}>
-          Build 90-day manual for {level}
+        <div style={{ display: "flex", gap: 8, marginBottom: 10, flexWrap: "wrap" }}>
+          {DAYS_PER_WEEK_OPTIONS.map((d) => (
+            <button
+              key={d}
+              className={d === daysPerWeek ? "ex-btn-primary" : "ex-btn-ghost"}
+              style={{ ...(d === daysPerWeek ? S.btnPrimary : S.btnGhost), padding: "6px 14px" }}
+              onClick={() => setDaysPerWeek(d)}
+            >
+              {d} days/week
+            </button>
+          ))}
+        </div>
+        <button className="ex-btn-primary" style={S.btnPrimary} onClick={() => onGenerate(level, "protocol", daysPerWeek)}>
+          Build {manualNameFor(level, daysPerWeek)}
         </button>
       </div>
 
@@ -2479,6 +2621,7 @@ function DailyIntro({ dayNumber, customQuotes }) {
 
 function ClientDetail({ client, programs, onBack, onAssign, onPhaseChange, customQuotes }) {
   const program = programs.find((p) => p.id === client.programId);
+  const suggested = suggestedProgramFor(client, programs);
   return (
     <div>
       <button className="ex-link" style={S.backBtn} onClick={onBack}>← All clients</button>
@@ -2487,10 +2630,25 @@ function ClientDetail({ client, programs, onBack, onAssign, onPhaseChange, custo
           <div style={{ ...S.avatar, width: 48, height: 48, fontSize: 18 }}>{client.name.slice(0, 1).toUpperCase()}</div>
           <div>
             <h1 style={S.h1}>{client.name}</h1>
-            <p style={S.sub}>{client.email || "no email on file"} · joined {client.joined} · {client.equipment || "equipment not set"}</p>
+            <p style={S.sub}>
+              {client.email || "no email on file"} · joined {client.joined} · {client.equipment || "equipment not set"}
+              {client.daysPerWeek ? ` · ${client.daysPerWeek} days/week` : " · days/week not set"}
+            </p>
           </div>
         </div>
       </div>
+
+      {suggested && suggested.id !== client.programId && (
+        <div style={{ ...S.card, borderColor: T.color.accent }}>
+          <div style={S.cardLabel}>Suggested manual — from their MAYDAY intake</div>
+          <p style={{ ...S.rowSub, marginBottom: 10 }}>
+            Based on {client.equipment} and {client.daysPerWeek} days/week: <strong>{suggested.name}</strong>
+          </p>
+          <button className="ex-btn-primary" style={S.btnPrimary} onClick={() => onAssign(suggested.id)}>
+            Assign {suggested.name}
+          </button>
+        </div>
+      )}
 
       <div style={S.card}>
         <div style={S.cardLabel}>Assigned manual</div>
@@ -2596,6 +2754,7 @@ function ClientFormModal({ onClose, onSave }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [equipment, setEquipment] = useState(EQUIPMENT_LEVELS[0]);
+  const [daysPerWeek, setDaysPerWeek] = useState(DAYS_PER_WEEK_OPTIONS[0]);
   const [error, setError] = useState("");
 
   function submit() {
@@ -2603,7 +2762,7 @@ function ClientFormModal({ onClose, onSave }) {
       setError("Enter a client name first");
       return;
     }
-    onSave({ name: name.trim(), email: email.trim(), equipment });
+    onSave({ name: name.trim(), email: email.trim(), equipment, daysPerWeek });
   }
 
   return (
@@ -2626,6 +2785,12 @@ function ClientFormModal({ onClose, onSave }) {
       <select style={S.select} value={equipment} onChange={(e) => setEquipment(e.target.value)}>
         {EQUIPMENT_LEVELS.map((l) => (
           <option key={l} value={l}>{l}</option>
+        ))}
+      </select>
+      <label style={S.label}>Days per week</label>
+      <select style={S.select} value={daysPerWeek} onChange={(e) => setDaysPerWeek(e.target.value)}>
+        {DAYS_PER_WEEK_OPTIONS.map((d) => (
+          <option key={d} value={d}>{d} days/week</option>
         ))}
       </select>
       <div style={S.modalActions}>
