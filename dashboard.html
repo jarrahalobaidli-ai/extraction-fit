@@ -11,6 +11,8 @@
 <script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/supabase-client.js"></script>
 <style>
   html, body { margin: 0; padding: 0; background: #111; -webkit-text-size-adjust: 100%; }
   #root { min-height: 100vh; }
@@ -341,6 +343,7 @@ const DASH_T = {
     nav_overview: "Overview",
     nav_clients: "Clients",
     nav_programs: "Manuals",
+    nav_inbox: "Inbox",
     nav_reference: "Quick reference",
     nav_nutrition: "Nutrition",
     nav_payments: "Payments",
@@ -391,6 +394,22 @@ const DASH_T = {
     quotes_text_label: "Quote",
     quotes_author_label: "Author",
     quotes_add_btn: "Add quote",
+
+    inbox_title: "Inbox",
+    inbox_sub: "MAYDAY reports waiting on a reply.",
+    inbox_empty_title: "Inbox is empty",
+    inbox_empty_body: "New MAYDAY reports will show up here.",
+    inbox_convert: "Add to Clients",
+    inbox_dismiss: "Dismiss",
+    sign_out: "Sign out",
+    login_title: "Cadre Access",
+    login_sub: "Sign in to run the dashboard.",
+    login_email_label: "Email",
+    login_email_placeholder: "you@example.com",
+    login_send: "Send magic link",
+    login_sent: "Check your email for the sign-in link.",
+    denied_title: "Not authorized",
+    denied_body: "This account isn't set up as Cadre.",
   },
   tr: {
     tagline: "Yönünü bul",
@@ -398,6 +417,7 @@ const DASH_T = {
     nav_overview: "Genel Bakış",
     nav_clients: "Danışanlar",
     nav_programs: "Kılavuzlar",
+    nav_inbox: "Gelen Kutusu",
     nav_reference: "Hızlı Referans",
     nav_nutrition: "Beslenme",
     nav_payments: "Ödemeler",
@@ -448,6 +468,22 @@ const DASH_T = {
     quotes_text_label: "Söz",
     quotes_author_label: "Yazar",
     quotes_add_btn: "Söz ekle",
+
+    inbox_title: "Gelen Kutusu",
+    inbox_sub: "Cevap bekleyen MAYDAY raporları.",
+    inbox_empty_title: "Gelen kutusu boş",
+    inbox_empty_body: "Yeni MAYDAY raporları burada görünecek.",
+    inbox_convert: "Danışanlara ekle",
+    inbox_dismiss: "Yoksay",
+    sign_out: "Çıkış yap",
+    login_title: "Kadro Girişi",
+    login_sub: "Paneli yönetmek için giriş yap.",
+    login_email_label: "E-posta",
+    login_email_placeholder: "sen@ornek.com",
+    login_send: "Sihirli bağlantı gönder",
+    login_sent: "Giriş bağlantısı için e-postanı kontrol et.",
+    denied_title: "Yetkisiz",
+    denied_body: "Bu hesap Kadro olarak tanımlı değil.",
   },
   ar: {
     tagline: "اعثر على اتجاهك",
@@ -455,6 +491,7 @@ const DASH_T = {
     nav_overview: "نظرة عامة",
     nav_clients: "العملاء",
     nav_programs: "الأدلة",
+    nav_inbox: "الوارد",
     nav_reference: "مرجع سريع",
     nav_nutrition: "التغذية",
     nav_payments: "المدفوعات",
@@ -505,12 +542,34 @@ const DASH_T = {
     quotes_text_label: "الاقتباس",
     quotes_author_label: "القائل",
     quotes_add_btn: "إضافة اقتباس",
+
+    inbox_title: "الوارد",
+    inbox_sub: "تقارير MAYDAY بانتظار المراجعة.",
+    inbox_empty_title: "لا يوجد وارد",
+    inbox_empty_body: "ستظهر تقارير MAYDAY الجديدة هنا.",
+    inbox_convert: "إضافة للعملاء",
+    inbox_dismiss: "تجاهل",
+    sign_out: "تسجيل الخروج",
+    login_title: "دخول القيادة",
+    login_sub: "سجّل الدخول لإدارة اللوحة.",
+    login_email_label: "البريد الإلكتروني",
+    login_email_placeholder: "you@example.com",
+    login_send: "إرسال رابط الدخول",
+    login_sent: "تحقق من بريدك الإلكتروني لرابط الدخول.",
+    denied_title: "غير مصرح",
+    denied_body: "هذا الحساب غير مسجل كقيادة.",
   },
 };
 
 function TrainerDashboard() {
+  const [session, setSession] = useState(null);
+  const [authChecked, setAuthChecked] = useState(false);
+  const [coachChecked, setCoachChecked] = useState(false);
+  const [isCoach, setIsCoach] = useState(false);
+
   const [clients, setClients] = useState([]);
   const [programs, setPrograms] = useState([]);
+  const [inbox, setInbox] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [view, setView] = useState("overview");
   const [lang, setLang] = useState("en");
@@ -524,21 +583,94 @@ function TrainerDashboard() {
   const [customQuotes, setCustomQuotes] = useState([]);
   const saveTimer = useRef(null);
 
+  // ---------- Cadre (coach) auth — magic link via Supabase ----------
   useEffect(() => {
+    if (!window.sb) { setAuthChecked(true); return; }
+    window.sb.auth.getSession().then(({ data }) => {
+      setSession((data && data.session) || null);
+      setAuthChecked(true);
+    });
+    const { data: sub } = window.sb.auth.onAuthStateChange((_event, sess) => {
+      setSession(sess || null);
+    });
+    return () => sub && sub.subscription && sub.subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!authChecked) return;
+    if (!session) {
+      setCoachChecked(true);
+      setIsCoach(false);
+      return;
+    }
     (async () => {
       try {
-        const c = await window.storage.get("clients");
-        setClients(c ? JSON.parse(c.value) : []);
+        const { data } = await window.sb.from("profiles").select("role").eq("id", session.user.id).single();
+        setIsCoach(!!data && data.role === "coach");
       } catch (e) {
-        setClients([]);
+        setIsCoach(false);
       }
-      try {
-        const p = await window.storage.get("programs");
-        const loadedPrograms = p ? JSON.parse(p.value) : [];
-        setPrograms(loadedPrograms.length ? loadedPrograms : [starterExtractionProgram()]);
-      } catch (e) {
-        setPrograms([starterExtractionProgram()]);
-      }
+      setCoachChecked(true);
+    })();
+  }, [authChecked, session]);
+
+  function signOut() {
+    if (window.sb) window.sb.auth.signOut();
+    setSession(null);
+    setIsCoach(false);
+    setLoaded(false);
+  }
+
+  // ---------- row <-> app-shape mappers ----------
+  function rowToClient(row) {
+    return {
+      id: row.id,
+      name: row.name,
+      email: row.email,
+      equipment: row.equipment,
+      programId: row.manual_id,
+      phase: row.phase,
+      joined: row.joined,
+      ...(row.data || {}),
+    };
+  }
+  function rowToManual(row) {
+    return { id: row.id, name: row.name, description: row.description, weeks: row.weeks };
+  }
+  function extrasOf(client) {
+    const extras = {};
+    if (client && client.nutrition !== undefined) extras.nutrition = client.nutrition;
+    if (client && client.invoices !== undefined) extras.invoices = client.invoices;
+    return extras;
+  }
+
+  async function refreshAll() {
+    if (!window.sb) return;
+    try {
+      const { data } = await window.sb.from("clients").select("*").order("joined", { ascending: false });
+      setClients((data || []).map(rowToClient));
+    } catch (e) {}
+    try {
+      const { data } = await window.sb.from("manuals").select("*").order("created_at", { ascending: false });
+      setPrograms(data && data.length ? data.map(rowToManual) : [starterExtractionProgram()]);
+    } catch (e) {
+      setPrograms([starterExtractionProgram()]);
+    }
+    try {
+      const { data } = await window.sb
+        .from("mayday_submissions")
+        .select("*")
+        .eq("status", "new")
+        .order("submitted_at", { ascending: false });
+      setInbox(data || []);
+    } catch (e) {}
+  }
+
+  // ---------- data: clients / manuals / inbox live in Supabase; quotes stay local ----------
+  useEffect(() => {
+    if (!coachChecked || !isCoach) return;
+    (async () => {
+      await refreshAll();
       try {
         const q = await window.storage.get("customQuotes");
         setCustomQuotes(q ? JSON.parse(q.value) : []);
@@ -547,55 +679,80 @@ function TrainerDashboard() {
       }
       setLoaded(true);
     })();
-  }, []);
+  }, [coachChecked, isCoach]);
 
   useEffect(() => {
     if (!loaded) return;
     clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(async () => {
       try {
-        await window.storage.set("clients", JSON.stringify(clients));
-        await window.storage.set("programs", JSON.stringify(programs));
         await window.storage.set("customQuotes", JSON.stringify(customQuotes));
       } catch (e) {
         showToast("Couldn't save — try again");
       }
     }, 400);
     return () => clearTimeout(saveTimer.current);
-  }, [clients, programs, customQuotes, loaded]);
+  }, [customQuotes, loaded]);
 
   function showToast(msg) {
     setToast(msg);
     setTimeout(() => setToast(null), 2200);
   }
 
-  function addClient(data) {
-    setClients((prev) => [
-      ...prev,
-      { id: uid(), name: data.name, email: data.email, equipment: data.equipment, programId: null, phase: null, joined: new Date().toISOString().slice(0, 10) },
-    ]);
+  async function addClient(data) {
+    try {
+      const { data: row, error } = await window.sb
+        .from("clients")
+        .insert({ name: data.name, email: data.email, equipment: data.equipment })
+        .select()
+        .single();
+      if (error) throw error;
+      setClients((prev) => [rowToClient(row), ...prev]);
+      showToast("Client added");
+    } catch (e) {
+      showToast(e && e.message && e.message.includes("duplicate") ? "That email is already a client" : "Couldn't add client");
+    }
     setShowClientForm(false);
-    showToast("Client added");
   }
 
-  function removeClient(id) {
+  async function removeClient(id) {
     setClients((prev) => prev.filter((c) => c.id !== id));
     if (selectedClientId === id) setSelectedClientId(null);
+    try {
+      await window.sb.from("clients").delete().eq("id", id);
+    } catch (e) {}
   }
 
-  function assignProgram(clientId, programId) {
-    setClients((prev) =>
-      prev.map((c) => (c.id === clientId ? { ...c, programId, phase: programId ? "Week 1" : null } : c))
-    );
+  async function assignProgram(clientId, programId) {
+    const phase = programId ? "Week 1" : null;
+    setClients((prev) => prev.map((c) => (c.id === clientId ? { ...c, programId, phase } : c)));
     showToast(programId ? "Manual assigned" : "Manual unassigned");
+    try {
+      await window.sb.from("clients").update({ manual_id: programId, phase }).eq("id", clientId);
+    } catch (e) {}
   }
 
-  function updateClientNutrition(clientId, nutrition) {
+  async function updateClientPhase(clientId, phase) {
+    setClients((prev) => prev.map((c) => (c.id === clientId ? { ...c, phase } : c)));
+    try {
+      await window.sb.from("clients").update({ phase }).eq("id", clientId);
+    } catch (e) {}
+  }
+
+  async function updateClientNutrition(clientId, nutrition) {
     setClients((prev) => prev.map((c) => (c.id === clientId ? { ...c, nutrition } : c)));
+    const current = clients.find((c) => c.id === clientId);
+    try {
+      await window.sb.from("clients").update({ data: extrasOf({ ...current, nutrition }) }).eq("id", clientId);
+    } catch (e) {}
   }
 
-  function updateClientInvoices(clientId, invoices) {
+  async function updateClientInvoices(clientId, invoices) {
     setClients((prev) => prev.map((c) => (c.id === clientId ? { ...c, invoices } : c)));
+    const current = clients.find((c) => c.id === clientId);
+    try {
+      await window.sb.from("clients").update({ data: extrasOf({ ...current, invoices }) }).eq("id", clientId);
+    } catch (e) {}
   }
 
   function addCustomQuote(text, author) {
@@ -607,38 +764,106 @@ function TrainerDashboard() {
     setCustomQuotes((prev) => prev.filter((q) => q.id !== id));
   }
 
-  function saveProgram(program) {
-    setPrograms((prev) => {
-      const exists = prev.some((p) => p.id === program.id);
-      return exists ? prev.map((p) => (p.id === program.id ? program : p)) : [...prev, program];
-    });
+  async function saveProgram(program) {
+    try {
+      const payload = { name: program.name, description: program.description, weeks: program.weeks };
+      const isExisting = program.id && programs.some((p) => p.id === program.id);
+      const { data: row, error } = isExisting
+        ? await window.sb.from("manuals").update(payload).eq("id", program.id).select().single()
+        : await window.sb.from("manuals").insert(payload).select().single();
+      if (error) throw error;
+      setPrograms((prev) => (isExisting ? prev.map((p) => (p.id === row.id ? rowToManual(row) : p)) : [rowToManual(row), ...prev]));
+      showToast("Manual saved");
+    } catch (e) {
+      showToast("Couldn't save manual");
+    }
     setShowBuilder(false);
     setEditingProgram(null);
-    showToast("Manual saved");
   }
 
-  function deleteProgram(id) {
+  async function deleteProgram(id) {
     setPrograms((prev) => prev.filter((p) => p.id !== id));
     setClients((prev) => prev.map((c) => (c.programId === id ? { ...c, programId: null, phase: null } : c)));
     showToast("Manual deleted");
+    try {
+      await window.sb.from("manuals").delete().eq("id", id);
+    } catch (e) {}
   }
 
-  function generateProgram(level, type) {
-    const program = type === "hybrid" ? buildHybridProgram(level) : buildFullProgram(level);
-    setPrograms((prev) => [...prev, program]);
-    setView("programs");
-    showToast(`Built "${program.name}"`);
+  async function generateProgram(level, type) {
+    const built = type === "hybrid" ? buildHybridProgram(level) : buildFullProgram(level);
+    try {
+      const { data: row, error } = await window.sb
+        .from("manuals")
+        .insert({ name: built.name, description: built.description, weeks: built.weeks })
+        .select()
+        .single();
+      if (error) throw error;
+      setPrograms((prev) => [rowToManual(row), ...prev]);
+      setView("programs");
+      showToast(`Built "${built.name}"`);
+    } catch (e) {
+      showToast("Couldn't build manual");
+    }
+  }
+
+  async function convertSubmission(sub) {
+    try {
+      const { data: row, error } = await window.sb
+        .from("clients")
+        .insert({ name: sub.name, email: sub.email, equipment: sub.equipment })
+        .select()
+        .single();
+      if (error) throw error;
+      setClients((prev) => [rowToClient(row), ...prev]);
+      await window.sb.from("mayday_submissions").update({ status: "converted", client_id: row.id }).eq("id", sub.id);
+      setInbox((prev) => prev.filter((s) => s.id !== sub.id));
+      showToast("Added to Clients");
+      setView("clients");
+    } catch (e) {
+      showToast(e && e.message && e.message.includes("duplicate") ? "That email is already a client" : "Couldn't convert");
+    }
+  }
+
+  async function dismissSubmission(id) {
+    setInbox((prev) => prev.filter((s) => s.id !== id));
+    try {
+      await window.sb.from("mayday_submissions").update({ status: "archived" }).eq("id", id);
+    } catch (e) {}
   }
 
   const selectedClient = clients.find((c) => c.id === selectedClientId) || null;
 
+  if (!authChecked || (session && !coachChecked)) {
+    return <GateScreen t={t}><div className="mono" style={{ color: T.color.textMuted }}>Loading…</div></GateScreen>;
+  }
+  if (!session) {
+    return <LoginGate t={t} />;
+  }
+  if (!isCoach) {
+    return <AccessDenied t={t} onSignOut={signOut} email={session.user.email} />;
+  }
+
   return (
     <div style={S.app} className="ex-app" dir={rtl ? "rtl" : "ltr"}>
       <GlobalStyle />
-      <Sidebar view={view} setView={setView} clientCount={clients.length} programCount={programs.length} lang={lang} setLang={setLang} t={t} />
+      <Sidebar
+        view={view}
+        setView={setView}
+        clientCount={clients.length}
+        programCount={programs.length}
+        inboxCount={inbox.length}
+        lang={lang}
+        setLang={setLang}
+        t={t}
+        onSignOut={signOut}
+      />
       <main style={S.main} className="ex-main">
         {view === "overview" && (
           <OverviewView clients={clients} programs={programs} onGoTo={setView} t={t} />
+        )}
+        {view === "inbox" && (
+          <InboxView submissions={inbox} onConvert={convertSubmission} onDismiss={dismissSubmission} t={t} />
         )}
         {view === "clients" && !selectedClient && (
           <ClientsView
@@ -656,9 +881,7 @@ function TrainerDashboard() {
             programs={programs}
             onBack={() => setSelectedClientId(null)}
             onAssign={(pid) => assignProgram(selectedClient.id, pid)}
-            onPhaseChange={(phase) =>
-              setClients((prev) => prev.map((c) => (c.id === selectedClient.id ? { ...c, phase } : c)))
-            }
+            onPhaseChange={(phase) => updateClientPhase(selectedClient.id, phase)}
             customQuotes={customQuotes}
           />
         )}
@@ -698,6 +921,121 @@ function TrainerDashboard() {
       {toast && (
         <div style={S.toast} role="status" aria-live="polite">
           {toast}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ---------- Cadre access: gate screens ---------- */
+function GateScreen({ t, children }) {
+  return (
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: T.color.bg }}>
+      <div style={{ textAlign: "center" }}>{children}</div>
+    </div>
+  );
+}
+
+function LoginGate({ t }) {
+  const [email, setEmail] = useState("");
+  const [sent, setSent] = useState(false);
+  const [err, setErr] = useState("");
+  const [sending, setSending] = useState(false);
+
+  async function send() {
+    setErr("");
+    if (!email.trim()) return;
+    setSending(true);
+    try {
+      if (!window.sb) throw new Error("Backend not configured");
+      const { error } = await window.sb.auth.signInWithOtp({
+        email: email.trim(),
+        options: { emailRedirectTo: window.location.href.split("#")[0] },
+      });
+      if (error) throw error;
+      setSent(true);
+    } catch (e) {
+      setErr(e.message || "Couldn't send link");
+    }
+    setSending(false);
+  }
+
+  return (
+    <GateScreen t={t}>
+      <div style={{ width: 320, maxWidth: "90vw", textAlign: "left" }}>
+        <img src={LOGO_SRC} alt="Extraction" style={{ width: 48, height: 48, display: "block", margin: "0 auto 14px" }} />
+        <h1 style={{ ...S.h1, textAlign: "center", fontSize: 22 }}>{t.login_title}</h1>
+        <p style={{ ...S.sub, textAlign: "center", marginBottom: 20 }}>{t.login_sub}</p>
+        {sent ? (
+          <p style={{ color: T.color.textSecondary, textAlign: "center" }}>{t.login_sent}</p>
+        ) : (
+          <React.Fragment>
+            <label style={S.label}>{t.login_email_label}</label>
+            <input
+              style={S.input}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && send()}
+              placeholder={t.login_email_placeholder}
+            />
+            {err && <div style={{ color: T.color.danger || "#c0451d", fontSize: 12, marginTop: 6 }}>{err}</div>}
+            <button
+              className="ex-btn-primary"
+              style={{ ...S.btnPrimary, width: "100%", marginTop: 14 }}
+              onClick={send}
+              disabled={sending}
+            >
+              {sending ? "…" : t.login_send}
+            </button>
+          </React.Fragment>
+        )}
+      </div>
+    </GateScreen>
+  );
+}
+
+function AccessDenied({ t, onSignOut, email }) {
+  return (
+    <GateScreen t={t}>
+      <div style={{ width: 320, maxWidth: "90vw" }}>
+        <h1 style={{ ...S.h1, fontSize: 22 }}>{t.denied_title}</h1>
+        <p style={{ ...S.sub, marginBottom: 18 }}>
+          {t.denied_body} ({email})
+        </p>
+        <button className="ex-btn-ghost" style={S.btnGhost} onClick={onSignOut}>{t.sign_out}</button>
+      </div>
+    </GateScreen>
+  );
+}
+
+/* ---------- Inbox: incoming MAYDAY reports waiting on the coach ---------- */
+function InboxView({ submissions, onConvert, onDismiss, t }) {
+  return (
+    <div>
+      <h1 style={S.h1}>{t.inbox_title}</h1>
+      <p style={S.sub}>{t.inbox_sub}</p>
+      {submissions.length === 0 ? (
+        <EmptyState title={t.inbox_empty_title} body={t.inbox_empty_body} />
+      ) : (
+        <div style={S.list}>
+          {submissions.map((s) => (
+            <div key={s.id} style={S.card}>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+                <div>
+                  <div style={S.rowTitle}>{s.name || "—"}</div>
+                  <div style={{ fontSize: 12, color: T.color.textMuted }}>{s.email}{s.phone ? ` · ${s.phone}` : ""}</div>
+                  <div style={{ fontSize: 12, color: T.color.textMuted, marginTop: 2 }}>
+                    {new Date(s.submitted_at).toLocaleString()} · {s.equipment}
+                  </div>
+                </div>
+                <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+                  <button className="ex-btn-primary" style={S.btnPrimary} onClick={() => onConvert(s)}>{t.inbox_convert}</button>
+                  <button className="ex-btn-ghost" style={S.btnGhost} onClick={() => onDismiss(s.id)}>{t.inbox_dismiss}</button>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>
@@ -1957,7 +2295,7 @@ function StatCard({ label, value, sub, onClick }) {
 }
 
 /* ---------- Sidebar ---------- */
-function Sidebar({ view, setView, clientCount, programCount, lang, setLang, t }) {
+function Sidebar({ view, setView, clientCount, programCount, inboxCount, lang, setLang, t, onSignOut }) {
   return (
     <aside style={S.sidebar} className="ex-no-print ex-sidebar">
       <div style={S.brand}>
@@ -1972,6 +2310,7 @@ function Sidebar({ view, setView, clientCount, programCount, lang, setLang, t })
       </div>
       <nav style={{ marginTop: 16 }} className="ex-nav-list">
         <NavItem active={view === "overview"} onClick={() => setView("overview")} label={t.nav_overview} />
+        <NavItem active={view === "inbox"} onClick={() => setView("inbox")} label={t.nav_inbox} count={inboxCount} />
         <NavItem active={view === "clients"} onClick={() => setView("clients")} label={t.nav_clients} count={clientCount} />
         <NavItem active={view === "programs"} onClick={() => setView("programs")} label={t.nav_programs} count={programCount} />
         <NavItem active={view === "reference"} onClick={() => setView("reference")} label={t.nav_reference} />
@@ -1979,6 +2318,11 @@ function Sidebar({ view, setView, clientCount, programCount, lang, setLang, t })
         <NavItem active={view === "payments"} onClick={() => setView("payments")} label={t.nav_payments} />
         <NavItem active={view === "quotes"} onClick={() => setView("quotes")} label={t.nav_quotes} />
       </nav>
+      <div className="ex-no-print" style={{ marginTop: "auto", paddingTop: 12 }}>
+        <button className="ex-btn-ghost" style={{ ...S.btnGhost, width: "100%", fontSize: 12 }} onClick={onSignOut}>
+          {t.sign_out}
+        </button>
+      </div>
       <div style={S.sidebarFooter} className="ex-no-print">{t.v1_tag}</div>
     </aside>
   );

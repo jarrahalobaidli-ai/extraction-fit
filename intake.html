@@ -11,6 +11,8 @@
 <script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/supabase-client.js"></script>
 <style>
   html, body { margin: 0; padding: 0; background: #111; -webkit-text-size-adjust: 100%; }
   #root { min-height: 100vh; }
@@ -640,6 +642,22 @@ function ExtractionIntake() {
     } catch (err) {
       // still show confirmation locally even if the save failed
     }
+    // Primary path: land the report in the coach's shared inbox (Supabase) so it
+    // reaches the dashboard automatically, regardless of whose device/browser this is.
+    try {
+      if (window.sb) {
+        await window.sb.from("mayday_submissions").insert({
+          name: form.name,
+          email: form.email,
+          phone: `${form.phoneCountry} ${form.phone}`.trim(),
+          equipment: form.equipment,
+          lang,
+          answers: form,
+        });
+      }
+    } catch (err) {
+      // local copy above still lets the client see their confirmation either way
+    }
     setMode("confirmed");
   }
 
@@ -1029,6 +1047,9 @@ function Confirmed({ lang, setLang, t, rtl, form, onRestart }) {
       <h1 style={{ ...S.wordmark, fontSize: 22, marginBottom: 6 }}>{t.confirmed_title}</h1>
       <p style={{ color: T.color.textSecondary, maxWidth: 420, margin: "0 auto 20px", lineHeight: 1.6 }}>
         {t.confirmed_body}
+      </p>
+      <p style={{ color: T.color.textMuted, fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, maxWidth: 420, margin: "0 auto 20px", lineHeight: 1.6 }}>
+        Once your Cadre assigns your manual, sign in anytime at <a href="portal.html" style={{ color: T.color.accent }}>the Operator Portal</a> with this same email to see it.
       </p>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 320, margin: "0 auto 24px" }}>

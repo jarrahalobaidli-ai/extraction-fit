@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Extraction — Operator Portal</title>
+<link rel="icon" href="assets/extraction-mark.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/supabase-client.js"></script>
+<style>
+  :root{
+    --bg:#0C0C0A; --bg-raise:#17140F; --bg-card:#1B170F;
+    --bone:#F5DFB8; --tan:#A6926F; --tan-dim:#7A6E56;
+    --oxide:#C0451D; --oxide-dim:#7A2C12;
+    --line:rgba(245,223,184,0.14); --line-strong:rgba(245,223,184,0.24);
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; background:var(--bg); color:var(--bone); font-family:'Inter',system-ui,sans-serif; line-height:1.6; }
+  h1,h2,h3{ font-family:'Oswald',sans-serif; text-transform:uppercase; margin:0; }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+  header{ display:flex; align-items:center; justify-content:space-between; padding:18px 24px; border-bottom:1px solid var(--line); }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand img{ width:36px; height:36px; }
+  .brand .word{ font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:0.12em; font-size:0.95rem; }
+  .brand .sub{ font-family:'IBM Plex Mono',monospace; font-size:0.6rem; color:var(--tan); text-transform:uppercase; letter-spacing:0.1em; }
+  #app{ max-width:760px; margin:0 auto; padding:48px 20px 100px; }
+  .center{ min-height:60vh; display:flex; align-items:center; justify-content:center; }
+  .panel{ width:340px; max-width:90vw; }
+  label{ font-family:'IBM Plex Mono',monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--tan); display:block; margin-bottom:6px; }
+  input[type=email]{
+    width:100%; background:var(--bg-raise); border:1px solid var(--line-strong); color:var(--bone);
+    padding:11px 12px; border-radius:2px; font-family:'Inter',sans-serif; font-size:0.95rem;
+  }
+  input[type=email]:focus{ outline:none; border-color:var(--oxide); }
+  button{
+    font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:0.04em; font-size:0.85rem;
+    background:var(--oxide); color:var(--bg); border:none; padding:12px 16px; border-radius:2px; cursor:pointer;
+    width:100%; margin-top:14px;
+  }
+  button:hover{ background:var(--oxide-dim); }
+  button.ghost{ background:transparent; border:1px solid var(--line-strong); color:var(--bone); width:auto; margin:0; padding:8px 14px; font-size:0.75rem; }
+  button.ghost:hover{ background:var(--bg-raise); }
+  .err{ color:var(--oxide); font-size:0.8rem; margin-top:8px; }
+  .msg{ color:var(--tan); text-align:center; }
+  p.sub{ color:var(--tan); font-size:0.95rem; margin-top:8px; }
+
+  .manual-head{ border:1px solid var(--line-strong); background:var(--bg-raise); padding:24px; border-radius:2px; }
+  .phase-pill{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.08em;
+    color:var(--oxide); border:1px solid var(--oxide-dim); padding:4px 10px; border-radius:2px; margin-top:10px;
+  }
+  .manual-desc{ color:var(--tan); margin-top:12px; }
+
+  .week{ margin-top:28px; }
+  .week-label{ font-size:1.05rem; letter-spacing:0.02em; padding-bottom:10px; border-bottom:1px solid var(--line-strong); }
+  .day{ margin-top:16px; }
+  .day-label{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--tan-dim); margin-bottom:8px; }
+  table{ width:100%; border-collapse:collapse; font-size:0.88rem; }
+  th{ text-align:left; font-family:'IBM Plex Mono',monospace; font-size:0.6rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--tan-dim); padding:6px 8px; border-bottom:1px solid var(--line-strong); }
+  td{ padding:8px; border-bottom:1px solid var(--line); vertical-align:top; }
+  td.notes{ color:var(--tan); font-size:0.82rem; }
+  .video-link{ color:var(--oxide); text-decoration:none; font-family:'IBM Plex Mono',monospace; font-size:0.72rem; white-space:nowrap; }
+  .video-link:hover{ text-decoration:underline; }
+  .table-wrap{ overflow-x:auto; }
+
+  @media (max-width:520px){
+    #app{ padding:32px 14px 80px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <img src="assets/extraction-mark.png" alt="Extraction" />
+    <div>
+      <div class="word">Extraction</div>
+      <div class="sub">Operator Portal</div>
+    </div>
+  </div>
+  <div id="header-actions"></div>
+</header>
+
+<div id="app"><div class="center msg">Loading…</div></div>
+
+<script>
+const ytSearchUrl = (name) =>
+  "https://www.youtube.com/results?search_query=" + encodeURIComponent(name + " exercise proper form tutorial");
+
+const app = document.getElementById("app");
+const headerActions = document.getElementById("header-actions");
+
+function escapeHtml(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  }[c]));
+}
+
+function renderLogin(prefillSent) {
+  headerActions.innerHTML = "";
+  app.innerHTML = `
+    <div class="center">
+      <div class="panel">
+        <h1 style="font-size:22px;text-align:center;">Find Your Bearing</h1>
+        <p class="sub" style="text-align:center;">Sign in with the email your coach has on file to see your assigned manual.</p>
+        <div id="login-body" style="margin-top:20px;"></div>
+      </div>
+    </div>`;
+  const body = document.getElementById("login-body");
+  if (prefillSent) {
+    body.innerHTML = `<p class="msg">Check your email for the sign-in link.</p>`;
+    return;
+  }
+  body.innerHTML = `
+    <label for="email">Email</label>
+    <input id="email" type="email" placeholder="you@example.com" />
+    <div id="login-err" class="err"></div>
+    <button id="send-link">Send magic link</button>`;
+  document.getElementById("send-link").addEventListener("click", sendMagicLink);
+  document.getElementById("email").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") sendMagicLink();
+  });
+}
+
+async function sendMagicLink() {
+  const email = document.getElementById("email").value.trim();
+  const errEl = document.getElementById("login-err");
+  errEl.textContent = "";
+  if (!email) return;
+  if (!window.sb) { errEl.textContent = "Backend not configured."; return; }
+  const { error } = await window.sb.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: window.location.href.split("#")[0] },
+  });
+  if (error) { errEl.textContent = error.message; return; }
+  renderLogin(true);
+}
+
+function renderSignOut(email) {
+  headerActions.innerHTML = `<button class="ghost" id="sign-out">Sign out</button>`;
+  document.getElementById("sign-out").addEventListener("click", async () => {
+    if (window.sb) await window.sb.auth.signOut();
+    location.reload();
+  });
+}
+
+function renderNoManual() {
+  app.innerHTML = `
+    <div class="center">
+      <div class="panel" style="width:400px;">
+        <h1 style="font-size:20px;">No manual assigned yet</h1>
+        <p class="sub">We don't have a manual linked to this email yet. If you just submitted your MAYDAY report, your coach hasn't assigned one yet — check Ops Freq (WhatsApp) if it's been a while.</p>
+      </div>
+    </div>`;
+}
+
+function renderManual(client, manual) {
+  if (!manual) { renderNoManual(); return; }
+  let html = `
+    <div class="manual-head">
+      <div class="mono" style="font-size:0.65rem;color:var(--tan-dim);text-transform:uppercase;letter-spacing:0.08em;">Operator</div>
+      <h1 style="font-size:1.6rem;margin-top:4px;">${escapeHtml(client.name)}</h1>
+      ${client.phase ? `<div class="phase-pill">${escapeHtml(client.phase)}</div>` : ""}
+      <h2 style="font-size:1.1rem;margin-top:18px;">${escapeHtml(manual.name)}</h2>
+      ${manual.description ? `<p class="manual-desc">${escapeHtml(manual.description)}</p>` : ""}
+    </div>`;
+
+  (manual.weeks || []).forEach((week) => {
+    html += `<div class="week"><div class="week-label">${escapeHtml(week.label)}</div>`;
+    (week.days || []).forEach((day) => {
+      html += `<div class="day"><div class="day-label">${escapeHtml(day.label)}</div>
+        <div class="table-wrap"><table><thead><tr>
+          <th>Exercise</th><th>Sets</th><th>Reps</th><th>Notes</th><th></th>
+        </tr></thead><tbody>`;
+      (day.exercises || []).forEach((ex) => {
+        html += `<tr>
+          <td>${escapeHtml(ex.name)}</td>
+          <td>${escapeHtml(ex.sets)}</td>
+          <td>${escapeHtml(ex.reps)}</td>
+          <td class="notes">${escapeHtml(ex.notes)}</td>
+          <td><a class="video-link" href="${ytSearchUrl(ex.name)}" target="_blank" rel="noopener noreferrer">▶ form</a></td>
+        </tr>`;
+      });
+      html += `</tbody></table></div></div>`;
+    });
+    html += `</div>`;
+  });
+
+  app.innerHTML = html;
+}
+
+async function boot() {
+  if (!window.sb) {
+    app.innerHTML = `<div class="center msg">Backend not configured.</div>`;
+    return;
+  }
+  const { data } = await window.sb.auth.getSession();
+  const session = data && data.session;
+  if (!session) {
+    renderLogin(false);
+    return;
+  }
+  renderSignOut(session.user.email);
+  app.innerHTML = `<div class="center msg">Finding your manual…</div>`;
+  try {
+    const { data: client, error } = await window.sb.rpc("claim_client");
+    if (error) throw error;
+    if (!client || !client.id) { renderNoManual(); return; }
+    if (!client.manual_id) { renderNoManual(); return; }
+    const { data: manual } = await window.sb.from("manuals").select("*").eq("id", client.manual_id).single();
+    renderManual(client, manual);
+  } catch (e) {
+    renderNoManual();
+  }
+}
+
+window.sb && window.sb.auth.onAuthStateChange((_event, _session) => {
+  boot();
+});
+
+boot();
+</script>
+</body>
+</html>

@@ -94,6 +94,12 @@
     text-transform: uppercase; transition: all 0.2s ease;
   }
   nav .cta-small:hover{background:var(--oxide); color:var(--bg);}
+  nav .nav-links{ display:flex; align-items:center; gap:22px; }
+  nav .portal-link{
+    font-family:'IBM Plex Mono', monospace; font-size:0.68rem; letter-spacing:0.08em;
+    color: var(--tan); text-decoration:none; text-transform:uppercase; transition: color 0.2s ease;
+  }
+  nav .portal-link:hover{ color: var(--bone); }
 
   /* Hero */
   .hero{
@@ -259,7 +265,10 @@
     <img src="assets/extraction-mark.png" alt="Extraction">
     <div class="logo">EXTRACT<span>ION</span></div>
   </div>
-  <a href="#offer" class="cta-small">Request Extraction</a>
+  <div class="nav-links">
+    <a href="portal.html" class="portal-link">Operator Login</a>
+    <a href="#offer" class="cta-small">Request Extraction</a>
+  </div>
 </nav>
 
 <div class="hero">
