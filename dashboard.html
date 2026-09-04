@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-<title>Extraction — Trainer Dashboard</title>
+<title>Extraction — Operator Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
@@ -404,7 +404,7 @@ const DASH_T = {
     sign_out: "Sign out",
     login_title: "Cadre Access",
     login_sub: "Sign in to run the dashboard.",
-    login_email_label: "Email",
+    login_email_label: "TAC-M",
     login_email_placeholder: "you@example.com",
     login_send: "Send magic link",
     login_sent: "Check your email for the sign-in link.",
@@ -478,7 +478,7 @@ const DASH_T = {
     sign_out: "Çıkış yap",
     login_title: "Kadro Girişi",
     login_sub: "Paneli yönetmek için giriş yap.",
-    login_email_label: "E-posta",
+    login_email_label: "TAC-M",
     login_email_placeholder: "sen@ornek.com",
     login_send: "Sihirli bağlantı gönder",
     login_sent: "Giriş bağlantısı için e-postanı kontrol et.",
@@ -552,7 +552,7 @@ const DASH_T = {
     sign_out: "تسجيل الخروج",
     login_title: "دخول القيادة",
     login_sub: "سجّل الدخول لإدارة اللوحة.",
-    login_email_label: "البريد الإلكتروني",
+    login_email_label: "TAC-M",
     login_email_placeholder: "you@example.com",
     login_send: "إرسال رابط الدخول",
     login_sent: "تحقق من بريدك الإلكتروني لرابط الدخول.",
@@ -561,7 +561,7 @@ const DASH_T = {
   },
 };
 
-function TrainerDashboard() {
+function OperatorDashboard() {
   const [session, setSession] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
   const [coachChecked, setCoachChecked] = useState(false);
@@ -1725,7 +1725,7 @@ function ClientNutrition({ client, onSave }) {
             style={{ width: "100%" }}
           />
         </Field2>
-        <Field2 label="Notes">
+        <Field2 label="Combat Field Notes">
           <input style={S.input} value={checkinDraft.notes} onChange={(e) => setCheckinDraft((d) => ({ ...d, notes: e.target.value }))} placeholder="How did the week feel?" />
         </Field2>
         <button className="ex-btn-primary" style={{ ...S.btnPrimary, marginTop: 4 }} onClick={addCheckin}>
@@ -2620,7 +2620,7 @@ function ClientFormModal({ onClose, onSave }) {
         autoFocus
       />
       {error && <div style={S.error}>{error}</div>}
-      <label style={S.label}>Email (optional)</label>
+      <label style={S.label}>TAC-M (optional)</label>
       <input style={S.input} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@example.com" />
       <label style={S.label}>Equipment access</label>
       <select style={S.select} value={equipment} onChange={(e) => setEquipment(e.target.value)}>
@@ -2754,7 +2754,7 @@ function ProgramBuilderModal({ initial, onClose, onSave }) {
                     />
                     <input
                       style={{ ...S.exInput, flex: 1 }}
-                      placeholder="notes"
+                      placeholder="field notes"
                       value={ex.notes}
                       onChange={(e) => updateExercise(wk.id, d.id, ex.id, "notes", e.target.value)}
                     />
@@ -2912,7 +2912,7 @@ const S = {
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<TrainerDashboard />);
+root.render(<OperatorDashboard />);
 
 } catch (err) {
   exShowError((err && err.stack) ? err.stack : String(err));

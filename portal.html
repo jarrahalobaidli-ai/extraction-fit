@@ -114,7 +114,7 @@ function renderLogin(prefillSent) {
     return;
   }
   body.innerHTML = `
-    <label for="email">Email</label>
+    <label for="email">TAC-M</label>
     <input id="email" type="email" placeholder="you@example.com" />
     <div id="login-err" class="err"></div>
     <button id="send-link">Send magic link</button>`;
@@ -172,7 +172,7 @@ function renderManual(client, manual) {
     (week.days || []).forEach((day) => {
       html += `<div class="day"><div class="day-label">${escapeHtml(day.label)}</div>
         <div class="table-wrap"><table><thead><tr>
-          <th>Exercise</th><th>Sets</th><th>Reps</th><th>Notes</th><th></th>
+          <th>Exercise</th><th>Sets</th><th>Reps</th><th>Combat Field Notes</th><th></th>
         </tr></thead><tbody>`;
       (day.exercises || []).forEach((ex) => {
         html += `<tr>
