@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Extraction — Shop</title>
+<link rel="icon" type="image/png" href="assets/extraction-mark.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Black+Ops+One&family=Oswald:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0C0C0A;
+    --bg-raise: #17140F;
+    --paper: #F5DFB8;
+    --paper-dim: #A6926F;
+    --bone: #F5DFB8;
+    --tan: #A6926F;
+    --oxide: #C0451D;
+    --oxide-dim: #7A2C12;
+    --line: rgba(245,223,184,0.14);
+    --line-strong: rgba(245,223,184,0.30);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse at top left, rgba(192,69,29,0.10), transparent 55%),
+      radial-gradient(ellipse at bottom right, rgba(192,69,29,0.07), transparent 55%);
+    color: var(--paper);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  .label{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--oxide);
+  }
+  .display{ font-family: 'Anton', sans-serif; font-weight: 400; letter-spacing: 0.01em; }
+  .heading{ font-family: 'Oswald', sans-serif; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; }
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width: 1200px; margin: 0 auto; padding: 0 28px;}
+
+  .hazard{
+    height: 6px;
+    background: repeating-linear-gradient(-45deg, var(--oxide), var(--oxide) 10px, var(--bg) 10px, var(--bg) 20px);
+  }
+
+  /* Nav */
+  nav{
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 18px 28px; max-width: 1200px; margin: 0 auto;
+    border-bottom: 1px solid var(--line);
+    position: sticky; top:0; z-index:500;
+    background: var(--bg);
+  }
+  .lockup{ display:flex; align-items:center; gap:12px; }
+  .lockup img{ width:38px; height:38px; display:block; filter: drop-shadow(0 0 6px rgba(192,69,29,0.35)); }
+  .logo{font-family:'Oswald',sans-serif; font-weight:800; font-size:1.25rem; letter-spacing:0.06em; text-transform:uppercase;}
+  .logo span{color: var(--oxide);}
+  nav .cta-small{
+    font-family:'IBM Plex Mono', monospace; font-weight:600; font-size:0.72rem; letter-spacing:0.1em;
+    border: 1px solid var(--oxide); color: var(--oxide); padding: 9px 18px;
+    text-transform: uppercase; transition: all 0.2s ease;
+  }
+  nav .cta-small:hover{background:var(--oxide); color:var(--bg);}
+  nav .nav-links{ display:flex; align-items:center; gap:18px; flex-wrap:wrap; row-gap:10px; justify-content:flex-end; }
+  nav .portal-link{
+    font-family:'IBM Plex Mono', monospace; font-size:0.68rem; letter-spacing:0.08em;
+    color: var(--tan); text-decoration:none; text-transform:uppercase; transition: color 0.2s ease;
+  }
+  nav .portal-link:hover{ color: var(--bone); }
+  nav .portal-link.is-active{ color: var(--oxide); }
+
+  /* Hero */
+  .shop-hero{ padding: 64px 28px 40px; text-align:center; border-bottom:1px solid var(--line); }
+  .shop-hero .label{ display:block; margin-bottom:14px; }
+  .shop-hero h1{ font-size: clamp(2.1rem, 6vw, 3.4rem); margin-bottom:18px; }
+  .shop-hero p{ max-width:560px; margin:0 auto; color:var(--paper-dim); font-size:1rem; }
+  .status-strip{
+    display:inline-flex; align-items:center; gap:10px; margin-top:26px;
+    font-family:'IBM Plex Mono',monospace; font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase;
+    border:1px solid var(--line-strong); padding:10px 18px; color:var(--tan);
+  }
+  .status-strip .dot{ width:8px; height:8px; border-radius:50%; background:var(--oxide); box-shadow:0 0 8px var(--oxide); animation:blink 1.6s ease-in-out infinite; }
+  @keyframes blink{ 0%,100%{opacity:1;} 50%{opacity:0.25;} }
+
+  section{ padding: 60px 28px; border-top: 1px solid var(--line); }
+  .sec-head{ display:flex; align-items:baseline; gap:16px; margin-bottom:34px; }
+  .sec-head .code{ font-family:'IBM Plex Mono',monospace; font-weight:700; color:var(--oxide); font-size:0.85rem;}
+  .sec-head h2{ font-size: clamp(1.4rem, 3.2vw, 1.9rem); }
+  .sec-head .rule{flex:1; height:1px; background:var(--line-strong); margin-left:6px;}
+  .sec-note{ color:var(--paper-dim); font-size:0.9rem; margin:-16px 0 34px; max-width:640px; }
+
+  .shop-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line-strong); border:1px solid var(--line-strong); }
+  .shop-card.placeholder{ align-items:center; justify-content:center; text-align:center; padding:18px; border:1px dashed var(--line-strong); background:var(--bg); }
+  .shop-card.placeholder .meta{ margin-bottom:8px; }
+  .shop-card.placeholder h3{ margin-bottom:0; font-size:0.86rem; }
+  .shop-card{ background:var(--bg-raise); display:flex; flex-direction:column; }
+  .shop-card .thumb{ position:relative; aspect-ratio:1/1; overflow:hidden; background:#000; }
+  .shop-card .thumb img{ width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.4s ease; }
+  .shop-card:hover .thumb img{ transform:scale(1.06); }
+  .shop-card .soon{
+    position:absolute; top:10px; left:10px;
+    font-family:'IBM Plex Mono',monospace; font-size:0.6rem; letter-spacing:0.08em; text-transform:uppercase;
+    background:var(--oxide); color:var(--bg); padding:5px 9px;
+  }
+  .shop-card .body{ padding:18px 18px 22px; display:flex; flex-direction:column; flex:1; }
+  .shop-card h3{ font-family:'Oswald',sans-serif; font-weight:800; letter-spacing:0.02em; font-size:0.98rem; text-transform:uppercase; margin-bottom:8px; }
+  .shop-card .meta{ font-family:'IBM Plex Mono',monospace; font-size:0.68rem; color:var(--tan); letter-spacing:0.06em; margin-bottom:6px; }
+  .shop-card .price{ font-family:'IBM Plex Mono',monospace; font-size:0.82rem; color:var(--oxide); font-weight:700; margin-top:auto; padding-top:10px; }
+  @media (max-width:980px){ .shop-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:520px){ .shop-grid{grid-template-columns:1fr;} }
+
+  .more-incoming{
+    margin-top:18px; padding:16px 20px; border:1px dashed var(--line-strong);
+    font-family:'IBM Plex Mono',monospace; font-size:0.74rem; letter-spacing:0.05em;
+    color:var(--tan); text-align:center;
+  }
+  .more-incoming strong{ color:var(--oxide); }
+
+  .waitlist{
+    background:var(--bg-raise); border:1px solid var(--line-strong);
+    padding:44px 34px; text-align:center; margin-top:8px;
+  }
+  .waitlist h2{ font-size:clamp(1.3rem,3vw,1.7rem); margin-bottom:14px; }
+  .waitlist p{ color:var(--paper-dim); max-width:520px; margin:0 auto 26px; font-size:0.94rem; }
+  .btn-primary{
+    position: relative; display:inline-block;
+    background: var(--oxide); color: var(--bg);
+    font-family:'Oswald',sans-serif; font-weight:800; text-transform:uppercase;
+    letter-spacing: 0.07em; padding: 17px 32px; font-size:0.94rem;
+    border: 1px solid var(--oxide); transition: background 0.2s ease, color 0.2s ease;
+  }
+  .btn-primary:hover{ background: transparent; color: var(--oxide); }
+  .btn-ghost{
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:0.78rem; letter-spacing:0.08em;
+    color: var(--paper-dim); border-bottom: 1px solid var(--line-strong); padding-bottom:2px;
+  }
+
+  footer{ padding: 40px 28px 60px; text-align:center; }
+  footer .code{ font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:0.7rem; color: var(--paper-dim); letter-spacing:0.12em;}
+
+  .ops-freq{
+    position:fixed; right:20px; bottom:20px; z-index:999;
+    display:flex; align-items:center; gap:9px;
+    background:var(--oxide); color:var(--bg);
+    padding:13px 20px 13px 15px; border-radius:30px;
+    text-decoration:none; box-shadow:0 8px 24px rgba(0,0,0,0.45);
+    font-family:'IBM Plex Mono',monospace;
+    border:1px solid var(--oxide);
+    transition:transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, color 0.15s ease;
+  }
+  .ops-freq:hover{ transform:translateY(-2px); box-shadow:0 12px 30px rgba(0,0,0,0.55); background:var(--bg); color:var(--oxide); }
+  .ops-freq-icon{ width:20px; height:20px; flex-shrink:0; }
+  .ops-freq-label{ font-size:0.72rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; }
+  @media (max-width:520px){ .ops-freq-label{ display:none; } .ops-freq{ padding:14px; border-radius:50%; } }
+
+  @media (prefers-reduced-motion: reduce){
+    .status-strip .dot{ animation:none; }
+    .shop-card .thumb img{ transition:none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="lockup">
+    <img src="assets/extraction-mark.png" alt="Extraction">
+    <span class="logo">EXTRACTION<span>.</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html#one-on-one" class="portal-link">1:1 Coaching</a>
+    <a href="dashboard.html" class="portal-link">Commander Access</a>
+    <a href="index.html#team" class="portal-link">Team of Six</a>
+    <a href="shop.html" class="portal-link is-active">Shop</a>
+    <a href="portal.html" class="portal-link">Operator Login</a>
+    <a href="index.html#offer" class="cta-small">Request Extraction</a>
+  </div>
+</nav>
+
+<div class="shop-hero">
+  <span class="label">Quartermaster // Community Gear</span>
+  <h1 class="display">The Extraction Shop</h1>
+  <p>Morale patches, apparel, and field grooming built for the community — not just operators. First concept batch is in. Vote with your interest — full drops release once the armory opens.</p>
+  <div class="status-strip"><span class="dot"></span> Armory Status: Pre-Launch — Concepts Open for Review</div>
+</div>
+
+<section id="patches">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="code">01</span>
+      <h2 class="heading">Morale Patches</h2>
+      <span class="rule"></span>
+    </div>
+    <p class="sec-note">3&quot; hook-and-loop patches. Not quitting, staying disciplined, staying sharp — plus GCC and allied flag patches for the roster.</p>
+    <div class="shop-grid">
+
+      <div class="shop-card">
+        <div class="thumb"><span class="soon">Concept 1/3</span><img src="https://cdn.shopify.com/s/files/1/1026/5486/9783/files/j2__ACpMuEMGOp1ZXcjHy.jpg?v=1788626867" alt="EXTRACTED morale patch"></div>
+        <div class="body"><h3>Extracted</h3><div class="meta">Morale Patch</div><div class="price">3.500 KWD</div></div>
+      </div>
+
+      <div class="shop-card">
+        <div class="thumb"><span class="soon">Concept 1/3</span><img src="https://cdn.shopify.com/s/files/1/1026/5486/9783/files/yiax5yfkcQGmCLmG_e3N2.jpg?v=1788626872" alt="DISCIPLINED morale patch"></div>
+        <div class="body"><h3>Disciplined</h3><div class="meta">Morale Patch</div><div class="price">3.500 KWD</div></div>
+      </div>
+
+      <div class="shop-card">
+        <div class="thumb"><span class="soon">Concept 1/3</span><img src="https://cdn.shopify.com/s/files/1/1026/5486/9783/files/4ySo1we4xxUPTZ6wxpwls.jpg?v=1788626876" alt="SHARPENED morale patch"></div>
+        <div class="body"><h3>Sharpened</h3><div class="meta">Morale Patch</div><div class="price">3.500 KWD</div></div>
+      </div>
+
+      <div class="shop-card">
+        <div class="thumb"><span class="soon">Concept 1/3</span><img src="https://cdn.shopify.com/s/files/1/1026/5486/9783/files/GnaNpkoqOJOAGrlf04dxE.jpg?v=1788626880" alt="SAVED OTHERS morale patch"></div>
+        <div class="body"><h3>Saved Others</h3><div class="meta">CSAR Tribute Patch</div><div class="price">3.500 KWD</div></div>
+      </div>
+
+      <div class="shop-card">
+        <div class="thumb"><span class="soon">Concept 1/3</span><img src="https://cdn.shopify.com/s/files/1/1026/5486/9783/files/nZQLvmsllnLEfDV48ICQj.jpg?v=1788626884" alt="No One Is Coming morale patch"></div>
+        <div class="body"><h3>No One Is Coming</h3><div class="meta">Tab Patch</div><div class="price">3.500 KWD</div></div>
+      </div>
+
+      <div class="shop-card">
+        <div class="thumb"><span class="soon">Concept 1/3</span><img src="https://cdn.shopify.com/s/files/1/1026/5486/9783/files/IVD_rrEimnmwm7sgYrD8S.jpg?v=1788626888" alt="Kuwait flag morale patch"></div>
+        <div class="body"><h3>Kuwait Flag</h3><div class="meta">GCC Flag Patch</div><div class="price">3.500 KWD</div></div>
+      </div>
+
+      <div class="shop-card">
+        <div class="thumb"><span class="soon">Concept 1/3</span><img src="https://cdn.shopify.com/s/files/1/1026/5486/9783/files/Tp1cKNFSGk8cI8Nvm9MXG.jpg?v=1788626892" alt="Turkey flag morale patch"></div>
+        <div class="body"><h3>Turkey Flag</h3><div class="meta">Allied Flag Patch</div><div class="price">3.500 KWD</div></div>
+      </div>
+
+      <div class="shop-card placeholder">
+        <div><div class="meta">More Incoming</div><h3>Saudi · UAE · Qatar<br>Bahrain · Oman</h3></div>
+      </div>
+
+    </div>
+    <div class="more-incoming">+ More incoming: <strong>2 more designs</strong> per idea above, plus the remaining <strong>GCC flag patches</strong></div>
+  </div>
+</section>
+
+<div class="hazard"></div>
+
+<section id="apparel">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="code">02</span>
+      <h2 class="heading">Apparel</h2>
+      <span class="rule"></span>
+    </div>
+    <p class="sec-note">Heavyweight tees now, hoodies / caps / rash guards / boxing gloves next drop. Sizes M / L / XL, brand colorway.</p>
+    <div class="shop-grid">
+
+      <div class="shop-card">
+        <div class="thumb"><span class="soon">Concept 1/3</span><img src="https://cdn.shopify.com/s/files/1/1026/5486/9783/files/fKWzLwTz1lw-J3_1WJzs3.jpg?v=1788627182" alt="No One Is Coming tee"></div>
+        <div class="body"><h3>No One Is Coming</h3><div class="meta">Military Tee · M / L / XL</div><div class="price">7.500 KWD</div></div>
+      </div>
+
+      <div class="shop-card">
+        <div class="thumb"><span class="soon">Concept 1/3</span><img src="https://cdn.shopify.com/s/files/1/1026/5486/9783/files/bxiQxsrMbMb3ZyouqEl1Z.jpg?v=1788627186" alt="Faith Over Fear tee"></div>
+        <div class="body"><h3>Faith Over Fear</h3><div class="meta">Tee · M / L / XL</div><div class="price">7.500 KWD</div></div>
+      </div>
+
+      <div class="shop-card">
+        <div class="thumb"><span class="soon">Concept 1/3</span><img src="assets/tee-designate-heading.jpg" alt="Designate Your Heading tee"></div>
+        <div class="body"><h3>Designate Your Heading</h3><div class="meta">Flagship Tee · M / L / XL</div><div class="price">7.500 KWD</div></div>
+      </div>
+
+      <div class="shop-card">
+        <div class="thumb"><span class="soon">Concept 1/3</span><img src="assets/hoodie-designate-heading.jpg" alt="Designate Your Heading hoodie"></div>
+        <div class="body"><h3>Designate Your Heading</h3><div class="meta">Flagship Hoodie · M / L / XL</div><div class="price">13.000 KWD</div></div>
+      </div>
+
+      <div class="shop-card">
+        <div class="thumb"><span class="soon">Concept 1/3</span><img src="assets/hoodie-extracted.jpg" alt="Extracted hoodie"></div>
+        <div class="body"><h3>Extracted</h3><div class="meta">Hoodie · M / L / XL</div><div class="price">13.000 KWD</div></div>
+      </div>
+
+      <div class="shop-card">
+        <div class="thumb"><span class="soon">Concept 1/3</span><img src="assets/mug-designate-heading.jpg" alt="Designate Your Heading mug"></div>
+        <div class="body"><h3>Designate Your Heading</h3><div class="meta">Field Mug · 11oz</div><div class="price">4.500 KWD</div></div>
+      </div>
+
+      <div class="shop-card placeholder">
+        <div><div class="meta">More Incoming</div><h3>Caps · Gloves<br>Rash Guards</h3></div>
+      </div>
+
+    </div>
+    <div class="more-incoming">+ More incoming: <strong>caps, gloves, and rash guards</strong>, sized M / L / XL and colorway-matched throughout</div>
+  </div>
+</section>
+
+<div class="hazard"></div>
+
+<section id="grooming">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="code">03</span>
+      <h2 class="heading">Grooming</h2>
+      <span class="rule"></span>
+    </div>
+    <p class="sec-note">Organic beard and hygiene products — built for the field, not the medicine cabinet.</p>
+    <div class="shop-grid">
+
+      <div class="shop-card">
+        <div class="thumb"><span class="soon">Concept 1/3</span><img src="https://cdn.shopify.com/s/files/1/1026/5486/9783/files/hBftB35qXyjfskNEz_9wu.jpg?v=1788627199" alt="Field grooming kit"></div>
+        <div class="body"><h3>Field Grooming Kit</h3><div class="meta">Beard Oil + Balm · Organic</div><div class="price">6.000 KWD</div></div>
+      </div>
+
+      <div class="shop-card placeholder">
+        <div><div class="meta">More Incoming</div><h3>Shampoo Bar</h3></div>
+      </div>
+
+      <div class="shop-card placeholder">
+        <div><div class="meta">More Incoming</div><h3>Body Wash</h3></div>
+      </div>
+
+      <div class="shop-card placeholder">
+        <div><div class="meta">More Incoming</div><h3>Travel Field Kit</h3></div>
+      </div>
+
+    </div>
+    <div class="more-incoming">+ More incoming: <strong>2 more designs</strong> for this idea, all organic and community-hygiene focused</div>
+  </div>
+</section>
+
+<div class="hazard"></div>
+
+<section>
+  <div class="wrap">
+    <div class="waitlist">
+      <span class="label">Armory Not Yet Open</span>
+      <h2 class="heading">Want First Access?</h2>
+      <p>The armory is still stocking up — checkout isn't live yet. Message Ops Freq to get on the list and vote on which designs ship first.</p>
+      <a href="https://wa.me/96599992990?text=Hi%2C%20I%20want%20on%20the%20Extraction%20Shop%20waitlist." target="_blank" rel="noopener noreferrer" class="btn-primary">Join the Waitlist</a>
+    </div>
+  </div>
+</section>
+
+<div class="hazard"></div>
+
+<footer>
+  <span class="code">EXTRACTION // FROM MEDIOCRITY // NO ONE IS COMING</span>
+</footer>
+
+<a class="ops-freq" href="https://wa.me/96599992990?text=Hi%2C%20I%20want%20on%20the%20Extraction%20Shop%20waitlist." target="_blank" rel="noopener noreferrer" aria-label="Message Extraction on WhatsApp">
+  <svg class="ops-freq-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M16 3C9.373 3 4 8.373 4 15c0 2.53.79 4.877 2.137 6.807L4.6 27.6l5.94-1.556A11.93 11.93 0 0 0 16 27c6.627 0 12-5.373 12-12S22.627 3 16 3Zm0 21.8a9.77 9.77 0 0 1-4.98-1.36l-.357-.212-3.527.924.94-3.436-.232-.353A9.77 9.77 0 0 1 6.2 15C6.2 9.585 10.585 5.2 16 5.2S25.8 9.585 25.8 15 21.415 24.8 16 24.8Zm5.373-7.36c-.294-.147-1.74-.858-2.01-.956-.27-.098-.467-.147-.664.147-.196.294-.76.956-.933 1.152-.171.196-.343.22-.637.073-.294-.147-1.24-.457-2.362-1.457-.873-.779-1.463-1.741-1.635-2.035-.171-.294-.018-.453.129-.6.132-.132.294-.343.441-.514.147-.171.196-.294.294-.49.098-.196.049-.367-.024-.514-.073-.147-.664-1.6-.91-2.192-.24-.577-.484-.499-.664-.508l-.566-.01c-.196 0-.514.073-.784.367-.27.294-1.03 1.007-1.03 2.456s1.054 2.848 1.201 3.045c.147.196 2.075 3.168 5.028 4.44.703.303 1.251.484 1.679.62.705.224 1.347.192 1.854.117.566-.085 1.74-.712 1.985-1.4.245-.688.245-1.278.171-1.4-.073-.123-.269-.196-.563-.343Z" fill="currentColor"/>
+  </svg>
+  <span class="ops-freq-label">Ops Freq</span>
+</a>
+
+</body>
+</html>
