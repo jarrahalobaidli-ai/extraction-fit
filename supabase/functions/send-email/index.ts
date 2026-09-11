@@ -76,7 +76,7 @@ Orders are cut. You're in the field now — here's your first tasking.
   <!-- Header -->
   <tr>
     <td align="center" style="padding:36px 32px 20px;border-bottom:1px solid rgba(245,223,184,0.14);">
-      <img src="https://extraction.fit/assets/extraction-mark.png" width="56" height="56" alt="Extraction" style="display:block;margin:0 auto 14px;">
+      <img src="https://extraction.fit/assets/logo-circle.png" width="56" height="56" alt="Extraction" style="display:block;margin:0 auto 14px;">
       <div style="font-family:Arial,Helvetica,sans-serif;font-weight:800;font-size:20px;letter-spacing:2px;color:#F5DFB8;text-transform:uppercase;">
         EXTRACTION<span style="color:#C0451D;">.</span>
       </div>
@@ -203,7 +203,7 @@ Coordinates locked. You're on the founding list — here's what that gets you.
   <!-- Header -->
   <tr>
     <td align="center" style="padding:36px 32px 20px;border-bottom:1px solid rgba(245,223,184,0.14);">
-      <img src="https://extraction.fit/assets/extraction-mark.png" width="56" height="56" alt="Extraction" style="display:block;margin:0 auto 14px;">
+      <img src="https://extraction.fit/assets/logo-circle.png" width="56" height="56" alt="Extraction" style="display:block;margin:0 auto 14px;">
       <div style="font-family:Arial,Helvetica,sans-serif;font-weight:800;font-size:20px;letter-spacing:2px;color:#F5DFB8;text-transform:uppercase;">
         EXTRACTION<span style="color:#C0451D;">.</span>
       </div>
@@ -329,7 +329,7 @@ Orders are cut. Your personalized manual is ready to download.
 <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="width:560px;max-width:92%;background:#17140F;border:1px solid rgba(245,223,184,0.14);">
   <tr>
     <td align="center" style="padding:36px 32px 20px;border-bottom:1px solid rgba(245,223,184,0.14);">
-      <img src="https://extraction.fit/assets/extraction-mark.png" width="56" height="56" alt="Extraction" style="display:block;margin:0 auto 14px;">
+      <img src="https://extraction.fit/assets/logo-circle.png" width="56" height="56" alt="Extraction" style="display:block;margin:0 auto 14px;">
       <div style="font-family:Arial,Helvetica,sans-serif;font-weight:800;font-size:20px;letter-spacing:2px;color:#F5DFB8;text-transform:uppercase;">
         EXTRACTION<span style="color:#C0451D;">.</span>
       </div>

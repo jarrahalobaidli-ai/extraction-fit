@@ -403,8 +403,12 @@ export function buildFullProgram(level, daysPerWeek) {
   };
 }
 
-/* ---------- self-check (only runs when this file is executed directly) ---------- */
-if (import.meta.url === `file://${process.argv[1]}`) {
+/* ---------- self-check (only runs when this file is executed directly in Node) ---------- */
+// Guarded on `typeof process !== "undefined"` first: this module is also dynamically
+// imported into the browser (dashboard.html), where `process` doesn't exist at all --
+// referencing process.argv unconditionally here would throw a ReferenceError on every
+// browser import, before the import.meta.url check even gets a chance to short-circuit it.
+if (typeof process !== "undefined" && process.argv && import.meta.url === `file://${process.argv[1]}`) {
   let failures = 0;
   for (const level of MODALITY_LEVELS) {
     for (const dpw of DAYS_PER_WEEK_OPTIONS) {

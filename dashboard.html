@@ -87,16 +87,41 @@ if (typeof React === 'undefined' || typeof ReactDOM === 'undefined' || typeof Ba
 }
 </script>
 
-<script type="text/babel-config">
-{ "presets": [["react", { "runtime": "classic" }]] }
-</script>
-
-<script type="text/babel">
+<!-- NOTE: @babel/standalone's in-browser auto-loader does NOT read a `text/babel-config`
+     script tag (that's not a real feature of this library) -- it only reads `data-presets`/
+     `data-plugins` attributes on the `text/babel` script tag itself. Without that attribute
+     it silently fell back to its own default presets (["react", "env"]), and the `env`
+     preset transpiles module syntax to CommonJS `require()` calls, which don't exist in the
+     browser. That was harmless while this script never used `import()` -- now that it does
+     (see the dynamic import of program-generator.mjs below), it broke the page. Fixed by
+     pinning the real preset via `data-presets` below, matching what this dead config tag
+     always intended. -->
+<script type="text/babel" data-presets="react">
 try {
+
+(async () => {
 
 const { useState, useEffect, useRef } = React;
 
 const uid = () => Math.random().toString(36).slice(2, 10);
+
+// Single source of truth for the 90-day program — imported live from program-generator.mjs
+// instead of a pasted-in copy. This is the fix for the historical bug where this dashboard's
+// own copy of the program logic silently drifted from the self-serve PDF manuals (see that
+// file's own header comment for the full programming-model notes: phase-indexed exercise
+// rotation, load/tempo/RPE prescriptions, Tabata/EMOM/AMRAP conditioning).
+const PG = await import('./program-generator.mjs');
+const {
+  MOVEMENT_PATTERNS,
+  CONDITIONING_TYPES,
+  MODALITY_BY_EQUIPMENT,
+  MODALITY_LEVELS,
+  DAYS_PER_WEEK_OPTIONS,
+  modalityName,
+  manualNameFor,
+  WEEK_SCHEME,
+  buildFullProgram,
+} = PG;
 
 // Curated form-video links for the Functional training (KB / mace / sandbag) exercise
 // names that make up this program's actual equipment set. Keyed on the exact exercise
@@ -126,7 +151,7 @@ const ytSearchUrl = (exerciseName) =>
   CURATED_VIDEO_LINKS[exerciseName] ||
   `https://www.youtube.com/results?search_query=${encodeURIComponent(exerciseName + " exercise proper form tutorial")}`;
 
-const LOGO_SRC = "assets/extraction-mark.png";
+const LOGO_SRC = "assets/logo-circle.png";
 
 // A week label looks like "Week 3 — Golden Hour" — the phase name is everything
 // after the em dash. Shared shape between the 1:1 hard-lock gate (Client Detail)
@@ -164,24 +189,6 @@ function equipmentLabelFromCode(value) {
   return EQUIPMENT_CODE_LABELS[value] || value;
 }
 
-// The three manual "tracks" Commander builds live in. Every client's equipment maps to exactly
-// one modality; "Bands only" clients fold into Bodyweight Training (closest equipment fit —
-// still uses the general movement-pattern substitutions, just grouped under one manual family
-// so the library stays at three tracks instead of four).
-const MODALITY_BY_EQUIPMENT = {
-  "Full gym": { level: "Full gym", modality: "Full Gym Bodybuilding" },
-  "Functional training": { level: "Functional training", modality: "functional program" },
-  "Bodyweight only": { level: "Bodyweight only", modality: "Bodyweight Training" },
-  "Bands only": { level: "Bodyweight only", modality: "Bodyweight Training" },
-};
-const MODALITY_LEVELS = ["Full gym", "Functional training", "Bodyweight only"];
-const DAYS_PER_WEEK_OPTIONS = ["3", "4", "5", "6"];
-function modalityName(level) {
-  return (MODALITY_BY_EQUIPMENT[level] && MODALITY_BY_EQUIPMENT[level].modality) || level;
-}
-function manualNameFor(level, daysPerWeek) {
-  return `${modalityName(level)} — ${daysPerWeek} Days/Week`;
-}
 // Finds the manual in the library that matches a client's equipment + chosen days/week.
 function suggestedProgramFor(client, programs) {
   if (!client || !client.equipment || !client.daysPerWeek) return null;
@@ -191,122 +198,8 @@ function suggestedProgramFor(client, programs) {
   return programs.find((p) => p.name === wantName) || null;
 }
 
-const MOVEMENT_PATTERNS = [
-  {
-    pattern: "Squat",
-    options: {
-      "Full gym": "Barbell back squat",
-      "Functional training": "DB or KB goblet squat / landmine squat",
-      "Bodyweight only": "Tempo bodyweight squat / jump squat",
-      "Bands only": "Band-resisted squat",
-    },
-  },
-  {
-    pattern: "Hinge",
-    options: {
-      "Full gym": "Barbell deadlift",
-      "Functional training": "DB or KB Romanian deadlift / sandbag deadlift",
-      "Bodyweight only": "Single-leg glute bridge / nordic curl progression",
-      "Bands only": "Band good morning",
-    },
-  },
-  {
-    pattern: "Horizontal push",
-    options: {
-      "Full gym": "Barbell bench press",
-      "Functional training": "DB bench or floor press / landmine single-arm press",
-      "Bodyweight only": "Push-up (elevate hands/feet to regress/progress)",
-      "Bands only": "Band chest press",
-    },
-  },
-  {
-    pattern: "Vertical push",
-    options: {
-      "Full gym": "Barbell overhead press",
-      "Functional training": "DB, KB, or landmine press",
-      "Bodyweight only": "Pike push-up / handstand hold progression",
-      "Bands only": "Band overhead press",
-    },
-  },
-  {
-    pattern: "Horizontal pull",
-    options: {
-      "Full gym": "Barbell bent-over row",
-      "Functional training": "DB or KB single-arm row / sandbag row",
-      "Bodyweight only": "Inverted row (table/bar) / towel row",
-      "Bands only": "Band seated row",
-    },
-  },
-  {
-    pattern: "Vertical pull",
-    options: {
-      "Full gym": "Weighted pull-up",
-      "Functional training": "DB pullover (assistance only)",
-      "Bodyweight only": "Pull-up / band-assisted pull-up",
-      "Bands only": "Band lat pulldown",
-    },
-  },
-  {
-    pattern: "Loaded carry",
-    options: {
-      "Full gym": "Farmer's carry (trap bar or DBs)",
-      "Functional training": "DB, KB, or sandbag farmer's / suitcase carry",
-      "Bodyweight only": "Loaded backpack ruck carry",
-      "Bands only": "Band-resisted march / carry walk",
-    },
-  },
-  {
-    pattern: "Core / anti-extension",
-    options: {
-      "Full gym": "Hanging leg raise",
-      "Functional training": "Weighted plank / DB deadbug / sandbag hold",
-      "Bodyweight only": "Plank / hollow hold progression",
-      "Bands only": "Band pallof press",
-    },
-  },
-  {
-    pattern: "Rotational / shoulder flow",
-    options: {
-      "Full gym": "Landmine rotational press / cable rotational chop",
-      "Functional training": "Steel mace 10-to-2 swings / steel club mills and swipes",
-      "Bodyweight only": "Rotational lunge with reach / bear crawl with rotation",
-      "Bands only": "Band rotational chop and lift",
-    },
-  },
-  {
-    pattern: "Conditioning — steady state",
-    options: {
-      "Full gym": "Rower or assault bike — steady pace",
-      "Functional training": "KB swings at a steady, sustainable pace",
-      "Bodyweight only": "Easy-paced run or ruck",
-      "Bands only": "Brisk step-up or march circuit, steady pace",
-    },
-  },
-  {
-    pattern: "Conditioning — HIIT",
-    options: {
-      "Full gym": "Assault bike or rower sprints (20s on / 40s off)",
-      "Functional training": "KB swing sprints (20s on / 40s off)",
-      "Bodyweight only": "Burpee or shuttle sprint intervals (20s on / 40s off)",
-      "Bands only": "Band-resisted step-up sprints (20s on / 40s off)",
-    },
-  },
-  {
-    pattern: "Conditioning — rounds (AMRAP/EMOM)",
-    options: {
-      "Full gym": "AMRAP: row cals + burpees + KB swings",
-      "Functional training": "EMOM: alternating DB thrusters + KB swings",
-      "Bodyweight only": "AMRAP: burpees + air squats + push-ups",
-      "Bands only": "EMOM: band press + band row + step-ups",
-    },
-  },
-];
-
-const CONDITIONING_TYPES = {
-  "Steady state": MOVEMENT_PATTERNS.find((p) => p.pattern === "Conditioning — steady state").options,
-  HIIT: MOVEMENT_PATTERNS.find((p) => p.pattern === "Conditioning — HIIT").options,
-  Rounds: MOVEMENT_PATTERNS.find((p) => p.pattern === "Conditioning — rounds (AMRAP/EMOM)").options,
-};
+// MOVEMENT_PATTERNS and CONDITIONING_TYPES now come from the program-generator.mjs import
+// above (destructured into PG) — see the comment at the top of this script block.
 
 /* ---------- starter program under your own Extraction Protocol architecture ---------- */
 function starterExtractionProgram() {
@@ -1389,176 +1282,11 @@ function GlobalStyle() {
   );
 }
 
-/* ---------- build a complete 90-day program (all 4 phases) for a given equipment level ---------- */
-const WEEK_SCHEME = [
-  // Designate Your Heading — weeks 1-3 — steady state to build the aerobic base
-  { phase: "Designate Your Heading", main: ["4", "6"], acc: ["3", "8"], carrySets: "3", carryDist: "30m", coreDur: "12", note: "",
-    cond: { type: "Steady state", sets: "1", reps: "15 min continuous", notes: "Hold a conversational, sustainable pace" } },
-  { phase: "Designate Your Heading", main: ["4", "6"], acc: ["3", "8"], carrySets: "3", carryDist: "40m", coreDur: "12", note: "",
-    cond: { type: "Steady state", sets: "1", reps: "18 min continuous", notes: "Hold a conversational, sustainable pace" } },
-  { phase: "Designate Your Heading", main: ["5", "5"], acc: ["4", "6"], carrySets: "4", carryDist: "40m", coreDur: "15", note: "End of Designate Your Heading — technique should be locked in before load climbs",
-    cond: { type: "Steady state", sets: "1", reps: "20 min continuous", notes: "Base-building complete — note your average pace for later comparison" } },
-  // Golden Hour — weeks 4-7 — alternate steady state and HIIT to build both engines
-  { phase: "Golden Hour", main: ["5", "5"], acc: ["4", "6"], carrySets: "4", carryDist: "45m", coreDur: "15", note: "Golden Hour begins — heavier loads, same technique standard",
-    cond: { type: "HIIT", sets: "6", reps: "20s on / 40s off", notes: "All-out effort on every work interval" } },
-  { phase: "Golden Hour", main: ["5", "5"], acc: ["4", "6"], carrySets: "4", carryDist: "45m", coreDur: "18", note: "",
-    cond: { type: "Steady state", sets: "1", reps: "22 min continuous", notes: "Aim for a slightly faster pace than Week 3" } },
-  { phase: "Golden Hour", main: ["5", "4"], acc: ["4", "6"], carrySets: "5", carryDist: "50m", coreDur: "18", note: "",
-    cond: { type: "HIIT", sets: "7", reps: "20s on / 40s off", notes: "" } },
-  { phase: "Golden Hour", main: ["5", "4"], acc: ["4", "6"], carrySets: "5", carryDist: "50m", coreDur: "20", note: "End of Golden Hour — should feel noticeably stronger than week 1",
-    cond: { type: "Steady state", sets: "1", reps: "25 min continuous", notes: "End-of-phase aerobic check" } },
-  // Hold the Line — weeks 8-11 — HIIT and full conditioning rounds at peak effort
-  { phase: "Hold the Line", main: ["5", "3"], acc: ["4", "5"], carrySets: "5", carryDist: "55m", coreDur: "20", note: "Hold the Line begins — peak effort, push closer to true max",
-    cond: { type: "HIIT", sets: "8", reps: "20s on / 40s off", notes: "Peak HIIT volume begins" } },
-  { phase: "Hold the Line", main: ["5", "3"], acc: ["4", "5"], carrySets: "5", carryDist: "55m", coreDur: "25", note: "",
-    cond: { type: "Rounds", sets: "1", reps: "AMRAP 12", notes: "Score = total rounds + reps completed" } },
-  { phase: "Hold the Line", main: ["6", "2"], acc: ["4", "5"], carrySets: "6", carryDist: "60m", coreDur: "25", note: "",
-    cond: { type: "HIIT", sets: "9", reps: "15s on / 45s off", notes: "Shorter work window, same max effort" } },
-  { phase: "Hold the Line", main: ["6", "2"], acc: ["4", "5"], carrySets: "6", carryDist: "60m", coreDur: "30", note: "Peak week — hardest session of the entire block",
-    cond: { type: "Rounds", sets: "1", reps: "AMRAP 15", notes: "Hardest conditioning test of the block" } },
-  // RTB — weeks 12-13 — deload, then retest against Week 1's steady-state benchmark
-  { phase: "RTB", main: ["3", "8"], acc: ["2", "10"], carrySets: "3", carryDist: "30m", coreDur: "20", note: "RTB deload — cut load roughly 40%, focus on movement quality and recovery",
-    cond: { type: "Steady state", sets: "1", reps: "15 min continuous", notes: "Deload pace — easy effort only" } },
-  { phase: "RTB", retest: true, note: "RTB Debrief — retest week. Compare every number against Week 1." },
-];
-
-// Builds the N regular (non-retest) training days for a given week, for a given weekly
-// frequency. Every day-count shares the same 13-week progression scheme (WEEK_SCHEME) —
-// only how that week's volume is spread across sessions changes.
-function buildRegularDays(daysPerWeek, w, find, condName, day) {
-  const [ms, mr] = w.main;
-  const [as, ar] = w.acc;
-  const coreReps = ar === "5" ? "10" : "12";
-
-  const lowerCore = () =>
-    day("Lower + core", [
-      [find("Squat"), ms, mr, w.note],
-      [find("Hinge"), ms, mr, ""],
-      [find("Loaded carry"), w.carrySets, w.carryDist, ""],
-      [find("Core / anti-extension"), as, coreReps, ""],
-    ]);
-  const upperPushPull = () =>
-    day("Upper push/pull", [
-      [find("Horizontal push"), ms, mr, ""],
-      [find("Horizontal pull"), ms, mr, ""],
-      [find("Vertical push"), as, ar, ""],
-      [find("Vertical pull"), as, "max", "Log actual reps achieved"],
-      [find("Rotational / shoulder flow"), "2", "8/side", "Shoulder health and rotational control — light, controlled tempo"],
-    ]);
-  const conditioningCarry = (label) =>
-    day(label || `Conditioning (${w.cond.type}) + carry`, [
-      [find("Loaded carry"), w.carrySets, w.carryDist, "Heaviest/hardest carry of the week"],
-      [condName, w.cond.sets, w.cond.reps, w.cond.notes],
-      [find("Core / anti-extension"), "3", `${w.coreDur}s`, ""],
-    ]);
-  const push = (label, note) =>
-    day(label || "Push", [
-      [find("Horizontal push"), ms, mr, note || ""],
-      [find("Vertical push"), as, ar, ""],
-      [find("Rotational / shoulder flow"), "2", "8/side", "Shoulder health and rotational control"],
-    ]);
-  const pull = (label, note) =>
-    day(label || "Pull", [
-      [find("Horizontal pull"), ms, mr, note || ""],
-      [find("Vertical pull"), as, "max", "Log actual reps achieved"],
-      [find("Core / anti-extension"), as, coreReps, ""],
-    ]);
-  const legsCarry = (label, note) =>
-    day(label || "Legs + carry", [
-      [find("Squat"), ms, mr, note || ""],
-      [find("Hinge"), ms, mr, ""],
-      [find("Loaded carry"), w.carrySets, w.carryDist, ""],
-    ]);
-  const fullBodyAccessory = () =>
-    day("Full-body accessory + mobility", [
-      [find("Squat"), as, ar, "Lighter, higher-rep — accessory volume, not a max effort"],
-      [find("Horizontal pull"), as, ar, ""],
-      [find("Rotational / shoulder flow"), "2", "8/side", "Shoulder health and rotational control"],
-      [find("Core / anti-extension"), "2", "12", ""],
-    ]);
-
-  if (daysPerWeek === "4") {
-    return [lowerCore(), upperPushPull(), conditioningCarry(), fullBodyAccessory()];
-  }
-  if (daysPerWeek === "5") {
-    return [
-      lowerCore(),
-      push(),
-      pull(),
-      conditioningCarry(),
-      day("Full-body accessory", [
-        [find("Squat"), as, ar, "Lighter, higher-rep accessory volume"],
-        [find("Hinge"), as, ar, ""],
-        [find("Horizontal push"), as, ar, ""],
-        [find("Horizontal pull"), as, ar, ""],
-        [find("Loaded carry"), "1", w.carryDist, "Easy pace — active recovery finisher"],
-      ]),
-    ];
-  }
-  if (daysPerWeek === "6") {
-    return [
-      push("Push A"),
-      pull("Pull A"),
-      legsCarry("Legs + carry A"),
-      push("Push B", "Second push session — same movement, moderate volume"),
-      pull("Pull B", "Second pull session — same movement, moderate volume"),
-      conditioningCarry("Legs B + carry + conditioning"),
-    ];
-  }
-  // default: 3 days/week
-  return [lowerCore(), upperPushPull(), conditioningCarry()];
-}
-
-function buildFullProgram(level, daysPerWeek) {
-  const dpw = daysPerWeek || "3";
-  const find = (pattern) => MOVEMENT_PATTERNS.find((p) => p.pattern === pattern).options[level];
-  const day = (label, rows) => ({
-    id: uid(),
-    label,
-    exercises: rows.map(([name, sets, reps, notes]) => ({ id: uid(), name, sets, reps, notes: notes || "" })),
-  });
-  const week = (label, days) => ({ id: uid(), label, days });
-
-  const weeks = WEEK_SCHEME.map((w, i) => {
-    if (w.retest) {
-      const steadyState = CONDITIONING_TYPES["Steady state"][level];
-      return week(`Week ${i + 1} — RTB (retest)`, [
-        day("Retest lower + core", [
-          [find("Squat"), "1", "heaviest set of 5", "Compare load directly against Week 1"],
-          [find("Hinge"), "1", "heaviest set of 5", ""],
-          [find("Core / anti-extension"), "1", "max hold/reps", ""],
-        ]),
-        day("Retest upper", [
-          [find("Horizontal push"), "1", "heaviest set of 5", "Compare load directly against Week 1"],
-          [find("Horizontal pull"), "1", "heaviest set of 5", ""],
-          [find("Vertical pull"), "1", "max", "Compare rep count against Week 1"],
-        ]),
-        day("Retest conditioning", [
-          [steadyState, "1", "15 min continuous", "Retest — compare pace/output directly against Week 1's 15-minute piece"],
-          [find("Loaded carry"), "1", "max distance in 60s", "RTB Debrief: log bodyweight, waist, and how the block felt overall — deload/retest week runs at reduced frequency regardless of your normal training days"],
-        ]),
-      ]);
-    }
-    const condName = CONDITIONING_TYPES[w.cond.type][level];
-    const days = buildRegularDays(dpw, w, find, condName, day);
-    if (w.note) days[0].exercises[0].notes = days[0].exercises[0].notes || w.note;
-    if (w.phase === "Golden Hour" && i === 6) {
-      const last = days[days.length - 1];
-      const lastEx = last.exercises[last.exercises.length - 1];
-      lastEx.notes = lastEx.notes ? `${lastEx.notes} — SITREP: log bodyweight, waist, recovery` : "SITREP: log bodyweight, waist, recovery";
-    }
-    days.forEach((d, di) => { d.label = `Day ${di + 1} — ${d.label}`; });
-    return week(`Week ${i + 1} — ${w.phase}`, days);
-  });
-
-  const modality = modalityName(level);
-  return {
-    id: uid(),
-    name: manualNameFor(level, dpw),
-    description: `Full 90-day, 4-phase block (Designate Your Heading → Golden Hour → Hold the Line → RTB), ${dpw} days/week, built entirely around ${modality.toLowerCase()} (${level.toLowerCase()}).`,
-    weeks,
-  };
-}
+// WEEK_SCHEME and buildFullProgram now come from the program-generator.mjs import above —
+// see the comment at the top of this script block. (buildRegularDays is imported too but not
+// destructured here since only buildHybridProgram below runs in this file, and it has its
+// own, structurally different day-composition — a compressed 4-week block, not the 13-week
+// phased one.)
 
 /* ---------- build a compressed 4-week hybrid plan (strength + conditioning blended every session) ---------- */
 const HYBRID_SCHEME = [
@@ -1573,7 +1301,7 @@ const HYBRID_SCHEME = [
 ];
 
 function buildHybridProgram(level) {
-  const find = (pattern) => MOVEMENT_PATTERNS.find((p) => p.pattern === pattern).options[level];
+  const find = (pattern) => MOVEMENT_PATTERNS.find((p) => p.pattern === pattern).variants[level][0];
   const day = (label, rows) => ({
     id: uid(),
     label,
@@ -1683,8 +1411,19 @@ function ReferenceView({ onGenerate, t }) {
           <div key={p.pattern} style={S.card}>
             <div style={S.cardLabel}>{p.pattern}</div>
             <div style={S.rowTitle}>
-              {p.options[level]}
-              <a href={ytSearchUrl(p.options[level])} target="_blank" rel="noopener noreferrer" style={S.videoLink}>
+              {p.variants[level][0]}
+              <a href={ytSearchUrl(p.variants[level][0])} target="_blank" rel="noopener noreferrer" style={S.videoLink}>
+                ▶ form
+              </a>
+            </div>
+          </div>
+        ))}
+        {Object.keys(CONDITIONING_TYPES).map((condType) => (
+          <div key={condType} style={S.card}>
+            <div style={S.cardLabel}>Conditioning — {condType}</div>
+            <div style={S.rowTitle}>
+              {CONDITIONING_TYPES[condType][level]}
+              <a href={ytSearchUrl(CONDITIONING_TYPES[condType][level])} target="_blank" rel="noopener noreferrer" style={S.videoLink}>
                 ▶ form
               </a>
             </div>
@@ -3386,6 +3125,10 @@ const S = {
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<OperatorDashboard />);
+
+})().catch(function (err) {
+  exShowError((err && err.stack) ? err.stack : String(err));
+});
 
 } catch (err) {
   exShowError((err && err.stack) ? err.stack : String(err));
