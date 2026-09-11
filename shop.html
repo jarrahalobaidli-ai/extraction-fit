@@ -124,6 +124,44 @@
   }
   .more-incoming strong{ color:var(--oxide); }
 
+  /* Digital product — Protocol */
+  .protocol-card{
+    display:grid; grid-template-columns: 1fr 1.15fr; gap:0;
+    background:var(--bg-raise); border:1px solid var(--oxide-dim);
+    box-shadow: 0 0 0 1px rgba(192,69,29,0.12);
+  }
+  .protocol-media{
+    position:relative; background:#000; min-height:280px;
+    display:flex; align-items:center; justify-content:center;
+    background-image: radial-gradient(circle at center, rgba(192,69,29,0.18), transparent 70%);
+    border-right:1px solid var(--line);
+  }
+  .protocol-media img{ width:120px; height:120px; opacity:0.92; filter: drop-shadow(0 0 18px rgba(192,69,29,0.35)); }
+  .protocol-badge{
+    position:absolute; top:14px; left:14px;
+    font-family:'IBM Plex Mono',monospace; font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase;
+    background:var(--oxide); color:var(--bg); padding:5px 10px;
+  }
+  .protocol-body{ padding:34px 34px 30px; display:flex; flex-direction:column; }
+  .protocol-body h3{ font-family:'Oswald',sans-serif; font-weight:800; letter-spacing:0.02em; font-size:1.5rem; text-transform:uppercase; margin-bottom:10px; }
+  .protocol-body .protocol-sub{ color:var(--paper-dim); font-size:0.92rem; margin-bottom:20px; max-width:480px; }
+  .protocol-list{ list-style:none; margin-bottom:26px; }
+  .protocol-list li{
+    font-size:0.88rem; color:var(--paper); padding-left:22px; position:relative; margin-bottom:9px;
+  }
+  .protocol-list li::before{
+    content:"›"; position:absolute; left:0; color:var(--oxide); font-weight:700;
+  }
+  .protocol-foot{ display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap; margin-top:auto; padding-top:10px; border-top:1px solid var(--line); }
+  .protocol-price{ font-family:'IBM Plex Mono',monospace; }
+  .protocol-price .amt{ font-family:'Anton',sans-serif; font-size:1.8rem; color:var(--bone); }
+  .protocol-price .note{ display:block; font-size:0.66rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--tan); margin-top:2px; }
+  .protocol-order-note{ font-family:'IBM Plex Mono',monospace; font-size:0.68rem; letter-spacing:0.04em; color:var(--tan); margin-top:14px; }
+  @media (max-width:780px){
+    .protocol-card{ grid-template-columns:1fr; }
+    .protocol-media{ min-height:180px; border-right:none; border-bottom:1px solid var(--line); }
+  }
+
   .waitlist{
     background:var(--bg-raise); border:1px solid var(--line-strong);
     padding:44px 34px; text-align:center; margin-top:8px;
@@ -197,14 +235,51 @@
 <div class="shop-hero">
   <span class="label">Quartermaster // Community Gear</span>
   <h1 class="display">The Extraction Shop</h1>
-  <p>Morale patches, apparel, and field grooming built for the community — not just operators. First concept batch is in. Vote with your interest — full drops release once the armory opens.</p>
+  <p>The 90-Day Protocol ships instantly. Morale patches, apparel, and field grooming built for the community — not just operators — are next: first concept batch is in, full drops release once the armory opens.</p>
   <div class="status-strip"><span class="dot"></span> Armory Status: Pre-Launch — Concepts Open for Review</div>
 </div>
+
+<section id="protocol">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="code">01</span>
+      <h2 class="heading">The 90-Day Protocol</h2>
+      <span class="rule"></span>
+    </div>
+    <p class="sec-note">The only product in this shop that ships instantly. Everything else below is pre-launch merch.</p>
+    <div class="protocol-card">
+      <div class="protocol-media">
+        <span class="protocol-badge">Digital · Instant Access</span>
+        <img src="assets/extraction-mark.png" alt="Extraction mark">
+      </div>
+      <div class="protocol-body">
+        <h3>90-Day Extraction Protocol</h3>
+        <p class="protocol-sub">A complete hybrid strength &amp; conditioning program, personalized to your equipment and training frequency, delivered as a watermarked manual with every exercise linked to a form-check video.</p>
+        <ul class="protocol-list">
+          <li>Full 90-day Extraction Protocol — all 4 phases, all 13 weeks</li>
+          <li>Personalized to your training frequency — 3, 4, 5, or 6 days a week</li>
+          <li>Lifetime portal access + a downloadable manual, watermarked to you</li>
+          <li>Every exercise linked to a form-check video</li>
+        </ul>
+        <div class="protocol-foot">
+          <div class="protocol-price">
+            <span class="amt">$97<span style="font-size:1rem;">.00</span></span>
+            <span class="note">One-time investment</span>
+          </div>
+          <a href="https://wa.me/96599992990?text=Hi%2C%20I%20want%20to%20get%20the%2090-Day%20Extraction%20Protocol%20(%2497)." target="_blank" rel="noopener noreferrer" class="btn-primary">Get The Protocol</a>
+        </div>
+        <div class="protocol-order-note">Self-serve checkout is being wired up — message Ops Freq now for instant manual access while it finishes rolling out.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="hazard"></div>
 
 <section id="patches">
   <div class="wrap">
     <div class="sec-head">
-      <span class="code">01</span>
+      <span class="code">02</span>
       <h2 class="heading">Morale Patches</h2>
       <span class="rule"></span>
     </div>
@@ -241,7 +316,7 @@
 <section id="apparel">
   <div class="wrap">
     <div class="sec-head">
-      <span class="code">02</span>
+      <span class="code">03</span>
       <h2 class="heading">Apparel</h2>
       <span class="rule"></span>
     </div>
@@ -282,7 +357,7 @@
 <section id="grooming">
   <div class="wrap">
     <div class="sec-head">
-      <span class="code">03</span>
+      <span class="code">04</span>
       <h2 class="heading">Grooming</h2>
       <span class="rule"></span>
     </div>
@@ -319,7 +394,7 @@
 <section id="coffee">
   <div class="wrap">
     <div class="sec-head">
-      <span class="code">04</span>
+      <span class="code">05</span>
       <h2 class="heading">Field Roast Coffee</h2>
       <span class="rule"></span>
     </div>

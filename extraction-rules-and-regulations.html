@@ -1,0 +1,359 @@
+<title>Extraction Rules & Regulations</title>
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --bg-raise:#F6F1E7;
+    --bg-card:#F0E9DA;
+    --ink:#171410;
+    --ink-dim:#6B5D45;
+    --ink-mute:#7A6E56;
+    --oxide:#C0451D;
+    --oxide-dim:#7A2C12;
+    --line:rgba(23,20,16,0.12);
+    --line-strong:rgba(23,20,16,0.22);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .grain{
+    position:fixed; inset:0; pointer-events:none; z-index:0; opacity:0.035; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .wrap{ position:relative; z-index:1; max-width:800px; margin:0 auto; padding:56px 24px 120px; }
+
+  h1,h2,h3{ font-family:'Oswald',sans-serif; text-transform:uppercase; margin:0; text-wrap:balance; }
+
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+
+  /* ---------- header / cover block ---------- */
+  header.cover{
+    border:1px solid var(--line-strong);
+    background:linear-gradient(180deg, var(--bg-raise), var(--bg));
+    padding:36px 32px 32px;
+    position:relative;
+    overflow:hidden;
+  }
+  header.cover::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(135deg, rgba(192,69,29,0.05) 0 2px, transparent 2px 34px);
+    pointer-events:none;
+  }
+  .cover-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; position:relative; }
+  .mark{ display:flex; align-items:center; }
+  .mark .lockup-img{ height:52px; width:auto; display:block; }
+  .stamp{
+    font-family:'IBM Plex Mono',monospace; font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--oxide); border:1px solid var(--oxide-dim); padding:5px 10px; border-radius:2px; white-space:nowrap;
+  }
+  h1.doc-title{ font-size:clamp(1.9rem,5vw,2.9rem); letter-spacing:0.02em; color:var(--ink); margin-top:28px; position:relative; }
+  .doc-sub{ margin-top:10px; color:var(--ink-dim); font-size:0.98rem; max-width:52ch; position:relative; }
+  .meta-row{ display:flex; flex-wrap:wrap; gap:10px 28px; margin-top:26px; padding-top:20px; border-top:1px solid var(--line); position:relative; }
+  .meta-item{ font-family:'IBM Plex Mono',monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-mute); }
+  .meta-item b{ display:block; color:var(--ink); font-size:0.82rem; letter-spacing:0.02em; margin-top:3px; }
+
+  /* ---------- table of contents ---------- */
+  nav.toc{ margin-top:28px; display:flex; flex-wrap:wrap; gap:8px; }
+  nav.toc a{
+    font-family:'IBM Plex Mono',monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em;
+    color:var(--ink-dim); text-decoration:none; border:1px solid var(--line); padding:7px 11px; border-radius:2px;
+    transition:border-color .15s, color .15s;
+  }
+  nav.toc a:hover, nav.toc a:focus-visible{ border-color:var(--oxide); color:var(--ink); outline:none; }
+  nav.toc a span{ color:var(--oxide); margin-right:6px; }
+
+  /* ---------- sections / articles ---------- */
+  section.block{ margin-top:14px; scroll-margin-top:24px; }
+  .block-head{ display:flex; align-items:baseline; gap:14px; padding:22px 0 14px; border-bottom:1px solid var(--line-strong); }
+  .block-num{ font-family:'IBM Plex Mono',monospace; font-size:0.82rem; color:var(--oxide); flex:none; }
+  h2.block-title{ font-size:clamp(1.15rem,3vw,1.5rem); letter-spacing:0.01em; color:var(--ink); }
+
+  article.rule{ display:grid; grid-template-columns:60px 1fr; gap:18px; padding:20px 0; border-bottom:1px solid var(--line); }
+  article.rule:last-child{ border-bottom:none; }
+  .rule-id{ font-family:'IBM Plex Mono',monospace; font-size:0.85rem; color:var(--ink-mute); padding-top:2px; }
+  h3.rule-title{ font-size:1.02rem; letter-spacing:0.01em; color:var(--ink); margin-bottom:6px; }
+  .rule-body{ color:var(--ink-dim); font-size:0.96rem; max-width:60ch; }
+  .rule-body strong{ color:var(--ink); font-weight:600; }
+  .rule-body code{ font-family:'IBM Plex Mono',monospace; font-size:0.86em; color:var(--oxide); background:rgba(192,69,29,0.1); padding:1px 5px; border-radius:2px; }
+  .tag{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.08em;
+    color:var(--oxide); border:1px solid var(--oxide-dim); border-radius:2px; padding:2px 7px; margin:8px 6px 0 0;
+  }
+
+  /* ---------- timeline strip (Section II) ---------- */
+  .timeline{ display:flex; flex-wrap:wrap; gap:10px; padding:22px 0 6px; }
+  .tl-stage{ flex:1 1 150px; background:var(--bg-card); border:1px solid var(--line); border-top:2px solid var(--oxide-dim); padding:14px 14px 16px; border-radius:2px; }
+  .tl-stage.active{ border-top-color:var(--oxide); }
+  .tl-phase{ font-family:'IBM Plex Mono',monospace; font-size:0.62rem; color:var(--ink-mute); text-transform:uppercase; letter-spacing:0.08em; }
+  .tl-name{ font-family:'Oswald',sans-serif; text-transform:uppercase; font-size:1rem; color:var(--ink); margin-top:4px; letter-spacing:0.02em; }
+  .tl-desc{ font-size:0.82rem; color:var(--ink-dim); margin-top:6px; }
+
+  /* ---------- sign-off ---------- */
+  footer.signoff{ margin-top:48px; border:1px solid var(--line-strong); background:var(--bg-raise); padding:28px 32px; border-radius:2px; }
+  .signoff-title{ font-size:1.05rem; color:var(--ink); letter-spacing:0.02em; }
+  .signoff-body{ color:var(--ink-dim); font-size:0.9rem; margin-top:8px; max-width:58ch; }
+  .sign-grid{ display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:26px; }
+  .sign-field{ border-top:1px solid var(--line-strong); padding-top:8px; }
+  .sign-field .lbl{ font-family:'IBM Plex Mono',monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-mute); }
+
+  .doc-footer{ margin-top:34px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:0.64rem; color:var(--ink-mute); text-transform:uppercase; letter-spacing:0.06em; }
+
+  @media (max-width:560px){
+    .wrap{ padding:32px 16px 90px; }
+    header.cover{ padding:26px 20px 24px; }
+    article.rule{ grid-template-columns:1fr; gap:4px; }
+    .sign-grid{ grid-template-columns:1fr; }
+  }
+
+  @media print{
+    .grain, nav.toc{ display:none; }
+  }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<div class="grain"></div>
+<div class="wrap">
+
+  <header class="cover">
+    <div class="cover-top">
+      <div class="mark">
+        <img class="lockup-img" src="assets/logo-lockup-light.png" alt="Extraction — Designate Your Heading">
+      </div>
+      <div class="stamp">Operator copy</div>
+    </div>
+
+    <h1 class="doc-title">Rules &amp; Regulations</h1>
+    <p class="doc-sub">The standard operating procedure governing every Extraction engagement — how the mission runs, who does what, and what's expected of both sides from MAYDAY to RTB.</p>
+
+    <div class="meta-row">
+      <div class="meta-item">Document<b>SOP&#8209;001</b></div>
+      <div class="meta-item">Applies to<b>Extraction Protocol · Recovery Team · Direct Action</b></div>
+      <div class="meta-item">Governs<b>MAYDAY → RTB, full cycle</b></div>
+      <div class="meta-item">Revision<b>v1.0 — Sep 2026</b></div>
+    </div>
+
+    <nav class="toc">
+      <a href="#command"><span>I.</span>Chain of Command</a>
+      <a href="#timeline"><span>II.</span>Mission Timeline</a>
+      <a href="#comms"><span>III.</span>Comms Protocol</a>
+      <a href="#conduct"><span>IV.</span>Conduct &amp; Commitment</a>
+      <a href="#manuals"><span>V.</span>Manuals &amp; Progression</a>
+      <a href="#rtb"><span>VI.</span>RTB Debrief</a>
+    </nav>
+  </header>
+
+  <!-- ================= I. CHAIN OF COMMAND ================= -->
+  <section class="block" id="command">
+    <div class="block-head"><span class="block-num">I.</span><h2 class="block-title">Chain of Command</h2></div>
+
+    <article class="rule">
+      <div class="rule-id">1.1</div>
+      <div>
+        <h3 class="rule-title">Commander (Coach)</h3>
+        <p class="rule-body">Reviews every <strong>MAYDAY Report</strong>, assigns the operator's <strong>Manual</strong>, approves phase advancement, and monitors incoming <strong>SITREPs</strong>. Final call on load, progression, and any deviation from the standard timeline.</p>
+      </div>
+    </article>
+
+    <article class="rule">
+      <div class="rule-id">1.2</div>
+      <div>
+        <h3 class="rule-title">Operator (Client)</h3>
+        <p class="rule-body">Executes the assigned Manual as written, reports status on schedule, and flags equipment gaps, missed sessions, or pain — not normal fatigue — the moment they happen, not at the next check-in.</p>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= II. MISSION TIMELINE ================= -->
+  <section class="block" id="timeline">
+    <div class="block-head"><span class="block-num">II.</span><h2 class="block-title">Mission Timeline</h2></div>
+    <p class="rule-body" style="padding-top:16px;">Every engagement runs the same architecture regardless of tier. Phases are not optional and are not skipped — each one sets up the load the next phase depends on.</p>
+
+    <div class="timeline">
+      <div class="tl-stage active">
+        <div class="tl-phase">Phase 0 · Days 1&#8211;3</div>
+        <div class="tl-name">Mayday</div>
+        <div class="tl-desc">Intake report submitted, equipment confirmed, baseline Manual assigned.</div>
+      </div>
+      <div class="tl-stage">
+        <div class="tl-phase">Weeks 1&#8211;3</div>
+        <div class="tl-name">Designate Your Heading</div>
+        <div class="tl-desc">Baseline established. Form standards locked in before load increases.</div>
+      </div>
+      <div class="tl-stage">
+        <div class="tl-phase">Weeks 4&#8211;7</div>
+        <div class="tl-name">Golden Hour</div>
+        <div class="tl-desc">Progressive overload begins. Volume and complexity step up on schedule.</div>
+      </div>
+      <div class="tl-stage">
+        <div class="tl-phase">Weeks 8&#8211;11</div>
+        <div class="tl-name">Hold the Line</div>
+        <div class="tl-desc">Peak intensity window — the highest demand block of the cycle.</div>
+      </div>
+      <div class="tl-stage">
+        <div class="tl-phase">Weeks 12&#8211;13</div>
+        <div class="tl-name">RTB</div>
+        <div class="tl-desc">Deload, retest against baseline, Return&#8209;to&#8209;Base debrief.</div>
+      </div>
+    </div>
+
+    <article class="rule" style="margin-top:6px;">
+      <div class="rule-id">2.1</div>
+      <div>
+        <h3 class="rule-title">Sustained Ops</h3>
+        <p class="rule-body">After RTB, the operator either re-enters at <code>DESIGNATE YOUR HEADING</code> for a new cycle, steps up a tier, or moves to Sustained Ops maintenance cadence. Standing still is the one option off the table.</p>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= III. COMMS PROTOCOL ================= -->
+  <section class="block" id="comms">
+    <div class="block-head"><span class="block-num">III.</span><h2 class="block-title">Comms Protocol</h2></div>
+
+    <article class="rule">
+      <div class="rule-id">3.1</div>
+      <div>
+        <h3 class="rule-title">Ops Freq</h3>
+        <p class="rule-body">WhatsApp is the primary channel for both sides — intake questions, SITREPs, and anything time-sensitive. It is not for scheduling live calls in the self-guided <strong>Extraction Protocol</strong> tier.</p>
+        <span class="tag">Extraction Protocol</span><span class="tag">Recovery Team</span><span class="tag">Direct Action</span>
+      </div>
+    </article>
+
+    <article class="rule">
+      <div class="rule-id">3.2</div>
+      <div>
+        <h3 class="rule-title">SITREP</h3>
+        <p class="rule-body">An <strong>async</strong> text-and-photo check-in on the cadence agreed at MAYDAY — not a scheduled call. Live check-ins are a Recovery Team / Direct Action feature and are booked separately from Ops Freq.</p>
+      </div>
+    </article>
+
+    <article class="rule">
+      <div class="rule-id">3.3</div>
+      <div>
+        <h3 class="rule-title">Response window</h3>
+        <p class="rule-body">Expect a reply within one business day, not in real time. For anything urgent — pain, injury, an equipment failure mid-Manual — say so plainly in the message; it moves to the front of the queue.</p>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= IV. CONDUCT & COMMITMENT ================= -->
+  <section class="block" id="conduct">
+    <div class="block-head"><span class="block-num">IV.</span><h2 class="block-title">Conduct &amp; Commitment</h2></div>
+
+    <article class="rule">
+      <div class="rule-id">4.1</div>
+      <div>
+        <h3 class="rule-title">Full term, not a trial</h3>
+        <p class="rule-body">Commitment is to the full cycle, not an optional spend evaluated week to week. Results come from finishing MAYDAY through RTB, not from the first two good weeks.</p>
+      </div>
+    </article>
+
+    <article class="rule">
+      <div class="rule-id">4.2</div>
+      <div>
+        <h3 class="rule-title">Report, don't ghost</h3>
+        <p class="rule-body">A missed session gets reported on Ops Freq, ideally rescheduled inside the same week. A pattern of unreported misses is treated as a SITREP flag, not silently ignored.</p>
+      </div>
+    </article>
+
+    <article class="rule">
+      <div class="rule-id">4.3</div>
+      <div>
+        <h3 class="rule-title">Form over ego</h3>
+        <p class="rule-body">No loading past clean form, especially through <code>GOLDEN HOUR</code> and <code>HOLD THE LINE</code> as weight climbs. Form-check video on request is not optional — it's how load increases stay safe.</p>
+      </div>
+    </article>
+
+    <article class="rule">
+      <div class="rule-id">4.4</div>
+      <div>
+        <h3 class="rule-title">Pain pauses, it doesn't cancel</h3>
+        <p class="rule-body">Report pain — as distinct from normal training fatigue — the moment it shows up. Commander adjusts the Manual around it. Working through it silently is the one thing that actually ends a cycle early.</p>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= V. MANUALS & PROGRESSION ================= -->
+  <section class="block" id="manuals">
+    <div class="block-head"><span class="block-num">V.</span><h2 class="block-title">Manuals &amp; Progression</h2></div>
+
+    <article class="rule">
+      <div class="rule-id">5.1</div>
+      <div>
+        <h3 class="rule-title">Assignment</h3>
+        <p class="rule-body">Every operator is assigned a <strong>Manual</strong> from the library after MAYDAY intake, matched to equipment access and current phase. Manuals are the deliverable — no operator trains without one on file.</p>
+      </div>
+    </article>
+
+    <article class="rule">
+      <div class="rule-id">5.2</div>
+      <div>
+        <h3 class="rule-title">Phase advancement</h3>
+        <p class="rule-body">Phase moves forward on the standard schedule (<code>DESIGNATE YOUR HEADING → GOLDEN HOUR → HOLD THE LINE → RTB</code>) unless SITREPs indicate otherwise. Commander can hold a phase; an operator cannot self-advance.</p>
+      </div>
+    </article>
+
+    <article class="rule">
+      <div class="rule-id">5.3</div>
+      <div>
+        <h3 class="rule-title">Edits happen at phase boundaries</h3>
+        <p class="rule-body">Manual swaps and edits land between phases, not mid-week — the training stimulus stays consistent that way. Equipment loss or injury are the standing exceptions and get actioned immediately.</p>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= VI. RTB DEBRIEF ================= -->
+  <section class="block" id="rtb">
+    <div class="block-head"><span class="block-num">VI.</span><h2 class="block-title">RTB Debrief</h2></div>
+
+    <article class="rule">
+      <div class="rule-id">6.1</div>
+      <div>
+        <h3 class="rule-title">Retest</h3>
+        <p class="rule-body">Every RTB retests the same markers set at MAYDAY. The comparison — not a feeling — is what closes the cycle out.</p>
+      </div>
+    </article>
+
+    <article class="rule">
+      <div class="rule-id">6.2</div>
+      <div>
+        <h3 class="rule-title">Field Log closes</h3>
+        <p class="rule-body">Progress data and photos from the cycle are compiled into the operator's Field Log at RTB, before the next decision gets made.</p>
+      </div>
+    </article>
+
+    <article class="rule">
+      <div class="rule-id">6.3</div>
+      <div>
+        <h3 class="rule-title">The decision point</h3>
+        <p class="rule-body">RTB ends with one of three calls: re-enter at <code>DESIGNATE YOUR HEADING</code> for a new cycle, step up a tier, or move to Sustained Ops. Commander recommends; the operator decides.</p>
+      </div>
+    </article>
+  </section>
+
+  <footer class="signoff">
+    <div class="signoff-title">Acknowledged &amp; Accepted</div>
+    <p class="signoff-body">By continuing past MAYDAY intake, the operator confirms they've read this SOP and agree to run the mission by it — Commander included.</p>
+    <div class="sign-grid">
+      <div class="sign-field"><div class="lbl">Operator</div></div>
+      <div class="sign-field"><div class="lbl">Date</div></div>
+    </div>
+  </footer>
+
+  <div class="doc-footer">
+    <span>Extraction — Find your bearing</span>
+    <span>SOP&#8209;001 · Rev 1.0</span>
+  </div>
+
+</div>

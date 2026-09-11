@@ -1,0 +1,25 @@
+{
+  "name": "extraction-fit-repo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jarrahalobaidli-ai/extraction-fit.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jarrahalobaidli-ai/extraction-fit/issues"
+  },
+  "homepage": "https://github.com/jarrahalobaidli-ai/extraction-fit#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.116.0",
+    "pdf-lib": "^1.17.1",
+    "playwright": "^1.63.0"
+  }
+}

@@ -1,0 +1,293 @@
+<title>Seven Sources</title>
+<style>
+  :root{
+    --bg: #0C0C0A;
+    --bg-raise: #17140F;
+    --bg-card: #1D1811;
+    --paper: #F5DFB8;
+    --paper-dim: #A6926F;
+    --oxide: #C0451D;
+    --oxide-dim: #7A2C12;
+    --line: rgba(245,223,184,0.14);
+    --line-strong: rgba(245,223,184,0.28);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse at top left, rgba(192,69,29,0.10), transparent 55%),
+      radial-gradient(ellipse at bottom right, rgba(192,69,29,0.06), transparent 55%);
+    color: var(--paper);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.65;
+  }
+  a{color:inherit;}
+  .wrap{max-width: 980px; margin: 0 auto; padding: 0 28px;}
+  .label{
+    font-family:'IBM Plex Mono', monospace; font-size:0.72rem; letter-spacing:0.18em;
+    text-transform:uppercase; color:var(--oxide);
+  }
+  .display{ font-family:'Anton', sans-serif; font-weight:400; letter-spacing:0.01em; text-wrap:balance; }
+  .heading{ font-family:'Oswald', sans-serif; font-weight:700; letter-spacing:0.03em; text-transform:uppercase; }
+  .mono{ font-family:'IBM Plex Mono', monospace; }
+
+  .hazard{ height:6px; background:repeating-linear-gradient(-45deg, var(--oxide), var(--oxide) 10px, var(--bg) 10px, var(--bg) 20px); }
+
+  header{ padding:56px 28px 40px; border-bottom:1px solid var(--line); }
+  header .label{ display:block; margin-bottom:16px; }
+  header h1{ font-size:clamp(2.4rem, 7vw, 4rem); margin-bottom:16px; }
+  header .dek{ max-width:620px; color:var(--paper-dim); font-size:1.02rem; }
+  .meta-row{
+    display:flex; gap:24px; flex-wrap:wrap; margin-top:28px;
+    font-family:'IBM Plex Mono',monospace; font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--paper-dim);
+  }
+  .meta-row span b{ color:var(--oxide); }
+
+  section{ padding:56px 28px; border-top:1px solid var(--line); }
+  .sec-head{ display:flex; align-items:baseline; gap:16px; margin-bottom:8px; }
+  .sec-head .code{ font-family:'IBM Plex Mono',monospace; font-weight:700; color:var(--oxide); font-size:0.85rem; }
+  .sec-head h2{ font-size:clamp(1.5rem, 3.6vw, 2rem); }
+  .sec-head .rule{ flex:1; height:1px; background:var(--line-strong); margin-left:6px; }
+  .sec-dek{ color:var(--paper-dim); max-width:640px; margin-bottom:40px; font-size:0.96rem; }
+
+  /* Source cards */
+  .source-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line-strong); border:1px solid var(--line-strong); }
+  .source-card{ background:var(--bg-card); padding:26px 26px 24px; display:flex; flex-direction:column; }
+  .source-card .num{ font-family:'IBM Plex Mono',monospace; font-size:0.68rem; color:var(--oxide); letter-spacing:0.1em; margin-bottom:10px; }
+  .source-card h3{ font-family:'Oswald',sans-serif; font-weight:800; text-transform:uppercase; letter-spacing:0.02em; font-size:1.15rem; margin-bottom:4px; }
+  .source-card .cat{ font-family:'IBM Plex Mono',monospace; font-size:0.66rem; color:var(--paper-dim); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:14px; }
+  .source-card p{ font-size:0.9rem; color:var(--paper); margin-bottom:14px; flex:1; }
+  .source-card .tactic{
+    font-size:0.82rem; color:var(--paper-dim); border-left:2px solid var(--oxide-dim); padding-left:12px;
+  }
+  .source-card .tactic b{ color:var(--oxide); font-weight:600; }
+  .source-grid .source-card:last-child{ grid-column: 1 / -1; }
+  @media (max-width:760px){ .source-grid{ grid-template-columns:1fr; } .source-grid .source-card:last-child{ grid-column:auto; } }
+
+  /* Patterns */
+  .patterns p{ max-width:680px; color:var(--paper); font-size:0.98rem; margin-bottom:18px; }
+  .patterns strong{ color:var(--paper); font-family:'Oswald',sans-serif; font-weight:700; }
+  .pullquote{
+    max-width:680px; margin:32px 0; padding:20px 24px; border-left:2px solid var(--oxide);
+    background:var(--bg-raise); font-family:'IBM Plex Mono',monospace; font-size:0.92rem; color:var(--paper);
+  }
+  .pullquote cite{ display:block; margin-top:10px; font-size:0.68rem; color:var(--paper-dim); text-transform:uppercase; letter-spacing:0.08em; font-style:normal; }
+
+  /* Build orders */
+  .orders{ display:flex; flex-direction:column; gap:1px; background:var(--line-strong); border:1px solid var(--line-strong); }
+  .order{ background:var(--bg-card); padding:24px 26px; display:grid; grid-template-columns:64px 1fr; gap:20px; align-items:start; }
+  .order .idx{ font-family:'Anton',sans-serif; font-size:2rem; color:var(--oxide-dim); line-height:1; }
+  .order h3{ font-family:'Oswald',sans-serif; font-weight:800; text-transform:uppercase; letter-spacing:0.02em; font-size:1.02rem; margin-bottom:8px; }
+  .order p{ font-size:0.9rem; color:var(--paper-dim); }
+  .order .from{ display:inline-block; margin-top:10px; font-family:'IBM Plex Mono',monospace; font-size:0.65rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--oxide); border:1px solid var(--oxide-dim); padding:4px 9px; }
+  @media (max-width:560px){ .order{ grid-template-columns:1fr; } .order .idx{ font-size:1.4rem; } }
+
+  /* References */
+  .refs{ font-family:'IBM Plex Mono',monospace; font-size:0.78rem; color:var(--paper-dim); }
+  .refs ol{ padding-left:22px; }
+  .refs li{ margin-bottom:10px; }
+  .refs a{ color:var(--paper); text-decoration:underline; text-decoration-color:var(--line-strong); text-underline-offset:3px; }
+  .refs a:hover{ color:var(--oxide); }
+
+  footer{ padding:40px 28px 60px; text-align:center; }
+  footer .code{ font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:0.68rem; color:var(--paper-dim); letter-spacing:0.12em; }
+</style>
+
+<header>
+  <div class="wrap">
+    <span class="label">Quartermaster Intel // Sourcing Report EXT-QM-01</span>
+    <h1 class="display">Seven Sources</h1>
+    <p class="dek">Seven brands already doing what the Extraction shop is trying to do — sell identity, not just gear. This is what each one actually does well, and the specific moves worth stealing for Patches, Apparel, and Grooming.</p>
+    <div class="meta-row">
+      <span>Filed: <b>Sep 2026</b></span>
+      <span>Subjects: <b>7</b></span>
+      <span>Build Orders: <b>8</b></span>
+      <span>Status: <b>For Review</b></span>
+    </div>
+  </div>
+</header>
+
+<div class="hazard"></div>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="code">01</span><h2 class="heading">The Seven</h2><span class="rule"></span></div>
+    <p class="sec-dek">Seven brands built a merch line that people wear as an identity, not a souvenir. Here's the one thing each one does that Extraction doesn't do yet.</p>
+
+    <div class="source-grid">
+      <div class="source-card">
+        <div class="num">SOURCE 01</div>
+        <h3>Til Valhalla Project</h3>
+        <div class="cat">Cause-Anchored Apparel</div>
+        <p>Founded by a Marine who started hand-making memorial plaques for fallen friends' families before he ever sold a shirt. The apparel exists to fund the plaques — the product is downstream of the mission, not the other way around.</p>
+        <div class="tactic"><b>Borrow:</b> give one product a real cause behind it, not just a design behind it.</div>
+      </div>
+
+      <div class="source-card">
+        <div class="num">SOURCE 02</div>
+        <h3>Grunt Style</h3>
+        <div class="cat">Patriotic Lifestyle Brand</div>
+        <p>Started by a former Drill Sergeant with $1,200. Built a huge, almost overwhelming catalog — bundles, state-specific drops, seasonal lines — but the constant underneath it all is a simple loyalty pledge that has nothing to do with rank or unit.</p>
+        <div class="tactic"><b>Borrow:</b> catalog breadth works once there's one loyalty idea holding it together.</div>
+      </div>
+
+      <div class="source-card">
+        <div class="num">SOURCE 03</div>
+        <h3>Jocko Fuel</h3>
+        <div class="cat">Performance Nutrition</div>
+        <p>Every product, from pre-workout to a kids' protein shake, sits under one three-word philosophy line (quoted below). Jocko didn't build a supplement brand and add a slogan — he built a slogan and hung a supplement line off it.</p>
+        <div class="tactic"><b>Borrow:</b> one phrase, repeated everywhere, outperforms ten good taglines.</div>
+      </div>
+
+      <div class="source-card">
+        <div class="num">SOURCE 04</div>
+        <h3>Jocko Store</h3>
+        <div class="cat">Podcast-Driven Merch</div>
+        <p>Runs a monthly mystery-shirt subscription (the "Shurt Locker") alongside the normal catalog — people pay to be surprised by a brand they already trust. It converts one-time buyers into a recurring line item.</p>
+        <div class="tactic"><b>Borrow:</b> a recurring drop box turns merch from a purchase into a habit.</div>
+      </div>
+
+      <div class="source-card">
+        <div class="num">SOURCE 05</div>
+        <h3>The Drive Clothing</h3>
+        <div class="cat">Motivational Streetwear</div>
+        <p>One skull mark, stretched across an enormous accessory catalog — mugs, koozies, beard products, decals, even unmarked "mystery boxes." The core symbol barely changes; what changes is how many surfaces it's printed on.</p>
+        <div class="tactic"><b>Borrow:</b> low-cost accessories and grab-bags are where volume lives, not the flagship tee.</div>
+      </div>
+
+      <div class="source-card">
+        <div class="num">SOURCE 06</div>
+        <h3>All American Roughneck</h3>
+        <div class="cat">Blue-Collar Identity Wear</div>
+        <p>Seth Feroce's line brands its entire audience with one blunt, shared acronym printed across hats, hoodies, and stickers — a shorthand members can flash at each other. Seasonal drops (spring, summer, winter) keep the acronym feeling current instead of stale.</p>
+        <div class="tactic"><b>Borrow:</b> a members-only shorthand does more tribal work than a logo.</div>
+      </div>
+
+      <div class="source-card">
+        <div class="num">SOURCE 07</div>
+        <h3>Zero Foxtrot</h3>
+        <div class="cat">Veteran-Founded Military Lifestyle</div>
+        <p>Veteran-founded, and the only one of the seven that doesn't lean on olive drab or black-and-red — it pairs dark backgrounds with an unexpected purple accent, which reads as premium rather than tacticool cliché. Collections get their own names ("Namakubi") instead of generic category labels, and a paid membership club sits alongside a one-off collectible novelty item styled like a laminated ID or dog-tag card. The tone stays dark-humored but never disrespectful.</p>
+        <div class="tactic"><b>Borrow:</b> a named collection and a small collectible card do more for repeat visits than another t-shirt design.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="hazard"></div>
+
+<section class="patterns">
+  <div class="wrap">
+    <div class="sec-head"><span class="code">02</span><h2 class="heading">Pattern Extracted</h2><span class="rule"></span></div>
+    <p>Strip away the six different aesthetics and the same four decisions keep showing up. None of these brands are selling a t-shirt — they're selling a reason to belong to something, and the shirt is just the receipt.</p>
+    <p><strong>First</strong>, every one of them picked a single phrase or symbol and refused to dilute it. Jocko has one line. The Drive has one skull. Grunt Style has one pledge. The temptation with a growing catalog is to keep inventing new taglines — the brands that actually stick did the opposite.</p>
+    <p><strong>Second</strong>, the highest-margin, highest-volume items are almost never the flagship piece. It's the $12 accessory — the patch, the sticker, the mug, the mystery box — that a member buys on impulse and that a $45 hoodie never will.</p>
+    <p><strong>Third</strong>, recurring beats one-off. A subscription box or a seasonal drop calendar gives people a reason to come back to the store instead of buying once and disappearing.</p>
+    <p><strong>Fourth</strong>, the brand's own story — a founder's loss, a veteran workforce, a hard-labor identity — is doing as much selling as the graphic design. None of these are just print shops with a mission statement bolted on; the mission came first.</p>
+
+    <div class="pullquote">
+      "Discipline Equals Freedom"
+      <cite>Jocko Fuel / Jocko Willink — one phrase run across an entire product line</cite>
+    </div>
+  </div>
+</section>
+
+<div class="hazard"></div>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="code">03</span><h2 class="heading">Build Orders</h2><span class="rule"></span></div>
+    <p class="sec-dek">Eight concrete moves for the Extraction shop, each one traceable to a specific source above and to something Extraction already has on the site.</p>
+
+    <div class="orders">
+      <div class="order">
+        <div class="idx">01</div>
+        <div>
+          <h3>Give "Saved Others" a real cause</h3>
+          <p>The CSAR-tribute patch already exists. Attach a fixed portion of every sale to something real — a SAR family fund, cadet gear, a first-responder cause — and it stops being a novelty patch and becomes the one product people buy on principle, not impulse.</p>
+          <span class="from">From Source 01 — Til Valhalla</span>
+        </div>
+      </div>
+      <div class="order">
+        <div class="idx">02</div>
+        <div>
+          <h3>Pick one flagship phrase and stop splitting focus</h3>
+          <p>Right now "No One Is Coming," "Disciplined," and "Sharpened" are three separate concepts competing for attention. The site's own footer line — <em>"Extraction // From Mediocrity // No One Is Coming"</em> — is already the strongest one on the page. Make that the phrase that runs across the patch, the tee, a mug, and a hat, the way Jocko runs one line across everything.</p>
+          <span class="from">From Source 03 — Jocko Fuel</span>
+        </div>
+      </div>
+      <div class="order">
+        <div class="idx">03</div>
+        <div>
+          <h3>Launch an Extraction Crate</h3>
+          <p>A quarterly drop box timed to the coaching program's own phase language (a Foundation batch, an Intensity batch) bundling a patch, a small accessory, and one surprise item. Turns a single sale into a standing subscription line the way Jocko's Shurt Locker does.</p>
+          <span class="from">From Source 04 — Jocko Store</span>
+        </div>
+      </div>
+      <div class="order">
+        <div class="idx">04</div>
+        <div>
+          <h3>Coin one members-only mark</h3>
+          <p>A short shorthand built off something already on the site — "SIX," or a mark tied to "No One Is Coming" — printed small on everything, the way HWM works for All American Roughneck. It should read as an inside reference, not a slogan.</p>
+          <span class="from">From Source 06 — All American Roughneck</span>
+        </div>
+      </div>
+      <div class="order">
+        <div class="idx">05</div>
+        <div>
+          <h3>Add a low-cost "Blackout Box"</h3>
+          <p>An unmarked grab-bag of patches at a flat low price, the way The Drive runs mystery boxes. Cheap enough to be an impulse add-on at checkout once checkout exists, and it moves inventory on designs that aren't anyone's first pick alone.</p>
+          <span class="from">From Source 05 — The Drive Clothing</span>
+        </div>
+      </div>
+      <div class="order">
+        <div class="idx">06</div>
+        <div>
+          <h3>Run drops on a calendar, not all at once</h3>
+          <p>Time releases to something already named on the site — a "Sustained Ops" quarterly collection, matching the existing Events badge — instead of shipping the whole catalog in one pass. Gives people a reason to check back.</p>
+          <span class="from">From Source 06 — All American Roughneck</span>
+        </div>
+      </div>
+      <div class="order">
+        <div class="idx">07</div>
+        <div>
+          <h3>Add a small family line</h3>
+          <p>The original brief was "build community, not just operators." A lightweight partner or kids' size of the flagship tee — the way AAR runs a dedicated women's line — puts that intent into an actual product instead of just copy on the shop page.</p>
+          <span class="from">From Source 06 — All American Roughneck</span>
+        </div>
+      </div>
+      <div class="order">
+        <div class="idx">08</div>
+        <div>
+          <h3>Ship a clearance-card collectible with every order</h3>
+          <p>A cheap laminated-ID-style "Extraction Clearance Card" — the skull-in-crosshair mark, an operator number, "CLEARANCE VERIFIED" — dropped into every order the way Zero Foxtrot ships its collectible cards. Costs almost nothing to produce and gives every buyer something to photograph and post.</p>
+          <span class="from">From Source 07 — Zero Foxtrot</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="hazard"></div>
+
+<section class="refs">
+  <div class="wrap">
+    <div class="sec-head"><span class="code">04</span><h2 class="heading">References</h2><span class="rule"></span></div>
+    <ol>
+      <li><a href="https://tilvalhallaproject.com/pages/about-us" target="_blank" rel="noopener noreferrer">Til Valhalla Project — About Us</a></li>
+      <li><a href="https://www.gruntstyle.com/pages/about" target="_blank" rel="noopener noreferrer">Grunt Style — About Grunt Style</a></li>
+      <li><a href="https://jockofuel.com/pages/about-us" target="_blank" rel="noopener noreferrer">Jocko Fuel — About Us</a></li>
+      <li><a href="https://www.jockostore.com/" target="_blank" rel="noopener noreferrer">Jocko Store — Official Merchandise</a></li>
+      <li><a href="https://www.thedriveclothing.com/pages/about-the-drive" target="_blank" rel="noopener noreferrer">The Drive Clothing — About The Drive</a></li>
+      <li><a href="https://allamericanroughneck.com/" target="_blank" rel="noopener noreferrer">All American Roughneck — Seth Feroce</a></li>
+      <li><a href="https://www.zerofoxtrot.com/pages/about-us" target="_blank" rel="noopener noreferrer">Zero Foxtrot — About Us</a></li>
+    </ol>
+  </div>
+</section>
+
+<div class="hazard"></div>
+
+<footer>
+  <span class="code">EXTRACTION // QUARTERMASTER INTEL // FOR INTERNAL REVIEW</span>
+</footer>

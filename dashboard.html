@@ -98,10 +98,32 @@ const { useState, useEffect, useRef } = React;
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 
-// Generates a YouTube search link for an exercise name rather than a single hardcoded
-// video, since specific video IDs go dead/get taken down — a search always resolves
-// to current, relevant results for proper form.
+// Curated form-video links for the Functional training (KB / mace / sandbag) exercise
+// names that make up this program's actual equipment set. Keyed on the exact exercise
+// name string produced by MOVEMENT_PATTERNS so buildFullProgram output resolves straight
+// to a specific, hand-picked tutorial instead of a blind search. Anything not in this
+// map — Full gym/Bodyweight/Bands options, or combo movements without one clean video —
+// falls back to the search link below. NOTE: these are real coached demonstrations, not
+// 3D-animated anatomy videos — no free, embeddable 3D-animated library exists yet for
+// mace/sandbag/ring work (see project notes). Revisit if a licensed animation set gets
+// commissioned.
+const CURATED_VIDEO_LINKS = {
+  "DB or KB goblet squat / landmine squat": "https://www.youtube.com/watch?v=MeIiIdhvXT4",
+  "DB or KB Romanian deadlift / sandbag deadlift": "https://www.youtube.com/watch?v=Uc5rP5xs7qQ",
+  "DB, KB, or landmine press": "https://www.youtube.com/watch?v=6c7WxPIEdLU",
+  "DB or KB single-arm row / sandbag row": "https://www.youtube.com/watch?v=uQZZdGF16KQ",
+  "DB, KB, or sandbag farmer's / suitcase carry": "https://www.youtube.com/watch?v=m7iiTYfRy9A",
+  "Weighted plank / DB deadbug / sandbag hold": "https://www.youtube.com/watch?v=fbfJ_FfxwKo",
+  "Steel mace 10-to-2 swings / steel club mills and swipes": "https://www.youtube.com/watch?v=oeBLReo9nYE",
+  "KB swings at a steady, sustainable pace": "https://www.youtube.com/watch?v=B_x0tp3HIbk",
+  "KB swing sprints (20s on / 40s off)": "https://www.youtube.com/watch?v=B_x0tp3HIbk",
+};
+
+// Generates a form-video link for an exercise name: a curated video when we have one
+// (see CURATED_VIDEO_LINKS above), otherwise a YouTube search link, since specific video
+// IDs go dead/get taken down — a search always resolves to current, relevant results.
 const ytSearchUrl = (exerciseName) =>
+  CURATED_VIDEO_LINKS[exerciseName] ||
   `https://www.youtube.com/results?search_query=${encodeURIComponent(exerciseName + " exercise proper form tutorial")}`;
 
 const LOGO_SRC = "assets/extraction-mark.png";
