@@ -213,6 +213,65 @@
     .status-strip .dot{ animation:none; }
     .shop-card .thumb img{ transition:none; }
   }
+
+  /* Cart */
+  .cart-btn{
+    position:relative; display:inline-flex; align-items:center; justify-content:center;
+    width:38px; height:38px; border:1px solid var(--line-strong); background:transparent;
+    color:var(--paper); cursor:pointer; transition:border-color 0.2s ease, color 0.2s ease; flex-shrink:0;
+  }
+  .cart-btn:hover{ border-color:var(--oxide); color:var(--oxide); }
+  .cart-btn svg{ width:18px; height:18px; }
+  .cart-count{
+    position:absolute; top:-7px; right:-7px; min-width:18px; height:18px; padding:0 4px;
+    border-radius:50%; background:var(--oxide); color:var(--bg);
+    font-family:'IBM Plex Mono',monospace; font-size:0.62rem; font-weight:700;
+    display:flex; align-items:center; justify-content:center; line-height:1;
+  }
+
+  .cart-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:900; }
+  .cart-drawer{
+    position:fixed; top:0; right:0; height:100%; width:380px; max-width:92vw;
+    background:var(--bg-raise); border-left:1px solid var(--line-strong);
+    z-index:901; display:flex; flex-direction:column; box-shadow:-12px 0 32px rgba(0,0,0,0.5);
+  }
+  .cart-overlay[hidden], .cart-drawer[hidden]{ display:none; }
+  .cart-head{ display:flex; align-items:center; justify-content:space-between; padding:20px 22px 16px; border-bottom:1px solid var(--line); }
+  .cart-head h3{ font-family:'Oswald',sans-serif; text-transform:uppercase; font-weight:800; letter-spacing:0.03em; font-size:1.05rem; }
+  .cart-close{ background:none; border:none; color:var(--paper); font-size:1.5rem; cursor:pointer; line-height:1; padding:4px; }
+  .cart-close:hover{ color:var(--oxide); }
+  .cart-items{ flex:1; overflow-y:auto; padding:6px 22px; }
+  .cart-item{ display:flex; gap:12px; padding:16px 0; border-bottom:1px solid var(--line); }
+  .cart-item .ci-name{ font-family:'Oswald',sans-serif; font-weight:700; font-size:0.86rem; text-transform:uppercase; letter-spacing:0.01em; }
+  .cart-item .ci-meta{ font-family:'IBM Plex Mono',monospace; font-size:0.64rem; color:var(--tan); letter-spacing:0.05em; margin-top:3px; }
+  .cart-item .ci-line{ display:flex; align-items:center; justify-content:space-between; margin-top:9px; gap:10px; flex-wrap:wrap; }
+  .cart-item .ci-price{ font-family:'IBM Plex Mono',monospace; font-size:0.76rem; color:var(--oxide); font-weight:700; }
+  .cart-item .ci-remove{ background:none; border:none; color:var(--tan); font-family:'IBM Plex Mono',monospace; font-size:0.64rem; letter-spacing:0.05em; text-transform:uppercase; cursor:pointer; text-decoration:underline; padding:0; }
+  .cart-item .ci-remove:hover{ color:var(--oxide); }
+  .cart-empty{ padding:44px 22px; text-align:center; color:var(--tan); font-family:'IBM Plex Mono',monospace; font-size:0.8rem; }
+  .cart-foot{ padding:18px 22px 24px; border-top:1px solid var(--line-strong); }
+  .cart-subtotal{ font-family:'IBM Plex Mono',monospace; font-size:0.85rem; color:var(--paper); margin-bottom:16px; display:flex; justify-content:space-between; }
+  .cart-subtotal span{ color:var(--oxide); font-weight:700; }
+  .cart-foot .btn-primary{ display:block; text-align:center; width:100%; }
+  .cart-foot .btn-primary.is-disabled{ pointer-events:none; opacity:0.4; }
+
+  .cart-controls{ margin-top:12px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .qty-stepper{ display:inline-flex; align-items:center; border:1px solid var(--line-strong); flex-shrink:0; }
+  .qty-btn{ width:26px; height:30px; background:transparent; border:none; color:var(--paper); font-size:0.95rem; cursor:pointer; }
+  .qty-btn:hover{ background:var(--oxide); color:var(--bg); }
+  .qty-input{
+    width:30px; height:30px; text-align:center; background:transparent; border:none;
+    border-left:1px solid var(--line-strong); border-right:1px solid var(--line-strong);
+    color:var(--paper); font-family:'IBM Plex Mono',monospace; font-size:0.76rem; -moz-appearance:textfield;
+  }
+  .qty-input::-webkit-outer-spin-button, .qty-input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+  .add-to-cart-btn{
+    flex:1; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:0.64rem; letter-spacing:0.06em; text-transform:uppercase;
+    background:transparent; border:1px solid var(--oxide); color:var(--oxide); padding:8px 8px; cursor:pointer;
+    transition:all 0.2s ease; white-space:nowrap; min-width:90px;
+  }
+  .add-to-cart-btn:hover{ background:var(--oxide); color:var(--bg); }
+  .add-to-cart-btn.is-added{ background:var(--oxide); color:var(--bg); }
 </style>
 </head>
 <body>
@@ -228,6 +287,12 @@
     <a href="shop.html" class="portal-link is-active">Shop</a>
     <a href="portal.html" class="portal-link">Operator Login</a>
     <a href="intake.html" class="cta-small">Request Extraction</a>
+    <button id="cart-toggle" class="cart-btn" type="button" aria-label="Open cart">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M3 3h2l.4 2M7 13h10l3-7H6.4M7 13L5.4 5M7 13l-1.2 4.8A1 1 0 0 0 6.76 19H18M9 22a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm9 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span id="cart-count" class="cart-count" hidden>0</span>
+    </button>
   </div>
 </nav>
 
@@ -285,24 +350,44 @@
     <p class="sec-note">3&quot; hook-and-loop patches. Not quitting, staying disciplined, staying sharp.</p>
     <div class="shop-grid">
 
-      <div class="shop-card">
+      <div class="shop-card" data-id="patch-extracted" data-name="Extracted" data-meta="Morale Patch" data-price="3.500">
         <div class="thumb"><img src="assets/patch-extracted.png" alt="EXTRACTED morale patch"></div>
-        <div class="body"><h3>Extracted</h3><div class="meta">Morale Patch</div><div class="price">3.500 KWD</div></div>
+        <div class="body"><h3>Extracted</h3><div class="meta">Morale Patch</div><div class="price">3.500 KWD</div>
+          <div class="cart-controls">
+            <div class="qty-stepper"><button class="qty-btn qty-minus" type="button" aria-label="Decrease quantity">−</button><input class="qty-input" type="number" min="1" max="5" value="1" inputmode="numeric"><button class="qty-btn qty-plus" type="button" aria-label="Increase quantity">+</button></div>
+            <button class="add-to-cart-btn" type="button">Add to Cart</button>
+          </div>
+        </div>
       </div>
 
-      <div class="shop-card">
+      <div class="shop-card" data-id="patch-disciplined" data-name="Disciplined" data-meta="Morale Patch" data-price="3.500">
         <div class="thumb"><img src="assets/patch-disciplined.png" alt="DISCIPLINED morale patch"></div>
-        <div class="body"><h3>Disciplined</h3><div class="meta">Morale Patch</div><div class="price">3.500 KWD</div></div>
+        <div class="body"><h3>Disciplined</h3><div class="meta">Morale Patch</div><div class="price">3.500 KWD</div>
+          <div class="cart-controls">
+            <div class="qty-stepper"><button class="qty-btn qty-minus" type="button" aria-label="Decrease quantity">−</button><input class="qty-input" type="number" min="1" max="5" value="1" inputmode="numeric"><button class="qty-btn qty-plus" type="button" aria-label="Increase quantity">+</button></div>
+            <button class="add-to-cart-btn" type="button">Add to Cart</button>
+          </div>
+        </div>
       </div>
 
-      <div class="shop-card">
+      <div class="shop-card" data-id="patch-sharpened" data-name="Sharpened" data-meta="Morale Patch" data-price="3.500">
         <div class="thumb"><img src="assets/patch-sharpened.png" alt="SHARPENED morale patch"></div>
-        <div class="body"><h3>Sharpened</h3><div class="meta">Morale Patch</div><div class="price">3.500 KWD</div></div>
+        <div class="body"><h3>Sharpened</h3><div class="meta">Morale Patch</div><div class="price">3.500 KWD</div>
+          <div class="cart-controls">
+            <div class="qty-stepper"><button class="qty-btn qty-minus" type="button" aria-label="Decrease quantity">−</button><input class="qty-input" type="number" min="1" max="5" value="1" inputmode="numeric"><button class="qty-btn qty-plus" type="button" aria-label="Increase quantity">+</button></div>
+            <button class="add-to-cart-btn" type="button">Add to Cart</button>
+          </div>
+        </div>
       </div>
 
-      <div class="shop-card">
+      <div class="shop-card" data-id="patch-no-one-is-coming" data-name="No One Is Coming" data-meta="Tab Patch" data-price="3.500">
         <div class="thumb"><img src="assets/patch-no-one-is-coming.png" alt="No One Is Coming morale patch"></div>
-        <div class="body"><h3>No One Is Coming</h3><div class="meta">Tab Patch</div><div class="price">3.500 KWD</div></div>
+        <div class="body"><h3>No One Is Coming</h3><div class="meta">Tab Patch</div><div class="price">3.500 KWD</div>
+          <div class="cart-controls">
+            <div class="qty-stepper"><button class="qty-btn qty-minus" type="button" aria-label="Decrease quantity">−</button><input class="qty-input" type="number" min="1" max="5" value="1" inputmode="numeric"><button class="qty-btn qty-plus" type="button" aria-label="Increase quantity">+</button></div>
+            <button class="add-to-cart-btn" type="button">Add to Cart</button>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -322,24 +407,44 @@
     <p class="sec-note">Tees, hoodies, rash guards, shorts, and field mugs now. Caps and gloves next drop. Sizes M / L / XL, brand colorway.</p>
     <div class="shop-grid">
 
-      <div class="shop-card">
+      <div class="shop-card" data-id="hoodie-wordmark" data-name="Extraction Wordmark" data-meta="Hoodie · M / L / XL" data-price="13.000">
         <div class="thumb"><img src="assets/hoodie-extraction-wordmark.jpg" alt="Extraction wordmark hoodie"></div>
-        <div class="body"><h3>Extraction Wordmark</h3><div class="meta">Hoodie · M / L / XL</div><div class="price">13.000 KWD</div></div>
+        <div class="body"><h3>Extraction Wordmark</h3><div class="meta">Hoodie · M / L / XL</div><div class="price">13.000 KWD</div>
+          <div class="cart-controls">
+            <div class="qty-stepper"><button class="qty-btn qty-minus" type="button" aria-label="Decrease quantity">−</button><input class="qty-input" type="number" min="1" max="5" value="1" inputmode="numeric"><button class="qty-btn qty-plus" type="button" aria-label="Increase quantity">+</button></div>
+            <button class="add-to-cart-btn" type="button">Add to Cart</button>
+          </div>
+        </div>
       </div>
 
-      <div class="shop-card">
+      <div class="shop-card" data-id="tee-wordmark" data-name="Extraction Wordmark" data-meta="Tee · M / L / XL" data-price="7.500">
         <div class="thumb"><img src="assets/tee-extraction-wordmark.jpg" alt="Extraction wordmark tee"></div>
-        <div class="body"><h3>Extraction Wordmark</h3><div class="meta">Tee · M / L / XL</div><div class="price">7.500 KWD</div></div>
+        <div class="body"><h3>Extraction Wordmark</h3><div class="meta">Tee · M / L / XL</div><div class="price">7.500 KWD</div>
+          <div class="cart-controls">
+            <div class="qty-stepper"><button class="qty-btn qty-minus" type="button" aria-label="Decrease quantity">−</button><input class="qty-input" type="number" min="1" max="5" value="1" inputmode="numeric"><button class="qty-btn qty-plus" type="button" aria-label="Increase quantity">+</button></div>
+            <button class="add-to-cart-btn" type="button">Add to Cart</button>
+          </div>
+        </div>
       </div>
 
-      <div class="shop-card">
+      <div class="shop-card" data-id="rash-guard" data-name="Extraction Wordmark" data-meta="Rash Guard · M / L / XL" data-price="9.500">
         <div class="thumb"><img src="assets/rash-guard-extraction.jpg" alt="Extraction rash guard"></div>
-        <div class="body"><h3>Extraction Wordmark</h3><div class="meta">Rash Guard · M / L / XL</div><div class="price">9.500 KWD</div></div>
+        <div class="body"><h3>Extraction Wordmark</h3><div class="meta">Rash Guard · M / L / XL</div><div class="price">9.500 KWD</div>
+          <div class="cart-controls">
+            <div class="qty-stepper"><button class="qty-btn qty-minus" type="button" aria-label="Decrease quantity">−</button><input class="qty-input" type="number" min="1" max="5" value="1" inputmode="numeric"><button class="qty-btn qty-plus" type="button" aria-label="Increase quantity">+</button></div>
+            <button class="add-to-cart-btn" type="button">Add to Cart</button>
+          </div>
+        </div>
       </div>
 
-      <div class="shop-card">
+      <div class="shop-card" data-id="mug-wordmark" data-name="Extraction Wordmark" data-meta="Field Mug · 11oz" data-price="4.500">
         <div class="thumb"><img src="assets/mug-extraction-wordmark.jpg" alt="Extraction wordmark mug"></div>
-        <div class="body"><h3>Extraction Wordmark</h3><div class="meta">Field Mug · 11oz</div><div class="price">4.500 KWD</div></div>
+        <div class="body"><h3>Extraction Wordmark</h3><div class="meta">Field Mug · 11oz</div><div class="price">4.500 KWD</div>
+          <div class="cart-controls">
+            <div class="qty-stepper"><button class="qty-btn qty-minus" type="button" aria-label="Decrease quantity">−</button><input class="qty-input" type="number" min="1" max="5" value="1" inputmode="numeric"><button class="qty-btn qty-plus" type="button" aria-label="Increase quantity">+</button></div>
+            <button class="add-to-cart-btn" type="button">Add to Cart</button>
+          </div>
+        </div>
       </div>
 
       <div class="shop-card placeholder">
@@ -363,24 +468,44 @@
     <p class="sec-note">Organic beard and hygiene products — built for the field, not the medicine cabinet.</p>
     <div class="shop-grid">
 
-      <div class="shop-card">
+      <div class="shop-card" data-id="grooming-kit" data-name="Field Grooming Kit" data-meta="Beard Oil + Balm · Organic" data-price="6.000">
         <div class="thumb"><img src="https://cdn.shopify.com/s/files/1/1026/5486/9783/files/hBftB35qXyjfskNEz_9wu.jpg?v=1788627199" alt="Field grooming kit"></div>
-        <div class="body"><h3>Field Grooming Kit</h3><div class="meta">Beard Oil + Balm · Organic</div><div class="price">6.000 KWD</div></div>
+        <div class="body"><h3>Field Grooming Kit</h3><div class="meta">Beard Oil + Balm · Organic</div><div class="price">6.000 KWD</div>
+          <div class="cart-controls">
+            <div class="qty-stepper"><button class="qty-btn qty-minus" type="button" aria-label="Decrease quantity">−</button><input class="qty-input" type="number" min="1" max="5" value="1" inputmode="numeric"><button class="qty-btn qty-plus" type="button" aria-label="Increase quantity">+</button></div>
+            <button class="add-to-cart-btn" type="button">Add to Cart</button>
+          </div>
+        </div>
       </div>
 
-      <div class="shop-card">
+      <div class="shop-card" data-id="beard-wash" data-name="Beard Wash" data-meta="Shampoo · Organic" data-price="5.000">
         <div class="thumb"><img src="assets/beard-wash.jpg" alt="Extraction Beard Wash"></div>
-        <div class="body"><h3>Beard Wash</h3><div class="meta">Shampoo · Organic</div><div class="price">5.000 KWD</div></div>
+        <div class="body"><h3>Beard Wash</h3><div class="meta">Shampoo · Organic</div><div class="price">5.000 KWD</div>
+          <div class="cart-controls">
+            <div class="qty-stepper"><button class="qty-btn qty-minus" type="button" aria-label="Decrease quantity">−</button><input class="qty-input" type="number" min="1" max="5" value="1" inputmode="numeric"><button class="qty-btn qty-plus" type="button" aria-label="Increase quantity">+</button></div>
+            <button class="add-to-cart-btn" type="button">Add to Cart</button>
+          </div>
+        </div>
       </div>
 
-      <div class="shop-card">
+      <div class="shop-card" data-id="body-wash" data-name="Body Wash" data-meta="Organic · All-Over" data-price="5.000">
         <div class="thumb"><img src="assets/body-wash.jpg" alt="Extraction Body Wash"></div>
-        <div class="body"><h3>Body Wash</h3><div class="meta">Organic · All-Over</div><div class="price">5.000 KWD</div></div>
+        <div class="body"><h3>Body Wash</h3><div class="meta">Organic · All-Over</div><div class="price">5.000 KWD</div>
+          <div class="cart-controls">
+            <div class="qty-stepper"><button class="qty-btn qty-minus" type="button" aria-label="Decrease quantity">−</button><input class="qty-input" type="number" min="1" max="5" value="1" inputmode="numeric"><button class="qty-btn qty-plus" type="button" aria-label="Increase quantity">+</button></div>
+            <button class="add-to-cart-btn" type="button">Add to Cart</button>
+          </div>
+        </div>
       </div>
 
-      <div class="shop-card">
+      <div class="shop-card" data-id="travel-kit" data-name="Travel Field Kit" data-meta="Beard Wash + Body Wash + Beard Oil" data-price="9.000">
         <div class="thumb"><img src="assets/travel-field-kit.jpg" alt="Extraction Travel Field Kit"></div>
-        <div class="body"><h3>Travel Field Kit</h3><div class="meta">Beard Wash + Body Wash + Beard Oil</div><div class="price">9.000 KWD</div></div>
+        <div class="body"><h3>Travel Field Kit</h3><div class="meta">Beard Wash + Body Wash + Beard Oil</div><div class="price">9.000 KWD</div>
+          <div class="cart-controls">
+            <div class="qty-stepper"><button class="qty-btn qty-minus" type="button" aria-label="Decrease quantity">−</button><input class="qty-input" type="number" min="1" max="5" value="1" inputmode="numeric"><button class="qty-btn qty-plus" type="button" aria-label="Increase quantity">+</button></div>
+            <button class="add-to-cart-btn" type="button">Add to Cart</button>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -400,24 +525,44 @@
     <p class="sec-note">Small-batch coffee, roasted for early wake-ups and long days. Community-brand crossover — same standard, different mission.</p>
     <div class="shop-grid">
 
-      <div class="shop-card">
+      <div class="shop-card" data-id="coffee-heading" data-name="Designate Your Heading" data-meta="Whole Bean · 12oz Bag" data-price="6.000">
         <div class="thumb"><img src="assets/coffee-bag.jpg" alt="Extraction Field Roast Coffee bag"></div>
-        <div class="body"><h3>Designate Your Heading</h3><div class="meta">Whole Bean · 12oz Bag</div><div class="price">6.000 KWD</div></div>
+        <div class="body"><h3>Designate Your Heading</h3><div class="meta">Whole Bean · 12oz Bag</div><div class="price">6.000 KWD</div>
+          <div class="cart-controls">
+            <div class="qty-stepper"><button class="qty-btn qty-minus" type="button" aria-label="Decrease quantity">−</button><input class="qty-input" type="number" min="1" max="5" value="1" inputmode="numeric"><button class="qty-btn qty-plus" type="button" aria-label="Increase quantity">+</button></div>
+            <button class="add-to-cart-btn" type="button">Add to Cart</button>
+          </div>
+        </div>
       </div>
 
-      <div class="shop-card">
+      <div class="shop-card" data-id="coffee-dark" data-name="Dark Roast" data-meta="Whole Bean · 12oz Bag" data-price="6.000">
         <div class="thumb"><img src="assets/coffee-dark-roast.jpg" alt="Extraction Dark Roast coffee bag"></div>
-        <div class="body"><h3>Dark Roast</h3><div class="meta">Whole Bean · 12oz Bag</div><div class="price">6.000 KWD</div></div>
+        <div class="body"><h3>Dark Roast</h3><div class="meta">Whole Bean · 12oz Bag</div><div class="price">6.000 KWD</div>
+          <div class="cart-controls">
+            <div class="qty-stepper"><button class="qty-btn qty-minus" type="button" aria-label="Decrease quantity">−</button><input class="qty-input" type="number" min="1" max="5" value="1" inputmode="numeric"><button class="qty-btn qty-plus" type="button" aria-label="Increase quantity">+</button></div>
+            <button class="add-to-cart-btn" type="button">Add to Cart</button>
+          </div>
+        </div>
       </div>
 
-      <div class="shop-card">
+      <div class="shop-card" data-id="coffee-ground" data-name="Ground · Drip" data-meta="Ground · 12oz Bag" data-price="6.000">
         <div class="thumb"><img src="assets/coffee-ground-drip.jpg" alt="Extraction Ground Drip coffee bag"></div>
-        <div class="body"><h3>Ground · Drip</h3><div class="meta">Ground · 12oz Bag</div><div class="price">6.000 KWD</div></div>
+        <div class="body"><h3>Ground · Drip</h3><div class="meta">Ground · 12oz Bag</div><div class="price">6.000 KWD</div>
+          <div class="cart-controls">
+            <div class="qty-stepper"><button class="qty-btn qty-minus" type="button" aria-label="Decrease quantity">−</button><input class="qty-input" type="number" min="1" max="5" value="1" inputmode="numeric"><button class="qty-btn qty-plus" type="button" aria-label="Increase quantity">+</button></div>
+            <button class="add-to-cart-btn" type="button">Add to Cart</button>
+          </div>
+        </div>
       </div>
 
-      <div class="shop-card">
+      <div class="shop-card" data-id="coffee-mug" data-name="Field Mug" data-meta="Insulated Steel · 15oz" data-price="7.000">
         <div class="thumb"><img src="assets/coffee-field-mug.jpg" alt="Extraction Field Mug"></div>
-        <div class="body"><h3>Field Mug</h3><div class="meta">Insulated Steel · 15oz</div><div class="price">7.000 KWD</div></div>
+        <div class="body"><h3>Field Mug</h3><div class="meta">Insulated Steel · 15oz</div><div class="price">7.000 KWD</div>
+          <div class="cart-controls">
+            <div class="qty-stepper"><button class="qty-btn qty-minus" type="button" aria-label="Decrease quantity">−</button><input class="qty-input" type="number" min="1" max="5" value="1" inputmode="numeric"><button class="qty-btn qty-plus" type="button" aria-label="Increase quantity">+</button></div>
+            <button class="add-to-cart-btn" type="button">Add to Cart</button>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -499,6 +644,160 @@
   </svg>
   <span class="ops-freq-label">Ops Freq</span>
 </a>
+
+<div id="cart-overlay" class="cart-overlay" hidden></div>
+<aside id="cart-drawer" class="cart-drawer" hidden>
+  <div class="cart-head">
+    <h3>Your Cart</h3>
+    <button id="cart-close" class="cart-close" type="button" aria-label="Close cart">×</button>
+  </div>
+  <div id="cart-items" class="cart-items"></div>
+  <div id="cart-empty" class="cart-empty">Cart is empty. Add gear from any section above — max 5 of each item.</div>
+  <div class="cart-foot">
+    <div class="cart-subtotal">Subtotal <span id="cart-subtotal">0.000 KWD</span></div>
+    <a id="cart-checkout" class="btn-primary is-disabled" href="#" target="_blank" rel="noopener noreferrer">Checkout via WhatsApp</a>
+  </div>
+</aside>
+
+<script>
+(function () {
+  var CART_KEY = "extraction_shop_cart";
+  var MAX_QTY = 5;
+  var WHATSAPP_NUMBER = "96599992990";
+
+  function loadCart() {
+    try {
+      var raw = localStorage.getItem(CART_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) { return {}; }
+  }
+  function saveCart(cart) {
+    try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch (e) {}
+  }
+
+  var cart = loadCart();
+
+  var cartToggle = document.getElementById("cart-toggle");
+  var cartOverlay = document.getElementById("cart-overlay");
+  var cartDrawer = document.getElementById("cart-drawer");
+  var cartClose = document.getElementById("cart-close");
+  var cartItemsEl = document.getElementById("cart-items");
+  var cartEmptyEl = document.getElementById("cart-empty");
+  var cartSubtotalEl = document.getElementById("cart-subtotal");
+  var cartCountEl = document.getElementById("cart-count");
+  var cartCheckoutEl = document.getElementById("cart-checkout");
+
+  function openCart() { cartOverlay.hidden = false; cartDrawer.hidden = false; }
+  function closeCart() { cartOverlay.hidden = true; cartDrawer.hidden = true; }
+  if (cartToggle) cartToggle.addEventListener("click", openCart);
+  if (cartClose) cartClose.addEventListener("click", closeCart);
+  if (cartOverlay) cartOverlay.addEventListener("click", closeCart);
+
+  function totalCount() {
+    var n = 0;
+    Object.keys(cart).forEach(function (id) { n += cart[id].qty; });
+    return n;
+  }
+
+  function renderCart() {
+    var ids = Object.keys(cart);
+    cartItemsEl.innerHTML = "";
+    var subtotal = 0;
+    if (!ids.length) {
+      cartEmptyEl.hidden = false;
+      cartCheckoutEl.classList.add("is-disabled");
+    } else {
+      cartEmptyEl.hidden = true;
+      cartCheckoutEl.classList.remove("is-disabled");
+      ids.forEach(function (id) {
+        var item = cart[id];
+        subtotal += item.price * item.qty;
+        var row = document.createElement("div");
+        row.className = "cart-item";
+        row.innerHTML =
+          '<div style="flex:1;">' +
+            '<div class="ci-name"></div>' +
+            '<div class="ci-meta"></div>' +
+            '<div class="ci-line">' +
+              '<span class="ci-price"></span>' +
+              '<button class="ci-remove" type="button" data-id="' + id.replace(/"/g, "&quot;") + '">Remove</button>' +
+            '</div>' +
+          '</div>';
+        row.querySelector(".ci-name").textContent = item.name;
+        row.querySelector(".ci-meta").textContent = item.meta;
+        row.querySelector(".ci-price").textContent = item.qty + " × " + item.price.toFixed(3) + " KWD";
+        cartItemsEl.appendChild(row);
+      });
+      cartSubtotalEl.textContent = subtotal.toFixed(3) + " KWD";
+    }
+    var n = totalCount();
+    if (n > 0) {
+      cartCountEl.hidden = false;
+      cartCountEl.textContent = n;
+    } else {
+      cartCountEl.hidden = true;
+    }
+    var lines = ["Hi, I want to order:"];
+    ids.forEach(function (id) {
+      var item = cart[id];
+      lines.push("- " + item.name + " (" + item.meta + ") x" + item.qty);
+    });
+    if (ids.length) lines.push("Total: " + subtotal.toFixed(3) + " KWD");
+    cartCheckoutEl.href = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(lines.join("\n"));
+  }
+
+  cartItemsEl.addEventListener("click", function (e) {
+    var btn = e.target.closest(".ci-remove");
+    if (!btn) return;
+    delete cart[btn.getAttribute("data-id")];
+    saveCart(cart);
+    renderCart();
+  });
+
+  document.querySelectorAll(".shop-card[data-id]").forEach(function (card) {
+    var id = card.getAttribute("data-id");
+    var name = card.getAttribute("data-name");
+    var meta = card.getAttribute("data-meta");
+    var price = parseFloat(card.getAttribute("data-price"));
+    var qtyInput = card.querySelector(".qty-input");
+    var minusBtn = card.querySelector(".qty-minus");
+    var plusBtn = card.querySelector(".qty-plus");
+    var addBtn = card.querySelector(".add-to-cart-btn");
+    if (!qtyInput || !addBtn) return;
+
+    function clampQty() {
+      var v = parseInt(qtyInput.value, 10);
+      if (isNaN(v) || v < 1) v = 1;
+      if (v > MAX_QTY) v = MAX_QTY;
+      qtyInput.value = v;
+      return v;
+    }
+
+    minusBtn.addEventListener("click", function () { qtyInput.value = Math.max(1, clampQty() - 1); });
+    plusBtn.addEventListener("click", function () { qtyInput.value = Math.min(MAX_QTY, clampQty() + 1); });
+    qtyInput.addEventListener("change", clampQty);
+
+    addBtn.addEventListener("click", function () {
+      var qty = clampQty();
+      if (cart[id]) {
+        cart[id].qty = Math.min(MAX_QTY, cart[id].qty + qty);
+      } else {
+        cart[id] = { name: name, meta: meta, price: price, qty: qty };
+      }
+      saveCart(cart);
+      renderCart();
+      addBtn.textContent = "Added ✓";
+      addBtn.classList.add("is-added");
+      setTimeout(function () {
+        addBtn.textContent = "Add to Cart";
+        addBtn.classList.remove("is-added");
+      }, 1200);
+    });
+  });
+
+  renderCart();
+})();
+</script>
 
 </body>
 </html>
