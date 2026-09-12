@@ -256,6 +256,12 @@
   .cart-foot .btn-primary.is-disabled{ pointer-events:none; opacity:0.4; }
 
   .cart-controls{ margin-top:12px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .size-select{
+    background:transparent; border:1px solid var(--line-strong); color:var(--paper);
+    font-family:'IBM Plex Mono',monospace; font-size:0.68rem; letter-spacing:0.04em; text-transform:uppercase;
+    padding:8px 6px; height:30px; flex-shrink:0;
+  }
+  .size-select:focus{ outline:none; border-color:var(--oxide); }
   .qty-stepper{ display:inline-flex; align-items:center; border:1px solid var(--line-strong); flex-shrink:0; }
   .qty-btn{ width:26px; height:30px; background:transparent; border:none; color:var(--paper); font-size:0.95rem; cursor:pointer; }
   .qty-btn:hover{ background:var(--oxide); color:var(--bg); }
@@ -417,10 +423,15 @@
         </div>
       </div>
 
-      <div class="shop-card" data-id="tee-wordmark" data-name="Extraction Wordmark" data-meta="Tee · M / L / XL" data-price="7.500">
+      <div class="shop-card" data-id="tee-wordmark" data-name="Extraction Wordmark" data-meta="Tee" data-price="7.500">
         <div class="thumb"><img src="assets/tee-extraction-wordmark.jpg" alt="Extraction wordmark tee"></div>
         <div class="body"><h3>Extraction Wordmark</h3><div class="meta">Tee · M / L / XL</div><div class="price">7.500 KWD</div>
           <div class="cart-controls">
+            <select class="size-select" aria-label="Select size">
+              <option value="M">M</option>
+              <option value="L">L</option>
+              <option value="XL">XL</option>
+            </select>
             <div class="qty-stepper"><button class="qty-btn qty-minus" type="button" aria-label="Decrease quantity">−</button><input class="qty-input" type="number" min="1" max="5" value="1" inputmode="numeric"><button class="qty-btn qty-plus" type="button" aria-label="Increase quantity">+</button></div>
             <button class="add-to-cart-btn" type="button">Add to Cart</button>
           </div>
@@ -755,14 +766,15 @@
   });
 
   document.querySelectorAll(".shop-card[data-id]").forEach(function (card) {
-    var id = card.getAttribute("data-id");
+    var baseId = card.getAttribute("data-id");
     var name = card.getAttribute("data-name");
-    var meta = card.getAttribute("data-meta");
+    var baseMeta = card.getAttribute("data-meta");
     var price = parseFloat(card.getAttribute("data-price"));
     var qtyInput = card.querySelector(".qty-input");
     var minusBtn = card.querySelector(".qty-minus");
     var plusBtn = card.querySelector(".qty-plus");
     var addBtn = card.querySelector(".add-to-cart-btn");
+    var sizeSelect = card.querySelector(".size-select");
     if (!qtyInput || !addBtn) return;
 
     function clampQty() {
@@ -779,6 +791,9 @@
 
     addBtn.addEventListener("click", function () {
       var qty = clampQty();
+      var size = sizeSelect ? sizeSelect.value : null;
+      var id = size ? baseId + "-" + size : baseId;
+      var meta = size ? baseMeta + " · Size " + size : baseMeta;
       if (cart[id]) {
         cart[id].qty = Math.min(MAX_QTY, cart[id].qty + qty);
       } else {
