@@ -1,0 +1,378 @@
+<title>Extraction — Coffee &amp; Grooming Label Stickers (Print-Ready)</title>
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --bg-raise:#F6F1E7;
+    --bg-card:#F0E9DA;
+    --ink:#171410;
+    --ink-dim:#6B5D45;
+    --ink-mute:#7A6E56;
+    --oxide:#C0451D;
+    --oxide-dim:#7A2C12;
+    --line:rgba(23,20,16,0.12);
+    --line-strong:rgba(23,20,16,0.22);
+    --kraft:#D3BE93;
+    --kraft-edge:#BFA778;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{ max-width:900px; margin:0 auto; padding:40px 24px 80px; }
+
+  h1,h2,h3{ font-family:'Oswald',sans-serif; text-transform:uppercase; margin:0; text-wrap:balance; }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+
+  /* ---------- header ---------- */
+  header.cover{
+    border:1px solid var(--line-strong);
+    background:linear-gradient(180deg, var(--bg-raise), var(--bg));
+    padding:28px 28px 24px;
+    position:relative;
+  }
+  .cover-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+  .mark img{ height:52px; width:auto; display:block; }
+  .stamp{
+    font-family:'IBM Plex Mono',monospace; font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--oxide); border:1px solid var(--oxide-dim); padding:5px 10px; border-radius:2px; white-space:nowrap;
+  }
+  h1.doc-title{ font-size:clamp(1.5rem,4vw,2.1rem); letter-spacing:0.02em; color:var(--ink); margin-top:18px; }
+  .doc-sub{ margin-top:8px; color:var(--ink-dim); font-size:0.9rem; max-width:66ch; }
+  .meta-row{ display:flex; flex-wrap:wrap; gap:8px 24px; margin-top:18px; padding-top:14px; border-top:1px solid var(--line); }
+  .meta-item{ font-family:'IBM Plex Mono',monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--ink-mute); }
+  .meta-item b{ display:block; color:var(--ink); font-size:0.74rem; letter-spacing:0.01em; margin-top:2px; }
+
+  /* ---------- sections ---------- */
+  section.block{ margin-top:30px; }
+  .block-head{ display:flex; align-items:baseline; gap:12px; padding:6px 0 4px; border-bottom:1px solid var(--line-strong); }
+  .block-num{ font-family:'IBM Plex Mono',monospace; font-size:0.76rem; color:var(--oxide); flex:none; }
+  h2.block-title{ font-size:1.15rem; letter-spacing:0.01em; color:var(--ink); }
+  .block-note{ color:var(--ink-dim); font-size:0.84rem; margin:10px 0 18px; max-width:70ch; }
+  h3.sub-title{ font-size:0.78rem; letter-spacing:0.08em; color:var(--ink-mute); margin:20px 0 4px; font-family:'IBM Plex Mono',monospace; text-transform:uppercase; }
+  h3.sub-title:first-of-type{ margin-top:4px; }
+
+  /* ---------- sticker sheet ---------- */
+  .sheet{ display:flex; flex-wrap:wrap; align-items:flex-end; gap:0.35in; padding:0.15in 0; }
+
+  .sticker-tile{
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    break-inside:avoid; page-break-inside:avoid;
+  }
+  .size-label{
+    font-family:'IBM Plex Mono',monospace; font-size:0.6rem; letter-spacing:0.06em; text-transform:uppercase;
+    color:var(--ink-mute); text-align:center;
+  }
+  .size-label b{ color:var(--ink); }
+
+  /* square label sticker -- dashed rect = cut guide */
+  .sticker-cut{
+    border:1px dashed var(--line-strong);
+    border-radius:0.05in;
+    padding:0.05in;
+    background:#fff;
+  }
+  .sticker-card{
+    width:100%; height:100%; position:relative; overflow:hidden;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    padding:9% 6%;
+  }
+  .sticker-card.black{ background:#0C0C0A; }
+  .sticker-card.kraft{
+    background:
+      repeating-linear-gradient(135deg, rgba(23,20,16,0.03) 0 2px, transparent 2px 20px),
+      var(--kraft);
+    border:1px solid var(--kraft-edge);
+  }
+
+  .tick{ position:absolute; width:12px; height:12px; border-color:var(--oxide); }
+  .tick.tl{ top:6%; left:6%; border-top:2px solid; border-left:2px solid; }
+  .tick.tr{ top:6%; right:6%; border-top:2px solid; border-right:2px solid; }
+  .tick.bl{ bottom:6%; left:6%; border-bottom:2px solid; border-left:2px solid; }
+  .tick.br{ bottom:6%; right:6%; border-bottom:2px solid; border-right:2px solid; }
+
+  .sticker-card img.compass-mark{ width:14%; height:auto; display:block; margin-bottom:5%; }
+
+  .sticker-brand{
+    font-family:'Oswald',sans-serif; font-weight:700; text-transform:uppercase;
+    letter-spacing:0.01em; line-height:1; white-space:nowrap;
+  }
+  .sticker-card.black .sticker-brand{ color:#F3E9D2; }
+  .sticker-card.kraft .sticker-brand{ color:var(--ink); }
+  .sticker-brand .dot{ display:inline-block; background:var(--oxide); padding:0 0.12em; margin-left:1px; }
+  .sticker-card.black .sticker-brand .dot{ color:#0C0C0A; }
+  .sticker-card.kraft .sticker-brand .dot{ color:var(--kraft); }
+
+  .sticker-product{
+    font-family:'Oswald',sans-serif; font-weight:600; text-transform:uppercase;
+    letter-spacing:0.03em; margin-top:5%;
+  }
+  .sticker-card.black .sticker-product{ color:#F3E9D2; }
+  .sticker-card.kraft .sticker-product{ color:var(--ink); }
+
+  .sticker-tagline{
+    font-family:'IBM Plex Mono',monospace; text-transform:uppercase;
+    letter-spacing:0.06em; margin-top:3%;
+  }
+  .sticker-card.black .sticker-tagline{ color:#B8A98A; }
+  .sticker-card.kraft .sticker-tagline{ color:var(--ink-dim); }
+
+  /* type scale keyed to tile size via inline custom property --sz (in inches) */
+  .sticker-card{ --sz:4; }
+  .sticker-brand{ font-size:calc(var(--sz) * 0.055in); }
+  .sticker-product{ font-size:calc(var(--sz) * 0.0375in); }
+  .sticker-tagline{ font-size:calc(var(--sz) * 0.0175in); }
+
+  .more-incoming{
+    margin-top:4px; padding:12px 14px; background:var(--bg-card); border:1px dashed var(--line-strong); border-radius:3px;
+    font-size:0.78rem; color:var(--ink-dim);
+  }
+  .more-incoming b{ color:var(--ink); }
+
+  /* ---------- footer ---------- */
+  footer.signoff{ margin-top:40px; border:1px solid var(--line-strong); background:var(--bg-raise); padding:22px 26px; border-radius:2px; }
+  .signoff-title{ font-size:0.98rem; color:var(--ink); letter-spacing:0.02em; }
+  .signoff-body{ color:var(--ink-dim); font-size:0.84rem; margin-top:6px; max-width:66ch; }
+  .signoff-row{ display:flex; flex-wrap:wrap; gap:8px 24px; margin-top:16px; padding-top:12px; border-top:1px solid var(--line); }
+
+  .doc-footer{ margin-top:28px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:0.6rem; color:var(--ink-mute); text-transform:uppercase; letter-spacing:0.06em; }
+
+  @media print{
+    .sticker-tile{ break-inside:avoid; }
+    section.block{ break-inside:avoid-page; }
+    footer.signoff{ break-inside:avoid; }
+  }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<div class="wrap">
+
+  <header class="cover">
+    <div class="cover-top">
+      <div class="mark"><img src="assets/logo-lockup-light.png" alt="Extraction — Designate Your Heading"></div>
+      <div class="stamp">Print-ready artwork</div>
+    </div>
+    <h1 class="doc-title">Coffee &amp; Grooming Label Stickers</h1>
+    <p class="doc-sub">The square corner-tick label mark as it actually appears on the Field Roast Coffee bags (black) and the Grooming bottles (kraft-tan) — compass mark, EXTRACTION wordmark, and the heading tagline — laid out as standalone stickers at a few common sizes.</p>
+    <div class="meta-row">
+      <div class="meta-item">Print scale<b>100% — do not "fit to page"</b></div>
+      <div class="meta-item">Recommended stock<b>Adhesive sticker / label paper</b></div>
+      <div class="meta-item">Cut guide<b>Dashed line = cut here</b></div>
+    </div>
+  </header>
+
+  <!-- ================= 01 COFFEE — BLACK LABEL ================= -->
+  <section class="block" id="coffee">
+    <div class="block-head"><span class="block-num">01</span><h2 class="block-title">Field Roast Coffee — Black Label</h2></div>
+    <p class="block-note">The matte-black square label used across the coffee line (Designate Your Heading, Ground · Drip) — same mark, no roast-specific text, so it works as a generic brand sticker for boxes, coolers, or gear.</p>
+
+    <div class="sheet">
+      <div class="sticker-tile">
+        <div class="sticker-cut" style="width:4in;height:4in;">
+          <div class="sticker-card black" style="--sz:4;">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <img class="compass-mark" src="assets/compass-mark.png" alt="">
+            <div class="sticker-brand">EXTRACTION<span class="dot">.</span></div>
+            <div class="sticker-tagline">Designate Your Heading</div>
+          </div>
+        </div>
+        <div class="size-label">4in &times; 4in</div>
+      </div>
+      <div class="sticker-tile">
+        <div class="sticker-cut" style="width:3in;height:3in;">
+          <div class="sticker-card black" style="--sz:3;">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <img class="compass-mark" src="assets/compass-mark.png" alt="">
+            <div class="sticker-brand">EXTRACTION<span class="dot">.</span></div>
+            <div class="sticker-tagline">Designate Your Heading</div>
+          </div>
+        </div>
+        <div class="size-label">3in &times; 3in</div>
+      </div>
+      <div class="sticker-tile">
+        <div class="sticker-cut" style="width:2in;height:2in;">
+          <div class="sticker-card black" style="--sz:2;">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <img class="compass-mark" src="assets/compass-mark.png" alt="">
+            <div class="sticker-brand">EXTRACTION<span class="dot">.</span></div>
+            <div class="sticker-tagline">Designate Your Heading</div>
+          </div>
+        </div>
+        <div class="size-label">2in &times; 2in</div>
+      </div>
+      <div class="sticker-tile">
+        <div class="sticker-cut" style="width:1.5in;height:1.5in;">
+          <div class="sticker-card black" style="--sz:1.5;">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <img class="compass-mark" src="assets/compass-mark.png" alt="">
+            <div class="sticker-brand">EXTRACTION<span class="dot">.</span></div>
+            <div class="sticker-tagline">Designate Your Heading</div>
+          </div>
+        </div>
+        <div class="size-label">1.5in &times; 1.5in</div>
+      </div>
+      <div class="sticker-tile">
+        <div class="sticker-cut" style="width:1in;height:1in;">
+          <div class="sticker-card black" style="--sz:1;">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <img class="compass-mark" src="assets/compass-mark.png" alt="">
+            <div class="sticker-brand">EXTRACTION<span class="dot">.</span></div>
+          </div>
+        </div>
+        <div class="size-label">1in &times; 1in</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 02 GROOMING — KRAFT LABEL ================= -->
+  <section class="block" id="grooming">
+    <div class="block-head"><span class="block-num">02</span><h2 class="block-title">Grooming — Kraft Label</h2></div>
+    <p class="block-note">The kraft-paper square label exactly as it's printed on the Grooming bottles — compass mark, EXTRACTION wordmark, product name, and the heading tagline, matching Beard Wash and Body Wash label-for-label.</p>
+
+    <h3 class="sub-title">Beard Wash</h3>
+    <div class="sheet">
+      <div class="sticker-tile">
+        <div class="sticker-cut" style="width:4in;height:4in;">
+          <div class="sticker-card kraft" style="--sz:4;">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <img class="compass-mark" src="assets/compass-mark.png" alt="">
+            <div class="sticker-brand">EXTRACTION<span class="dot">.</span></div>
+            <div class="sticker-product">Beard Wash</div>
+            <div class="sticker-tagline">Designate Your Heading</div>
+          </div>
+        </div>
+        <div class="size-label">4in &times; 4in</div>
+      </div>
+      <div class="sticker-tile">
+        <div class="sticker-cut" style="width:3in;height:3in;">
+          <div class="sticker-card kraft" style="--sz:3;">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <img class="compass-mark" src="assets/compass-mark.png" alt="">
+            <div class="sticker-brand">EXTRACTION<span class="dot">.</span></div>
+            <div class="sticker-product">Beard Wash</div>
+            <div class="sticker-tagline">Designate Your Heading</div>
+          </div>
+        </div>
+        <div class="size-label">3in &times; 3in</div>
+      </div>
+      <div class="sticker-tile">
+        <div class="sticker-cut" style="width:2in;height:2in;">
+          <div class="sticker-card kraft" style="--sz:2;">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <img class="compass-mark" src="assets/compass-mark.png" alt="">
+            <div class="sticker-brand">EXTRACTION<span class="dot">.</span></div>
+            <div class="sticker-product">Beard Wash</div>
+            <div class="sticker-tagline">Designate Your Heading</div>
+          </div>
+        </div>
+        <div class="size-label">2in &times; 2in</div>
+      </div>
+      <div class="sticker-tile">
+        <div class="sticker-cut" style="width:1.5in;height:1.5in;">
+          <div class="sticker-card kraft" style="--sz:1.5;">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <img class="compass-mark" src="assets/compass-mark.png" alt="">
+            <div class="sticker-brand">EXTRACTION<span class="dot">.</span></div>
+            <div class="sticker-product">Beard Wash</div>
+          </div>
+        </div>
+        <div class="size-label">1.5in &times; 1.5in</div>
+      </div>
+      <div class="sticker-tile">
+        <div class="sticker-cut" style="width:1in;height:1in;">
+          <div class="sticker-card kraft" style="--sz:1;">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <img class="compass-mark" src="assets/compass-mark.png" alt="">
+            <div class="sticker-brand">EXTRACTION<span class="dot">.</span></div>
+          </div>
+        </div>
+        <div class="size-label">1in &times; 1in</div>
+      </div>
+    </div>
+
+    <h3 class="sub-title">Body Wash</h3>
+    <div class="sheet">
+      <div class="sticker-tile">
+        <div class="sticker-cut" style="width:4in;height:4in;">
+          <div class="sticker-card kraft" style="--sz:4;">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <img class="compass-mark" src="assets/compass-mark.png" alt="">
+            <div class="sticker-brand">EXTRACTION<span class="dot">.</span></div>
+            <div class="sticker-product">Body Wash</div>
+            <div class="sticker-tagline">Designate Your Heading</div>
+          </div>
+        </div>
+        <div class="size-label">4in &times; 4in</div>
+      </div>
+      <div class="sticker-tile">
+        <div class="sticker-cut" style="width:3in;height:3in;">
+          <div class="sticker-card kraft" style="--sz:3;">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <img class="compass-mark" src="assets/compass-mark.png" alt="">
+            <div class="sticker-brand">EXTRACTION<span class="dot">.</span></div>
+            <div class="sticker-product">Body Wash</div>
+            <div class="sticker-tagline">Designate Your Heading</div>
+          </div>
+        </div>
+        <div class="size-label">3in &times; 3in</div>
+      </div>
+      <div class="sticker-tile">
+        <div class="sticker-cut" style="width:2in;height:2in;">
+          <div class="sticker-card kraft" style="--sz:2;">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <img class="compass-mark" src="assets/compass-mark.png" alt="">
+            <div class="sticker-brand">EXTRACTION<span class="dot">.</span></div>
+            <div class="sticker-product">Body Wash</div>
+            <div class="sticker-tagline">Designate Your Heading</div>
+          </div>
+        </div>
+        <div class="size-label">2in &times; 2in</div>
+      </div>
+      <div class="sticker-tile">
+        <div class="sticker-cut" style="width:1.5in;height:1.5in;">
+          <div class="sticker-card kraft" style="--sz:1.5;">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <img class="compass-mark" src="assets/compass-mark.png" alt="">
+            <div class="sticker-brand">EXTRACTION<span class="dot">.</span></div>
+            <div class="sticker-product">Body Wash</div>
+          </div>
+        </div>
+        <div class="size-label">1.5in &times; 1.5in</div>
+      </div>
+      <div class="sticker-tile">
+        <div class="sticker-cut" style="width:1in;height:1in;">
+          <div class="sticker-card kraft" style="--sz:1;">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <img class="compass-mark" src="assets/compass-mark.png" alt="">
+            <div class="sticker-brand">EXTRACTION<span class="dot">.</span></div>
+          </div>
+        </div>
+        <div class="size-label">1in &times; 1in</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="signoff">
+    <div class="signoff-title">About This Sheet</div>
+    <p class="signoff-body">All labels are drawn from the same source lockup as the rest of the brand system (see <span class="mono">extraction-logo-stickers.html</span> for the round compass badge and wordmark rectangle). The Coffee sheet stays generic (no roast name) since it's shared across the line; the Grooming sheet is per-product — Beard Wash and Body Wash — label-for-label with what's actually printed on those bottles today.</p>
+    <div class="signoff-row">
+      <div class="meta-item mono">Order / Reserve<b>wa.me/96599992990 (Ops Freq)</b></div>
+      <div class="meta-item mono">Email<b>contact@extraction.fit</b></div>
+    </div>
+  </footer>
+
+  <div class="doc-footer">
+    <span>EXTRACTION // COFFEE &amp; GROOMING LABEL STICKERS</span>
+    <span>NO ONE IS COMING</span>
+  </div>
+
+</div>

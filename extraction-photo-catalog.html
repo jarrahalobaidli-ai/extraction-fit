@@ -1,0 +1,133 @@
+<title>Extraction — Photo Catalog</title>
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --bg-raise:#F6F1E7;
+    --bg-card:#F0E9DA;
+    --ink:#171410;
+    --ink-dim:#6B5D45;
+    --ink-mute:#7A6E56;
+    --oxide:#C0451D;
+    --oxide-dim:#7A2C12;
+    --line:rgba(23,20,16,0.12);
+    --line-strong:rgba(23,20,16,0.22);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{ max-width:900px; margin:0 auto; padding:40px 24px 80px; }
+
+  h1,h2{ font-family:'Oswald',sans-serif; text-transform:uppercase; margin:0; text-wrap:balance; }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+
+  /* ---------- cover ---------- */
+  header.cover{
+    border:1px solid var(--line-strong);
+    background:linear-gradient(180deg, var(--bg-raise), var(--bg));
+    padding:28px 28px 24px;
+  }
+  .cover-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+  .mark .lockup-img{ height:52px; width:auto; display:block; }
+  .stamp{
+    font-family:'IBM Plex Mono',monospace; font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--oxide); border:1px solid var(--oxide-dim); padding:5px 10px; border-radius:2px; white-space:nowrap;
+  }
+  h1.doc-title{ font-size:clamp(1.5rem,4vw,2.1rem); letter-spacing:0.02em; color:var(--ink); margin-top:18px; }
+
+  /* ---------- sections ---------- */
+  section.block{ margin-top:34px; }
+  .block-head{ display:flex; align-items:baseline; gap:12px; padding:6px 0 14px; border-bottom:1px solid var(--line-strong); }
+  .block-num{ font-family:'IBM Plex Mono',monospace; font-size:0.76rem; color:var(--oxide); flex:none; }
+  h2.block-title{ font-size:1.1rem; letter-spacing:0.01em; color:var(--ink); }
+
+  /* ---------- photo grid — images only, no captions ---------- */
+  .grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; margin-top:16px; }
+  .grid.cols-4{ grid-template-columns:repeat(4, 1fr); }
+  .tile{
+    aspect-ratio:1/1; border-radius:3px; overflow:hidden;
+    background:var(--bg-card); border:1px solid var(--line);
+  }
+  .tile img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+  .doc-footer{ margin-top:34px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:0.6rem; color:var(--ink-mute); text-transform:uppercase; letter-spacing:0.06em; }
+
+  @media (max-width:560px){
+    .grid{ grid-template-columns:repeat(2, 1fr); }
+    .grid.cols-4{ grid-template-columns:repeat(2, 1fr); }
+  }
+
+  @media print{
+    section.block{ break-inside:avoid-page; }
+    .tile{ break-inside:avoid; }
+  }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<div class="wrap">
+
+  <header class="cover">
+    <div class="cover-top">
+      <div class="mark"><img class="lockup-img" src="assets/logo-lockup-light.png" alt="Extraction — Designate Your Heading"></div>
+      <div class="stamp">Photo catalog — no copy</div>
+    </div>
+    <h1 class="doc-title">Photo Catalog</h1>
+  </header>
+
+  <!-- ================= 01 CLOTHING ================= -->
+  <section class="block">
+    <div class="block-head"><span class="block-num">01</span><h2 class="block-title">Clothing</h2></div>
+    <div class="grid cols-4">
+      <div class="tile"><img src="assets/hoodie-extraction-wordmark.jpg" alt=""></div>
+      <div class="tile"><img src="assets/tee-extraction-wordmark.jpg" alt=""></div>
+      <div class="tile"><img src="assets/tee-extraction-wordmark-back.jpg" alt=""></div>
+      <div class="tile"><img src="assets/rash-guard-extraction.jpg" alt=""></div>
+      <div class="tile"><img src="assets/mug-extraction-wordmark.jpg" alt=""></div>
+    </div>
+  </section>
+
+  <!-- ================= 02 PATCHES ================= -->
+  <section class="block">
+    <div class="block-head"><span class="block-num">02</span><h2 class="block-title">Patches</h2></div>
+    <div class="grid cols-4">
+      <div class="tile"><img src="assets/patch-extracted.png" alt=""></div>
+      <div class="tile"><img src="assets/patch-disciplined.png" alt=""></div>
+      <div class="tile"><img src="assets/patch-sharpened.png" alt=""></div>
+      <div class="tile"><img src="assets/patch-no-one-is-coming.png" alt=""></div>
+    </div>
+  </section>
+
+  <!-- ================= 03 GROOMING ================= -->
+  <section class="block">
+    <div class="block-head"><span class="block-num">03</span><h2 class="block-title">Grooming</h2></div>
+    <div class="grid">
+      <div class="tile"><img src="assets/beard-wash.jpg" alt=""></div>
+      <div class="tile"><img src="assets/body-wash.jpg" alt=""></div>
+      <div class="tile"><img src="assets/travel-field-kit.jpg" alt=""></div>
+    </div>
+  </section>
+
+  <!-- ================= 04 FIELD ROAST COFFEE ================= -->
+  <section class="block">
+    <div class="block-head"><span class="block-num">04</span><h2 class="block-title">Field Roast Coffee</h2></div>
+    <div class="grid">
+      <div class="tile"><img src="assets/coffee-bag.jpg" alt=""></div>
+      <div class="tile"><img src="assets/coffee-ground-drip.jpg" alt=""></div>
+      <div class="tile"><img src="assets/coffee-field-mug.jpg" alt=""></div>
+    </div>
+  </section>
+
+  <div class="doc-footer">
+    <span>EXTRACTION // PHOTO CATALOG</span>
+    <span>NO ONE IS COMING</span>
+  </div>
+
+</div>

@@ -1,0 +1,410 @@
+<title>Extraction — Quartermaster Catalog</title>
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --bg-raise:#F6F1E7;
+    --bg-card:#F0E9DA;
+    --ink:#171410;
+    --ink-dim:#6B5D45;
+    --ink-mute:#7A6E56;
+    --oxide:#C0451D;
+    --oxide-dim:#7A2C12;
+    --line:rgba(23,20,16,0.12);
+    --line-strong:rgba(23,20,16,0.22);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .grain{
+    position:fixed; inset:0; pointer-events:none; z-index:0; opacity:0.035; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .wrap{ position:relative; z-index:1; max-width:900px; margin:0 auto; padding:56px 24px 100px; }
+
+  h1,h2,h3{ font-family:'Oswald',sans-serif; text-transform:uppercase; margin:0; text-wrap:balance; }
+
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+
+  /* ---------- header / cover block ---------- */
+  header.cover{
+    border:1px solid var(--line-strong);
+    background:linear-gradient(180deg, var(--bg-raise), var(--bg));
+    padding:36px 32px 32px;
+    position:relative;
+    overflow:hidden;
+  }
+  header.cover::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(135deg, rgba(192,69,29,0.05) 0 2px, transparent 2px 34px);
+    pointer-events:none;
+  }
+  .cover-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; position:relative; }
+  .mark{ display:flex; align-items:center; }
+  .mark .lockup-img{ height:76px; width:auto; display:block; }
+  .stamp{
+    font-family:'IBM Plex Mono',monospace; font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--oxide); border:1px solid var(--oxide-dim); padding:5px 10px; border-radius:2px; white-space:nowrap;
+  }
+  h1.doc-title{ font-size:clamp(1.9rem,5vw,2.9rem); letter-spacing:0.02em; color:var(--ink); margin-top:28px; position:relative; }
+  .doc-sub{ margin-top:10px; color:var(--ink-dim); font-size:0.98rem; max-width:58ch; position:relative; }
+  .meta-row{ display:flex; flex-wrap:wrap; gap:10px 28px; margin-top:26px; padding-top:20px; border-top:1px solid var(--line); position:relative; }
+  .meta-item{ font-family:'IBM Plex Mono',monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-mute); }
+  .meta-item b{ display:block; color:var(--ink); font-size:0.82rem; letter-spacing:0.02em; margin-top:3px; }
+
+  /* ---------- table of contents ---------- */
+  nav.toc{ margin-top:28px; display:flex; flex-wrap:wrap; gap:8px; }
+  nav.toc a{
+    font-family:'IBM Plex Mono',monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em;
+    color:var(--ink-dim); text-decoration:none; border:1px solid var(--line); padding:7px 11px; border-radius:2px;
+  }
+  nav.toc a span{ color:var(--oxide); margin-right:6px; }
+
+  /* ---------- sections ---------- */
+  section.block{ margin-top:14px; scroll-margin-top:24px; }
+  .block-head{ display:flex; align-items:baseline; gap:14px; padding:22px 0 6px; border-bottom:1px solid var(--line-strong); }
+  .block-num{ font-family:'IBM Plex Mono',monospace; font-size:0.82rem; color:var(--oxide); flex:none; }
+  h2.block-title{ font-size:clamp(1.15rem,3vw,1.5rem); letter-spacing:0.01em; color:var(--ink); }
+  .block-note{ color:var(--ink-dim); font-size:0.9rem; margin:12px 0 20px; max-width:64ch; }
+
+  /* ---------- product card ---------- */
+  .product{
+    display:grid; grid-template-columns:150px 1fr; gap:20px;
+    padding:22px 0; border-bottom:1px solid var(--line);
+  }
+  .product:last-child{ border-bottom:none; }
+  .product-media{
+    width:150px; height:150px; border-radius:3px; overflow:hidden;
+    background:var(--bg-card); border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; flex:none;
+  }
+  .product-media img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .product-media.no-photo{
+    display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:10px;
+  }
+  .product-media.no-photo .glyph{ font-size:1.6rem; color:var(--oxide-dim); }
+  .product-media.no-photo span.label-sm{
+    font-family:'IBM Plex Mono',monospace; font-size:0.58rem; letter-spacing:0.06em; text-transform:uppercase;
+    color:var(--ink-mute); margin-top:6px;
+  }
+  .product-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  h3.product-name{ font-size:1.05rem; letter-spacing:0.01em; color:var(--ink); }
+  .product-price{ font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:0.92rem; color:var(--oxide); white-space:nowrap; }
+  .product-meta{ font-family:'IBM Plex Mono',monospace; font-size:0.66rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-mute); margin-top:2px; }
+  .product-desc{ color:var(--ink-dim); font-size:0.92rem; margin-top:10px; max-width:64ch; }
+  .product-details{ margin-top:10px; font-size:0.82rem; color:var(--ink-mute); }
+  .product-details b{ color:var(--ink-dim); font-weight:600; }
+  .tag{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:0.6rem; text-transform:uppercase; letter-spacing:0.08em;
+    color:var(--oxide); border:1px solid var(--oxide-dim); border-radius:2px; padding:2px 7px; margin-top:8px;
+  }
+  .tag.soon{ color:var(--ink-mute); border-color:var(--line-strong); }
+
+  .more-incoming{
+    margin-top:6px; padding:14px 16px; background:var(--bg-card); border:1px dashed var(--line-strong); border-radius:3px;
+    font-size:0.82rem; color:var(--ink-dim);
+  }
+  .more-incoming b{ color:var(--ink); }
+
+  /* ---------- bundle cards ---------- */
+  .bundle{
+    background:var(--bg-card); border:1px solid var(--line); border-top:2px solid var(--oxide-dim);
+    border-radius:2px; padding:18px 20px; margin-top:16px;
+  }
+  .bundle.soon{ border-top-color:var(--line-strong); }
+  .bundle-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .bundle-head h3{ font-size:1rem; color:var(--ink); }
+  .bundle-price{ font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:0.9rem; color:var(--oxide); }
+  .bundle-price.tbd{ color:var(--ink-mute); font-weight:500; }
+  .bundle-contains{ font-family:'IBM Plex Mono',monospace; font-size:0.64rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-mute); margin-top:4px; }
+  .bundle p{ color:var(--ink-dim); font-size:0.9rem; margin-top:10px; max-width:64ch; }
+
+  /* ---------- sign-off / footer ---------- */
+  footer.signoff{ margin-top:48px; border:1px solid var(--line-strong); background:var(--bg-raise); padding:28px 32px; border-radius:2px; }
+  .signoff-title{ font-size:1.05rem; color:var(--ink); letter-spacing:0.02em; }
+  .signoff-body{ color:var(--ink-dim); font-size:0.9rem; margin-top:8px; max-width:60ch; }
+  .signoff-row{ display:flex; flex-wrap:wrap; gap:10px 28px; margin-top:20px; padding-top:16px; border-top:1px solid var(--line); }
+
+  .doc-footer{ margin-top:34px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:0.64rem; color:var(--ink-mute); text-transform:uppercase; letter-spacing:0.06em; }
+
+  @media (max-width:560px){
+    .wrap{ padding:32px 16px 80px; }
+    header.cover{ padding:26px 20px 24px; }
+    .product{ grid-template-columns:1fr; }
+    .product-media{ width:100%; height:180px; }
+  }
+
+  @media print{
+    .grain, nav.toc{ display:none; }
+    .product{ break-inside:avoid; }
+    .bundle{ break-inside:avoid; }
+    section.block{ break-inside:avoid-page; }
+    footer.signoff{ break-inside:avoid; }
+  }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<div class="grain"></div>
+<div class="wrap">
+
+  <header class="cover">
+    <div class="cover-top">
+      <div class="mark">
+        <img class="lockup-img" src="assets/logo-lockup-light.png" alt="Extraction — Designate Your Heading">
+      </div>
+      <div class="stamp">Quartermaster copy</div>
+    </div>
+
+    <h1 class="doc-title">Quartermaster Catalog</h1>
+    <p class="doc-sub">Full product descriptions for every item in the Extraction Shop — Clothing, Patches, Grooming, Field Roast Coffee, and the bundles built from them.</p>
+
+    <div class="meta-row">
+      <div class="meta-item">Armory Status<b>Pre-Launch — Concepts Open for Review</b></div>
+      <div class="meta-item">Categories<b>4 lines + 3 bundles</b></div>
+      <div class="meta-item">Ordering<b>Message Ops Freq / contact@extraction.fit</b></div>
+    </div>
+
+    <nav class="toc">
+      <a href="#clothing"><span>01</span>Clothing</a>
+      <a href="#patches"><span>02</span>Patches</a>
+      <a href="#grooming"><span>03</span>Grooming</a>
+      <a href="#coffee"><span>04</span>Field Roast Coffee</a>
+      <a href="#bundles"><span>05</span>Bundles</a>
+    </nav>
+  </header>
+
+  <!-- ================= 01 CLOTHING ================= -->
+  <section class="block" id="clothing">
+    <div class="block-head"><span class="block-num">01</span><h2 class="block-title">Clothing</h2></div>
+    <p class="block-note">The Extraction Wordmark line. Black brand colorway throughout, printed with the full lockup — the compass-heading mark, the EXTRACTION wordmark, and the "Designate Your Heading" line underneath. Sized M / L / XL.</p>
+
+    <div class="product">
+      <div class="product-media"><img src="assets/hoodie-extraction-wordmark.jpg" alt="Extraction Wordmark Hoodie"></div>
+      <div>
+        <div class="product-head"><h3 class="product-name">Extraction Wordmark Hoodie</h3><span class="product-price">13.000 KWD</span></div>
+        <div class="product-meta">Hoodie · M / L / XL</div>
+        <p class="product-desc">A heavyweight pullover hoodie in black, carrying the full wordmark lockup across the chest — drawstring hood, kangaroo pocket, ribbed cuffs and hem. Built to layer over a rash guard on a cold morning row or to wear straight through a debrief; the point of the piece is representing the standard off the training floor as much as on it.</p>
+        <div class="product-details"><b>Sizes:</b> M / L / XL &nbsp;·&nbsp; <b>Colorway:</b> Black / cream / oxide print</div>
+      </div>
+    </div>
+
+    <div class="product">
+      <div class="product-media"><img src="assets/tee-extraction-wordmark.jpg" alt="Extraction Wordmark Tee"></div>
+      <div>
+        <div class="product-head"><h3 class="product-name">Extraction Wordmark Tee</h3><span class="product-price">7.500 KWD</span></div>
+        <div class="product-meta">Tee · M / L / XL</div>
+        <p class="product-desc">The same wordmark lockup as the hoodie, printed clean on a black crew-neck tee — no competing slogans, just the compass mark, EXTRACTION, and the heading line beneath it, sized to read as a statement of identity rather than a billboard. A second, smaller lockup repeats between the shoulder blades on the back, framed in the same corner-tick brackets used across the product line. Built for the days between hoodie weather: training, travel, or just wearing the standard.</p>
+        <div class="product-details"><b>Sizes:</b> M / L / XL &nbsp;·&nbsp; <b>Colorway:</b> Black / cream / oxide print</div>
+      </div>
+    </div>
+
+    <div class="product">
+      <div class="product-media"><img src="assets/rash-guard-extraction.jpg" alt="Extraction Wordmark Rash Guard"></div>
+      <div>
+        <div class="product-head"><h3 class="product-name">Extraction Wordmark Rash Guard</h3><span class="product-price">9.500 KWD</span></div>
+        <div class="product-meta">Rash Guard · M / L / XL</div>
+        <p class="product-desc">A long-sleeve performance rash guard for the sessions where cotton doesn't hold up — grappling, rowing intervals, a sweat-through mace flow. Poly/spandex performance fabric with the wordmark printed at the chest, built to move with you instead of against you.</p>
+        <div class="product-details"><b>Sizes:</b> M / L / XL &nbsp;·&nbsp; <b>Fabric:</b> 80% polyester / 20% spandex performance blend</div>
+      </div>
+    </div>
+
+    <div class="product">
+      <div class="product-media"><img src="assets/mug-extraction-wordmark.jpg" alt="Extraction Wordmark Field Mug"></div>
+      <div>
+        <div class="product-head"><h3 class="product-name">Extraction Wordmark Field Mug</h3><span class="product-price">4.500 KWD</span></div>
+        <div class="product-meta">Field Mug · 11oz</div>
+        <p class="product-desc">A matte-black ceramic mug carrying the compass mark and wordmark — the desk or kitchen-counter version of the brand, for the first coffee of the day before the first rep. Pairs naturally with the Field Roast Coffee line in Section 04.</p>
+        <div class="product-details"><b>Capacity:</b> 11oz &nbsp;·&nbsp; <b>Material:</b> Ceramic</div>
+      </div>
+    </div>
+
+    <div class="more-incoming"><b>+ More incoming:</b> Caps and gloves, sized M / L / XL and colorway-matched to the rest of the line.</div>
+  </section>
+
+  <!-- ================= 02 PATCHES ================= -->
+  <section class="block" id="patches">
+    <div class="block-head"><span class="block-num">02</span><h2 class="block-title">Morale Patches</h2></div>
+    <p class="block-note">4-inch hook-and-loop patches — built to go on a plate carrier, a range bag, or a pack. Each design carries its own piece of the brand's standing message: not quitting, staying disciplined, staying sharp.</p>
+
+    <div class="product">
+      <div class="product-media"><img src="assets/patch-extracted.png" alt="Extracted morale patch"></div>
+      <div>
+        <div class="product-head"><h3 class="product-name">Extracted</h3><span class="product-price">3.500 KWD</span></div>
+        <div class="product-meta">Morale Patch · Circle</div>
+        <p class="product-desc">A crosshair-and-skull design ringed by EXTRACTED in stenciled type — a target reticle framing the idea that the mission is complete, not still in progress. Shorthand for the whole brand: you don't wear this one until you've actually been pulled out of whatever wreckage you started in.</p>
+        <div class="product-details"><b>Size:</b> 4in &nbsp;·&nbsp; <b>Backing:</b> Hook-and-loop</div>
+      </div>
+    </div>
+
+    <div class="product">
+      <div class="product-media"><img src="assets/patch-disciplined.png" alt="Disciplined morale patch"></div>
+      <div>
+        <div class="product-head"><h3 class="product-name">Disciplined</h3><span class="product-price">3.500 KWD</span></div>
+        <div class="product-meta">Morale Patch · Shield</div>
+        <p class="product-desc">A shield-shaped patch — the one break from the circular format in this line — with a skull flanked by crossed rifles beneath the DISCIPLINED arc. Built around the brand's core claim that discipline, not motivation, is what actually gets you out, anchored to a plate carrier or pack the way a unit patch would be.</p>
+        <div class="product-details"><b>Size:</b> 4in &nbsp;·&nbsp; <b>Backing:</b> Hook-and-loop</div>
+      </div>
+    </div>
+
+    <div class="product">
+      <div class="product-media"><img src="assets/patch-sharpened.png" alt="Sharpened morale patch"></div>
+      <div>
+        <div class="product-head"><h3 class="product-name">Sharpened</h3><span class="product-price">3.500 KWD</span></div>
+        <div class="product-meta">Morale Patch · Circle</div>
+        <p class="product-desc">A combat-knife graphic catching light against a circular field, ringed by SHARPENED in the same stenciled type as the rest of the line. The visual shorthand for the idea that standards — like a blade — dull without maintenance and have to be actively kept sharp.</p>
+        <div class="product-details"><b>Size:</b> 4in &nbsp;·&nbsp; <b>Backing:</b> Hook-and-loop</div>
+      </div>
+    </div>
+
+    <div class="product">
+      <div class="product-media"><img src="assets/patch-no-one-is-coming.png" alt="No One Is Coming tab patch"></div>
+      <div>
+        <div class="product-head"><h3 class="product-name">No One Is Coming</h3><span class="product-price">3.500 KWD</span></div>
+        <div class="product-meta">Tab Patch · Rectangle</div>
+        <p class="product-desc">A rectangular tab patch pairing a skull icon with the brand's core line — NO ONE IS COMING / REFUSE TO QUIT — the same phrase that runs through the site's ticker and the 90-Day Protocol's messaging, distilled onto a patch built to go somewhere visible.</p>
+        <div class="product-details"><b>Size:</b> 4in &nbsp;·&nbsp; <b>Backing:</b> Hook-and-loop</div>
+      </div>
+    </div>
+
+    <div class="more-incoming"><b>+ More incoming:</b> 2 more designs per idea above.</div>
+  </section>
+
+  <!-- ================= 03 GROOMING ================= -->
+  <section class="block" id="grooming">
+    <div class="block-head"><span class="block-num">03</span><h2 class="block-title">Grooming</h2></div>
+    <p class="block-note">Organic beard and hygiene products, packaged in amber apothecary-style bottles with kraft-paper compass-mark labels — built for the field, not the medicine cabinet.</p>
+
+    <div class="product">
+      <div class="product-media no-photo"><div class="glyph">◐</div><span class="label-sm">Field Grooming Kit</span></div>
+      <div>
+        <div class="product-head"><h3 class="product-name">Field Grooming Kit</h3><span class="product-price">6.000 KWD</span></div>
+        <div class="product-meta">Beard Oil + Balm · Organic</div>
+        <p class="product-desc">A 2-piece starter kit — organic beard oil and balm — for building a beard routine from zero. Oil conditions and softens; balm holds shape and tames flyaways. The entry point into the grooming line, one step before the full 3-piece Travel Field Kit below.</p>
+        <div class="product-details"><b>Contains:</b> Beard Oil, Beard Balm &nbsp;·&nbsp; <b>Formulation:</b> Organic</div>
+      </div>
+    </div>
+
+    <div class="product">
+      <div class="product-media"><img src="assets/beard-wash.jpg" alt="Extraction Beard Wash"></div>
+      <div>
+        <div class="product-head"><h3 class="product-name">Beard Wash</h3><span class="product-price">5.000 KWD</span></div>
+        <div class="product-meta">Shampoo · Organic</div>
+        <p class="product-desc">An organic beard shampoo in the brand's amber pump bottle, kraft-paper label carrying the compass mark and EXTRACTION wordmark. Built to clean without stripping a beard the way a regular body shampoo would — pairs naturally with the Beard Oil above and the Body Wash below for a complete routine.</p>
+        <div class="product-details"><b>Formulation:</b> Organic &nbsp;·&nbsp; <b>Format:</b> Pump bottle</div>
+      </div>
+    </div>
+
+    <div class="product">
+      <div class="product-media"><img src="assets/body-wash.jpg" alt="Extraction Body Wash"></div>
+      <div>
+        <div class="product-head"><h3 class="product-name">Body Wash</h3><span class="product-price">5.000 KWD</span></div>
+        <div class="product-meta">Organic · All-Over</div>
+        <p class="product-desc">The all-over companion to the Beard Wash — same organic formulation, same amber-bottle packaging — built for one wash routine before or after a session instead of separate products for separate parts of the body.</p>
+        <div class="product-details"><b>Formulation:</b> Organic &nbsp;·&nbsp; <b>Format:</b> Pump bottle</div>
+      </div>
+    </div>
+
+    <div class="product">
+      <div class="product-media"><img src="assets/travel-field-kit.jpg" alt="Extraction Travel Field Kit"></div>
+      <div>
+        <div class="product-head"><h3 class="product-name">Travel Field Kit</h3><span class="product-price">9.000 KWD</span></div>
+        <div class="product-meta">Beard Wash + Body Wash + Beard Oil</div>
+        <p class="product-desc">The full 3-piece grooming routine in travel-size bottles, packed into an olive-drab canvas pouch with an oxide zipper and a leather EXTRACTION patch on the flap. Built to go in a gym bag or a carry-on without the footprint of the full-size bottles — the kit to buy instead of the three products separately once the routine is dialed in.</p>
+        <div class="product-details"><b>Contains:</b> Beard Wash, Body Wash, Beard Oil (travel size) &nbsp;·&nbsp; <b>Case:</b> Canvas zip pouch</div>
+        <span class="tag">Bundle</span>
+      </div>
+    </div>
+
+    <div class="more-incoming"><b>+ More incoming:</b> 2 more designs for this line, all organic and community-hygiene focused.</div>
+  </section>
+
+  <!-- ================= 04 COFFEE ================= -->
+  <section class="block" id="coffee">
+    <div class="block-head"><span class="block-num">04</span><h2 class="block-title">Field Roast Coffee</h2></div>
+    <p class="block-note">Small-batch coffee, roasted for early wake-ups and long days — the same brand standard applied to a different mission. All bags 12oz, matte-black packaging with the compass mark.</p>
+
+    <div class="product">
+      <div class="product-media"><img src="assets/coffee-bag.jpg" alt="Designate Your Heading coffee bag"></div>
+      <div>
+        <div class="product-head"><h3 class="product-name">Designate Your Heading</h3><span class="product-price">6.000 KWD</span></div>
+        <div class="product-meta">Whole Bean · 12oz Bag</div>
+        <p class="product-desc">The flagship roast, named for the same line that opens the 90-Day Protocol's first phase — coffee built for the same early wake-ups the program asks of you. Whole bean, resealable 12oz bag, matte-black packaging with the compass mark.</p>
+        <div class="product-details"><b>Grind:</b> Whole bean &nbsp;·&nbsp; <b>Size:</b> 12oz</div>
+      </div>
+    </div>
+
+    <div class="product">
+      <div class="product-media"><img src="assets/coffee-ground-drip.jpg" alt="Ground Drip coffee bag"></div>
+      <div>
+        <div class="product-head"><h3 class="product-name">Ground · Drip</h3><span class="product-price">6.000 KWD</span></div>
+        <div class="product-meta">Ground · 12oz Bag</div>
+        <p class="product-desc">The same roast profile as the flagship bag, pre-ground for drip machines and pour-over filters instead of a grinder — for the mornings where speed matters more than the ritual. Same 12oz bag, same matte-black packaging.</p>
+        <div class="product-details"><b>Grind:</b> Ground (drip) &nbsp;·&nbsp; <b>Size:</b> 12oz</div>
+      </div>
+    </div>
+
+    <div class="product">
+      <div class="product-media"><img src="assets/coffee-field-mug.jpg" alt="Extraction Field Mug"></div>
+      <div>
+        <div class="product-head"><h3 class="product-name">Field Mug</h3><span class="product-price">7.000 KWD</span></div>
+        <div class="product-meta">Insulated Steel · 15oz</div>
+        <p class="product-desc">A 15oz insulated steel field mug built on a Yeti mug blank — double-wall vacuum insulation, locking lid, full-loop handle — engraved with the compass mark and wordmark in place of the stock branding. Built to keep coffee hot through a drive or a cold morning row, not just look good on a desk. This is the coffee line's own mug, separate from the ceramic Extraction Wordmark Field Mug in the Clothing section.</p>
+        <div class="product-details"><b>Capacity:</b> 15oz &nbsp;·&nbsp; <b>Material:</b> Insulated steel</div>
+      </div>
+    </div>
+
+    <div class="more-incoming"><b>+ More incoming:</b> Espresso and Decaf roasts, plus a Coffee + Mug bundle once the armory opens — see Section 05.</div>
+  </section>
+
+  <!-- ================= 05 BUNDLES ================= -->
+  <section class="block" id="bundles">
+    <div class="block-head"><span class="block-num">05</span><h2 class="block-title">Bundles</h2></div>
+    <p class="block-note">The shop's multi-item sets, pulled together here for a straight comparison. Two are live today inside the Grooming line; the third is announced but not yet available.</p>
+
+    <div class="bundle">
+      <div class="bundle-head"><h3>Field Grooming Kit — 2-in-1</h3><span class="bundle-price">6.000 KWD</span></div>
+      <div class="bundle-contains">Beard Oil + Beard Balm</div>
+      <p>The smallest bundle in the shop and the right starting point for a first-time beard routine — oil to condition, balm to hold shape. Full write-up in Section 03 · Grooming.</p>
+    </div>
+
+    <div class="bundle">
+      <div class="bundle-head"><h3>Travel Field Kit — 3-in-1</h3><span class="bundle-price">9.000 KWD</span></div>
+      <div class="bundle-contains">Beard Wash + Body Wash + Beard Oil, travel size, canvas pouch</div>
+      <p>The complete grooming routine in travel-size bottles, packed into a branded canvas pouch — the step up once you already know you want all three products together. Full write-up in Section 03 · Grooming.</p>
+    </div>
+
+    <div class="bundle soon">
+      <div class="bundle-head"><h3>Coffee + Mug Bundle</h3><span class="bundle-price tbd">Pricing TBD</span></div>
+      <div class="bundle-contains">A Field Roast coffee bag + the insulated steel Field Mug</div>
+      <p>Announced but not yet available — pairs a bag from Section 04 · Field Roast Coffee with the insulated Field Mug, releasing once the armory opens alongside the Espresso and Decaf roasts.</p>
+      <span class="tag soon">Coming Soon</span>
+    </div>
+  </section>
+
+  <footer class="signoff">
+    <div class="signoff-title">Armory Not Yet Open</div>
+    <p class="signoff-body">The Extraction Shop is pre-launch — the 90-Day Protocol is the only item that ships instantly today. Everything above is a confirmed concept, open for review, with checkout still being wired up.</p>
+    <div class="signoff-row">
+      <div class="meta-item mono">Order / Reserve<b>wa.me/96599992990 (Ops Freq)</b></div>
+      <div class="meta-item mono">Email<b>contact@extraction.fit</b></div>
+    </div>
+  </footer>
+
+  <div class="doc-footer">
+    <span>EXTRACTION // QUARTERMASTER CATALOG</span>
+    <span>NO ONE IS COMING</span>
+  </div>
+
+</div>

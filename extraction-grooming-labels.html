@@ -1,0 +1,321 @@
+<title>Extraction — Grooming Label Sheet (Print-Ready)</title>
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --bg-raise:#F6F1E7;
+    --bg-card:#F0E9DA;
+    --ink:#171410;
+    --ink-dim:#6B5D45;
+    --ink-mute:#7A6E56;
+    --oxide:#C0451D;
+    --oxide-dim:#7A2C12;
+    --line:rgba(23,20,16,0.12);
+    --line-strong:rgba(23,20,16,0.22);
+    --kraft:#D3BE93;
+    --kraft-edge:#BFA778;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{ max-width:900px; margin:0 auto; padding:40px 24px 80px; }
+
+  h1,h2,h3{ font-family:'Oswald',sans-serif; text-transform:uppercase; margin:0; text-wrap:balance; }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+
+  /* ---------- header ---------- */
+  header.cover{
+    border:1px solid var(--line-strong);
+    background:linear-gradient(180deg, var(--bg-raise), var(--bg));
+    padding:28px 28px 24px;
+    position:relative;
+  }
+  .cover-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+  .mark img{ height:52px; width:auto; display:block; }
+  .stamp{
+    font-family:'IBM Plex Mono',monospace; font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--oxide); border:1px solid var(--oxide-dim); padding:5px 10px; border-radius:2px; white-space:nowrap;
+  }
+  h1.doc-title{ font-size:clamp(1.5rem,4vw,2.1rem); letter-spacing:0.02em; color:var(--ink); margin-top:18px; }
+  .doc-sub{ margin-top:8px; color:var(--ink-dim); font-size:0.9rem; max-width:66ch; }
+  .meta-row{ display:flex; flex-wrap:wrap; gap:8px 24px; margin-top:18px; padding-top:14px; border-top:1px solid var(--line); }
+  .meta-item{ font-family:'IBM Plex Mono',monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--ink-mute); }
+  .meta-item b{ display:block; color:var(--ink); font-size:0.74rem; letter-spacing:0.01em; margin-top:2px; }
+
+  /* ---------- sections ---------- */
+  section.block{ margin-top:30px; }
+  .block-head{ display:flex; align-items:baseline; gap:12px; padding:6px 0 4px; border-bottom:1px solid var(--line-strong); }
+  .block-num{ font-family:'IBM Plex Mono',monospace; font-size:0.76rem; color:var(--oxide); flex:none; }
+  h2.block-title{ font-size:1.15rem; letter-spacing:0.01em; color:var(--ink); }
+  .block-note{ color:var(--ink-dim); font-size:0.84rem; margin:10px 0 18px; max-width:70ch; }
+
+  /* ---------- label sheet ---------- */
+  .sheet{ display:flex; flex-wrap:wrap; align-items:flex-end; gap:0.35in; padding:0.15in 0; }
+
+  .label-tile{
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    break-inside:avoid; page-break-inside:avoid;
+  }
+  .size-label{
+    font-family:'IBM Plex Mono',monospace; font-size:0.6rem; letter-spacing:0.06em; text-transform:uppercase;
+    color:var(--ink-mute); text-align:center;
+  }
+  .size-label b{ color:var(--ink); }
+
+  /* the kraft label card itself -- dashed rect = cut guide */
+  .label-cut{
+    border:1px dashed var(--line-strong);
+    border-radius:0.05in;
+    padding:0.05in;
+    background:#fff;
+  }
+  .label-card{
+    width:100%; height:100%; position:relative; overflow:hidden;
+    background:
+      repeating-linear-gradient(135deg, rgba(23,20,16,0.03) 0 2px, transparent 2px 20px),
+      var(--kraft);
+    border:1px solid var(--kraft-edge);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    padding:8% 6%;
+  }
+
+  .tick{ position:absolute; width:11px; height:11px; border-color:var(--oxide); }
+  .tick.tl{ top:6%; left:6%; border-top:2px solid; border-left:2px solid; }
+  .tick.tr{ top:6%; right:6%; border-top:2px solid; border-right:2px solid; }
+  .tick.bl{ bottom:6%; left:6%; border-bottom:2px solid; border-left:2px solid; }
+  .tick.br{ bottom:6%; right:6%; border-bottom:2px solid; border-right:2px solid; }
+
+  .compass-glyph{ width:0.22in; height:0.22in; position:relative; flex:none; margin-bottom:4%; }
+  .compass-glyph::before, .compass-glyph::after{
+    content:""; position:absolute; inset:0; background:var(--ink);
+    clip-path:polygon(50% 0%,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0% 50%,39% 39%);
+  }
+  .compass-glyph::after{ transform:rotate(22.5deg); opacity:0.55; }
+
+  .label-brand{
+    font-family:'Oswald',sans-serif; font-weight:700; text-transform:uppercase;
+    color:var(--ink); letter-spacing:0.01em; line-height:1; white-space:nowrap;
+  }
+  .label-brand .dot{ display:inline-block; background:var(--oxide); color:var(--kraft); padding:0 0.12em; margin-left:1px; }
+
+  .label-product{
+    font-family:'Oswald',sans-serif; font-weight:600; text-transform:uppercase;
+    color:var(--ink); letter-spacing:0.03em; margin-top:6%;
+  }
+  .label-tagline{
+    font-family:'IBM Plex Mono',monospace; text-transform:uppercase;
+    color:var(--ink-dim); letter-spacing:0.06em; margin-top:2%;
+  }
+
+  /* full-size label type scale */
+  .label-card.full .label-brand{ font-size:0.22in; }
+  .label-card.full .label-product{ font-size:0.15in; }
+  .label-card.full .label-tagline{ font-size:0.07in; }
+
+  /* travel mini label type scale */
+  .label-card.mini{ padding:10% 8%; }
+  .label-card.mini .compass-glyph{ width:0.12in; height:0.12in; margin-bottom:6%; }
+  .label-card.mini .label-brand{ font-size:0.1in; }
+  .label-card.mini .label-product{ font-size:0.095in; margin-top:8%; }
+  .label-card.mini .tick{ width:6px; height:6px; }
+
+  .more-incoming{
+    margin-top:4px; padding:12px 14px; background:var(--bg-card); border:1px dashed var(--line-strong); border-radius:3px;
+    font-size:0.78rem; color:var(--ink-dim);
+  }
+  .more-incoming b{ color:var(--ink); }
+
+  /* ---------- footer ---------- */
+  footer.signoff{ margin-top:40px; border:1px solid var(--line-strong); background:var(--bg-raise); padding:22px 26px; border-radius:2px; }
+  .signoff-title{ font-size:0.98rem; color:var(--ink); letter-spacing:0.02em; }
+  .signoff-body{ color:var(--ink-dim); font-size:0.84rem; margin-top:6px; max-width:68ch; }
+  .signoff-row{ display:flex; flex-wrap:wrap; gap:8px 24px; margin-top:16px; padding-top:12px; border-top:1px solid var(--line); }
+
+  .doc-footer{ margin-top:28px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:0.6rem; color:var(--ink-mute); text-transform:uppercase; letter-spacing:0.06em; }
+
+  @media print{
+    .label-tile{ break-inside:avoid; }
+    section.block{ break-inside:avoid-page; }
+    footer.signoff{ break-inside:avoid; }
+  }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<div class="wrap">
+
+  <header class="cover">
+    <div class="cover-top">
+      <div class="mark"><img src="assets/logo-lockup-light.png" alt="Extraction — Designate Your Heading"></div>
+      <div class="stamp">Print-ready artwork</div>
+    </div>
+    <h1 class="doc-title">Grooming Label Sheet</h1>
+    <p class="doc-sub">The kraft-paper label design already used on the Beard Wash and Body Wash bottle photography, extended to cover the two products that were still missing artwork — Beard Oil and Beard Balm — plus the travel-size mini labels for the Travel Field Kit. Same corner-tick + compass + wordmark layout throughout, so the whole grooming line reads as one family on the shelf.</p>
+    <div class="meta-row">
+      <div class="meta-item">Print scale<b>100% — do not "fit to page"</b></div>
+      <div class="meta-item">Recommended stock<b>Waterproof adhesive label paper</b></div>
+      <div class="meta-item">Cut guide<b>Dashed line = cut here</b></div>
+    </div>
+  </header>
+
+  <!-- ================= 01 FULL-SIZE LABELS ================= -->
+  <section class="block" id="full-size">
+    <div class="block-head"><span class="block-num">01</span><h2 class="block-title">Full-Size Bottle Labels</h2></div>
+    <p class="block-note">Sized for the same amber apothecary-style bottle used across the line (~2.5in &times; 3.75in wraparound label). Treat this as a starting size, not a locked spec — resize to match whatever bottle the private-label cosmetics vendor ships once that's picked (see the vendor research doc: beard care hasn't been placed with a manufacturer yet).</p>
+
+    <div class="sheet">
+      <div class="label-tile">
+        <div class="label-cut" style="width:2.5in;height:3.75in;">
+          <div class="label-card full">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <div class="compass-glyph"></div>
+            <div class="label-brand">EXTRACTION<span class="dot">.</span></div>
+            <div class="label-product">Beard Oil</div>
+            <div class="label-tagline">Designate Your Heading</div>
+          </div>
+        </div>
+        <div class="size-label">Beard Oil &middot; <b>2.5in &times; 3.75in</b></div>
+      </div>
+
+      <div class="label-tile">
+        <div class="label-cut" style="width:2.5in;height:3.75in;">
+          <div class="label-card full">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <div class="compass-glyph"></div>
+            <div class="label-brand">EXTRACTION<span class="dot">.</span></div>
+            <div class="label-product">Beard Balm</div>
+            <div class="label-tagline">Designate Your Heading</div>
+          </div>
+        </div>
+        <div class="size-label">Beard Balm &middot; <b>2.5in &times; 3.75in</b></div>
+      </div>
+
+      <div class="label-tile">
+        <div class="label-cut" style="width:2.5in;height:3.75in;">
+          <div class="label-card full">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <div class="compass-glyph"></div>
+            <div class="label-brand">EXTRACTION<span class="dot">.</span></div>
+            <div class="label-product">Beard Wash</div>
+            <div class="label-tagline">Designate Your Heading</div>
+          </div>
+        </div>
+        <div class="size-label">Beard Wash &middot; <b>2.5in &times; 3.75in</b></div>
+      </div>
+
+      <div class="label-tile">
+        <div class="label-cut" style="width:2.5in;height:3.75in;">
+          <div class="label-card full">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <div class="compass-glyph"></div>
+            <div class="label-brand">EXTRACTION<span class="dot">.</span></div>
+            <div class="label-product">Body Wash</div>
+            <div class="label-tagline">Designate Your Heading</div>
+          </div>
+        </div>
+        <div class="size-label">Body Wash &middot; <b>2.5in &times; 3.75in</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 02 TRAVEL MINI LABELS ================= -->
+  <section class="block" id="travel-mini">
+    <div class="block-head"><span class="block-num">02</span><h2 class="block-title">Travel Field Kit — Mini Labels</h2></div>
+    <p class="block-note">The small pill-shaped labels for the travel-size bottles in the 3-in-1 Travel Field Kit — same three products as the live bundle (Beard Wash, Body Wash, Beard Oil), condensed to fit the smaller bottle. Two of each here to fill a sheet; a print shop will nest as many as the sheet fits.</p>
+
+    <div class="sheet">
+      <div class="label-tile">
+        <div class="label-cut" style="width:1.6in;height:1in;">
+          <div class="label-card mini">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <div class="compass-glyph"></div>
+            <div class="label-brand">EXTRACTION<span class="dot">.</span></div>
+            <div class="label-product">Beard Wash</div>
+          </div>
+        </div>
+        <div class="size-label">1.6in &times; 1in</div>
+      </div>
+      <div class="label-tile">
+        <div class="label-cut" style="width:1.6in;height:1in;">
+          <div class="label-card mini">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <div class="compass-glyph"></div>
+            <div class="label-brand">EXTRACTION<span class="dot">.</span></div>
+            <div class="label-product">Beard Wash</div>
+          </div>
+        </div>
+        <div class="size-label">1.6in &times; 1in</div>
+      </div>
+      <div class="label-tile">
+        <div class="label-cut" style="width:1.6in;height:1in;">
+          <div class="label-card mini">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <div class="compass-glyph"></div>
+            <div class="label-brand">EXTRACTION<span class="dot">.</span></div>
+            <div class="label-product">Body Wash</div>
+          </div>
+        </div>
+        <div class="size-label">1.6in &times; 1in</div>
+      </div>
+      <div class="label-tile">
+        <div class="label-cut" style="width:1.6in;height:1in;">
+          <div class="label-card mini">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <div class="compass-glyph"></div>
+            <div class="label-brand">EXTRACTION<span class="dot">.</span></div>
+            <div class="label-product">Body Wash</div>
+          </div>
+        </div>
+        <div class="size-label">1.6in &times; 1in</div>
+      </div>
+      <div class="label-tile">
+        <div class="label-cut" style="width:1.6in;height:1in;">
+          <div class="label-card mini">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <div class="compass-glyph"></div>
+            <div class="label-brand">EXTRACTION<span class="dot">.</span></div>
+            <div class="label-product">Beard Oil</div>
+          </div>
+        </div>
+        <div class="size-label">1.6in &times; 1in</div>
+      </div>
+      <div class="label-tile">
+        <div class="label-cut" style="width:1.6in;height:1in;">
+          <div class="label-card mini">
+            <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+            <div class="compass-glyph"></div>
+            <div class="label-brand">EXTRACTION<span class="dot">.</span></div>
+            <div class="label-product">Beard Oil</div>
+          </div>
+        </div>
+        <div class="size-label">1.6in &times; 1in</div>
+      </div>
+    </div>
+
+    <div class="more-incoming"><b>Field Grooming Kit box/pouch label:</b> not included here — that's a 2-piece Oil + Balm kit sold in its own small box or pouch (per the shop catalog), which needs a packaging mockup rather than a bottle label once that container is chosen.</div>
+  </section>
+
+  <footer class="signoff">
+    <div class="signoff-title">Before This Goes to a Printer</div>
+    <p class="signoff-body">These labels are placeholder-accurate to the brand system (kraft ground, corner ticks, compass mark, wordmark, tagline) but not yet tied to a confirmed bottle SKU — beard care is still an unplaced private-label order (see the merch fulfillment vendor research). Once a manufacturer and bottle size are locked in, resize these to their exact label template before ordering a print run.</p>
+    <div class="signoff-row">
+      <div class="meta-item mono">Order / Reserve<b>wa.me/96599992990 (Ops Freq)</b></div>
+      <div class="meta-item mono">Email<b>contact@extraction.fit</b></div>
+    </div>
+  </footer>
+
+  <div class="doc-footer">
+    <span>EXTRACTION // GROOMING LABEL SHEET</span>
+    <span>NO ONE IS COMING</span>
+  </div>
+
+</div>

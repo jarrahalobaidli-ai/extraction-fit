@@ -1,0 +1,204 @@
+<title>Extraction — Logo Sticker Sheet (Print-Ready)</title>
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --bg-raise:#F6F1E7;
+    --bg-card:#F0E9DA;
+    --ink:#171410;
+    --ink-dim:#6B5D45;
+    --ink-mute:#7A6E56;
+    --oxide:#C0451D;
+    --oxide-dim:#7A2C12;
+    --line:rgba(23,20,16,0.12);
+    --line-strong:rgba(23,20,16,0.22);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{ max-width:900px; margin:0 auto; padding:40px 24px 80px; }
+
+  h1,h2,h3{ font-family:'Oswald',sans-serif; text-transform:uppercase; margin:0; text-wrap:balance; }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+
+  /* ---------- header ---------- */
+  header.cover{
+    border:1px solid var(--line-strong);
+    background:linear-gradient(180deg, var(--bg-raise), var(--bg));
+    padding:28px 28px 24px;
+    position:relative;
+  }
+  .cover-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+  .mark img{ height:52px; width:auto; display:block; }
+  .stamp{
+    font-family:'IBM Plex Mono',monospace; font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--oxide); border:1px solid var(--oxide-dim); padding:5px 10px; border-radius:2px; white-space:nowrap;
+  }
+  h1.doc-title{ font-size:clamp(1.5rem,4vw,2.1rem); letter-spacing:0.02em; color:var(--ink); margin-top:18px; }
+  .doc-sub{ margin-top:8px; color:var(--ink-dim); font-size:0.9rem; max-width:64ch; }
+  .meta-row{ display:flex; flex-wrap:wrap; gap:8px 24px; margin-top:18px; padding-top:14px; border-top:1px solid var(--line); }
+  .meta-item{ font-family:'IBM Plex Mono',monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--ink-mute); }
+  .meta-item b{ display:block; color:var(--ink); font-size:0.74rem; letter-spacing:0.01em; margin-top:2px; }
+
+  /* ---------- sections ---------- */
+  section.block{ margin-top:30px; }
+  .block-head{ display:flex; align-items:baseline; gap:12px; padding:6px 0 4px; border-bottom:1px solid var(--line-strong); }
+  .block-num{ font-family:'IBM Plex Mono',monospace; font-size:0.76rem; color:var(--oxide); flex:none; }
+  h2.block-title{ font-size:1.15rem; letter-spacing:0.01em; color:var(--ink); }
+  .block-note{ color:var(--ink-dim); font-size:0.84rem; margin:10px 0 18px; max-width:68ch; }
+
+  /* ---------- sticker sheet ---------- */
+  .sheet{ display:flex; flex-wrap:wrap; align-items:flex-end; gap:0.3in; padding:0.15in 0; }
+
+  .sticker-tile{
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    break-inside:avoid; page-break-inside:avoid;
+  }
+  .size-label{
+    font-family:'IBM Plex Mono',monospace; font-size:0.6rem; letter-spacing:0.06em; text-transform:uppercase;
+    color:var(--ink-mute);
+  }
+  .size-label b{ color:var(--ink); }
+
+  /* circular badge sticker — cut guide is the dashed ring itself */
+  .badge-cut{
+    border-radius:50%;
+    border:1px dashed var(--line-strong);
+    padding:0.05in;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .badge-cut img{ display:block; width:100%; height:100%; border-radius:50%; }
+
+  /* rectangular wordmark sticker — dark card + dashed rect cut guide */
+  .rect-cut{
+    border:1px dashed var(--line-strong);
+    border-radius:0.08in;
+    padding:0.06in;
+    background:#fff;
+  }
+  .rect-card{
+    width:100%; height:100%; background:#0C0C0A; border-radius:0.04in;
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+  }
+  .rect-card img{ width:82%; height:auto; display:block; }
+
+  .rect-card.light{ background:var(--bg-card); }
+
+  .more-incoming{
+    margin-top:4px; padding:12px 14px; background:var(--bg-card); border:1px dashed var(--line-strong); border-radius:3px;
+    font-size:0.78rem; color:var(--ink-dim);
+  }
+  .more-incoming b{ color:var(--ink); }
+
+  /* ---------- footer ---------- */
+  footer.signoff{ margin-top:40px; border:1px solid var(--line-strong); background:var(--bg-raise); padding:22px 26px; border-radius:2px; }
+  .signoff-title{ font-size:0.98rem; color:var(--ink); letter-spacing:0.02em; }
+  .signoff-body{ color:var(--ink-dim); font-size:0.84rem; margin-top:6px; max-width:66ch; }
+  .signoff-row{ display:flex; flex-wrap:wrap; gap:8px 24px; margin-top:16px; padding-top:12px; border-top:1px solid var(--line); }
+
+  .doc-footer{ margin-top:28px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:0.6rem; color:var(--ink-mute); text-transform:uppercase; letter-spacing:0.06em; }
+
+  @media print{
+    .sticker-tile{ break-inside:avoid; }
+    section.block{ break-inside:avoid-page; }
+    footer.signoff{ break-inside:avoid; }
+  }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<div class="wrap">
+
+  <header class="cover">
+    <div class="cover-top">
+      <div class="mark"><img src="assets/logo-lockup-light.png" alt="Extraction — Designate Your Heading"></div>
+      <div class="stamp">Print-ready artwork</div>
+    </div>
+    <h1 class="doc-title">Logo Sticker Sheet</h1>
+    <p class="doc-sub">The compass badge and wordmark lockup, laid out at a few common sticker sizes for reference. Every mark here is the same clean vector-style source art used across the site and shop, so it can be resized up or down to any dimension without losing quality — the sizes below are a starting point, not a limit.</p>
+    <div class="meta-row">
+      <div class="meta-item">Print scale<b>100% — do not "fit to page"</b></div>
+      <div class="meta-item">Recommended stock<b>Adhesive sticker / label paper</b></div>
+      <div class="meta-item">Cut guide<b>Dashed line = cut here</b></div>
+    </div>
+  </header>
+
+  <!-- ================= 01 CIRCULAR BADGE ================= -->
+  <section class="block" id="badge">
+    <div class="block-head"><span class="block-num">01</span><h2 class="block-title">Compass Badge — Round</h2></div>
+    <p class="block-note">The full circular badge — compass mark, wordmark, and ring — printed as a single round sticker. Trim along the dashed edge, or send straight to a sticker printer for a clean die-cut circle.</p>
+
+    <div class="sheet">
+      <div class="sticker-tile">
+        <div class="badge-cut" style="width:4in;height:4in;"><img src="assets/logo-circle.png" alt="Extraction compass badge, 4 inch"></div>
+        <div class="size-label">4in round</div>
+      </div>
+      <div class="sticker-tile">
+        <div class="badge-cut" style="width:3in;height:3in;"><img src="assets/logo-circle.png" alt="Extraction compass badge, 3 inch"></div>
+        <div class="size-label">3in round</div>
+      </div>
+      <div class="sticker-tile">
+        <div class="badge-cut" style="width:2in;height:2in;"><img src="assets/logo-circle.png" alt="Extraction compass badge, 2 inch"></div>
+        <div class="size-label">2in round</div>
+      </div>
+      <div class="sticker-tile">
+        <div class="badge-cut" style="width:1.5in;height:1.5in;"><img src="assets/logo-circle.png" alt="Extraction compass badge, 1.5 inch"></div>
+        <div class="size-label">1.5in round</div>
+      </div>
+      <div class="sticker-tile">
+        <div class="badge-cut" style="width:1.5in;height:1.5in;"><img src="assets/logo-circle.png" alt="Extraction compass badge, 1.5 inch"></div>
+        <div class="size-label">1.5in round</div>
+      </div>
+      <div class="sticker-tile">
+        <div class="badge-cut" style="width:1.5in;height:1.5in;"><img src="assets/logo-circle.png" alt="Extraction compass badge, 1.5 inch"></div>
+        <div class="size-label">1.5in round</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 02 WORDMARK LOCKUP ================= -->
+  <section class="block" id="lockup">
+    <div class="block-head"><span class="block-num">02</span><h2 class="block-title">Wordmark Lockup — Rectangle</h2></div>
+    <p class="block-note">The compass-and-wordmark lockup on a black card, sized for a laptop, water bottle, or hard-case. Transparent-background source art underneath, so a print shop can kiss-cut it to the artwork's own silhouette instead of a straight rectangle if preferred.</p>
+
+    <div class="sheet">
+      <div class="sticker-tile">
+        <div class="rect-cut" style="width:4in;height:2.667in;"><div class="rect-card"><img src="assets/logo-rectangle-transparent.png" alt="Extraction wordmark lockup, 4 inch"></div></div>
+        <div class="size-label">4in &times; 2.67in</div>
+      </div>
+      <div class="sticker-tile">
+        <div class="rect-cut" style="width:3in;height:2in;"><div class="rect-card"><img src="assets/logo-rectangle-transparent.png" alt="Extraction wordmark lockup, 3 inch"></div></div>
+        <div class="size-label">3in &times; 2in</div>
+      </div>
+      <div class="sticker-tile">
+        <div class="rect-cut" style="width:2in;height:1.333in;"><div class="rect-card"><img src="assets/logo-rectangle-transparent.png" alt="Extraction wordmark lockup, 2 inch"></div></div>
+        <div class="size-label">2in &times; 1.33in</div>
+      </div>
+    </div>
+
+    <div class="more-incoming"><b>Kraft / light variant:</b> the same lockup is also on file in dark ink for light-colored backgrounds (<span class="mono">logo-lockup-light.png</span>) — swap it in if the sticker is going on tan, cream, or white stock instead of black.</div>
+  </section>
+
+  <footer class="signoff">
+    <div class="signoff-title">Resizing This Sheet</div>
+    <p class="signoff-body">All artwork on this sheet is placed at true print size (a 4in tile prints at exactly 4 inches when this page is printed at 100% scale). To go bigger or smaller than what's shown, the source files — <span class="mono">logo-circle.png</span>, <span class="mono">logo-rectangle-transparent.png</span>, <span class="mono">logo-lockup-light.png</span> — are high-resolution and scale cleanly in any direction; hand them directly to a print shop for a custom size or die-cut run.</p>
+    <div class="signoff-row">
+      <div class="meta-item mono">Order / Reserve<b>wa.me/96599992990 (Ops Freq)</b></div>
+      <div class="meta-item mono">Email<b>contact@extraction.fit</b></div>
+    </div>
+  </footer>
+
+  <div class="doc-footer">
+    <span>EXTRACTION // LOGO STICKER SHEET</span>
+    <span>NO ONE IS COMING</span>
+  </div>
+
+</div>
