@@ -76,6 +76,12 @@
   }
   nav .portal-link:hover{ color: var(--bone); }
   nav .portal-link.is-active{ color: var(--oxide); }
+  @media (max-width:520px){
+    nav{ flex-wrap:wrap; padding:14px 16px; row-gap:10px; }
+    nav .nav-links{ width:100%; justify-content:center; gap:8px 14px; }
+    nav .portal-link{ font-size:0.64rem; }
+    nav .cta-small{ font-size:0.64rem; padding:8px 14px; }
+  }
 
   /* Hero */
   .shop-hero{ padding: 64px 28px 40px; text-align:center; border-bottom:1px solid var(--line); }

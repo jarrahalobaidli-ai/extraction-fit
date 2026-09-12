@@ -107,6 +107,12 @@
     color: var(--tan); text-decoration:none; text-transform:uppercase; transition: color 0.2s ease;
   }
   nav .portal-link:hover{ color: var(--bone); }
+  @media (max-width:520px){
+    nav{ flex-wrap:wrap; padding:14px 16px; row-gap:10px; }
+    nav .nav-links{ width:100%; justify-content:center; gap:8px 14px; }
+    nav .portal-link{ font-size:0.64rem; }
+    nav .cta-small{ font-size:0.64rem; padding:8px 14px; }
+  }
 
   /* Hero */
   .hero{
