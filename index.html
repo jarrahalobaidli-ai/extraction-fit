@@ -107,12 +107,28 @@
     color: var(--tan); text-decoration:none; text-transform:uppercase; transition: color 0.2s ease;
   }
   nav .portal-link:hover{ color: var(--bone); }
+  .lang-switch{ display:flex; gap:3px; background:var(--bg-raise); border:1px solid var(--line-strong); border-radius:20px; padding:3px; }
+  .lang-switch button{
+    background:transparent; border:none; color:var(--tan); font-family:'IBM Plex Mono',monospace;
+    font-size:0.66rem; font-weight:600; letter-spacing:0.04em; padding:5px 10px; border-radius:16px; cursor:pointer;
+  }
+  .lang-switch button.is-active{ background:var(--oxide); color:var(--bg); }
   @media (max-width:520px){
     nav{ flex-wrap:wrap; padding:14px 16px; row-gap:10px; }
     nav .nav-links{ width:100%; justify-content:center; gap:8px 14px; }
     nav .portal-link{ font-size:0.64rem; }
     nav .cta-small{ font-size:0.64rem; padding:8px 14px; }
   }
+
+  /* Arabic reading direction — scoped to text content only; layout containers
+     (nav, grids, fixed/absolute-positioned badges and the floating WhatsApp
+     button) stay put so hand-positioned decorative elements don't mirror. */
+  body.lang-ar :is(p, li, h1, h2, h3, .label, .code, .sub, .dossier-quote, .price-label, .k, .v, .rname, .rrole, .tag){
+    direction: rtl; text-align: right;
+  }
+  body.lang-ar .includes li::before{ margin-right:0; margin-left:10px; }
+  body.lang-ar .dossier-item{ border-left:none; border-right:2px solid var(--oxide); padding:4px 18px 4px 0; }
+  body.lang-ar .phase-note strong, body.lang-ar .roster-note{ direction:rtl; }
 
   /* Hero */
   .hero{
@@ -392,7 +408,7 @@
 <div id="boot-seq" aria-hidden="true"><div id="boot-lines"></div></div>
 <div id="handoff-seq" aria-hidden="true"><div id="handoff-lines"></div></div>
 <div class="hazard"></div>
-<div class="ticker"><div class="ticker-inner">NO ONE IS COMING <span class="dot">•</span> 90 DAYS <span class="dot">•</span> EXTRACTION IS EARNED, NOT GRANTED <span class="dot">•</span> DISCIPLINE EQUALS DISTANCE FROM WRECKAGE <span class="dot">•</span> NO ONE IS COMING <span class="dot">•</span> 90 DAYS <span class="dot">•</span> EXTRACTION IS EARNED, NOT GRANTED <span class="dot">•</span> DISCIPLINE EQUALS DISTANCE FROM WRECKAGE <span class="dot">•</span></div></div>
+<div class="ticker"><div class="ticker-inner" id="ticker-inner"></div></div>
 
 <nav>
   <div class="lockup">
@@ -400,26 +416,27 @@
     <div class="logo">EXTRACT<span>ION</span></div>
   </div>
   <div class="nav-links">
-    <a href="#one-on-one" class="portal-link">1:1 Coaching</a>
-    <a href="#leadership" class="portal-link">Leadership</a>
-    <a href="shop.html" class="portal-link">Shop</a>
-    <a href="portal.html" class="portal-link">Operator Login</a>
-    <a href="intake.html" class="cta-small">Request Extraction</a>
+    <a href="#one-on-one" class="portal-link" data-i18n="nav_coaching">1:1 Coaching</a>
+    <a href="#leadership" class="portal-link" data-i18n="nav_leadership">Leadership</a>
+    <a href="shop.html" class="portal-link" data-i18n="nav_shop">Shop</a>
+    <a href="portal.html" class="portal-link" data-i18n="nav_portal">Operator Login</a>
+    <a href="intake.html" class="cta-small" data-i18n="nav_request">Request Extraction</a>
+    <div class="lang-switch" id="lang-switch"></div>
   </div>
 </nav>
 
 <div class="hero">
   <div class="hero-mark"></div>
   <div class="doc-frame">
-    <div class="stamp"><span>Extraction<br>Authorized</span></div>
+    <div class="stamp"><span data-i18n-html="hero_stamp">Extraction<br>Authorized</span></div>
     <div class="classification">
-      <span class="label">Order No. 90-EXT-01</span>
-      <span class="label">Status: Open Enrollment</span>
+      <span class="label" data-i18n="hero_order">Order No. 90-EXT-01</span>
+      <span class="label" data-i18n="hero_status">Status: Open Enrollment</span>
     </div>
-    <h1>The Extraction<br><span class="accent">Protocol.</span></h1>
-    <p class="sub">You don't need motivation. You need extraction. A 90-day operation to pull yourself out of stagnation and rebuild under a standard — not a slogan.</p>
+    <h1 data-i18n-html="hero_h1">The Extraction<br><span class="accent">Protocol.</span></h1>
+    <p class="sub" data-i18n="hero_sub">You don't need motivation. You need extraction. A 90-day operation to pull yourself out of stagnation and rebuild under a standard — not a slogan.</p>
     <div class="cta-row">
-      <a href="#situation" class="btn-ghost">Read the briefing ↓</a>
+      <a href="#situation" class="btn-ghost" data-i18n="hero_briefing">Read the briefing ↓</a>
     </div>
   </div>
 </div>
@@ -427,138 +444,138 @@
 <section id="one-on-one">
   <div class="wrap" style="display:grid; grid-template-columns:1.15fr 0.85fr; gap:48px; align-items:center;">
     <div class="reveal">
-      <div class="sec-head" style="margin-bottom:24px;"><span class="code">01 / ON TARGET</span><div class="rule"></div></div>
-      <h2 style="font-family:'Anton',sans-serif; font-size:clamp(1.9rem,4.2vw,2.7rem); text-transform:uppercase; line-height:1.05; margin-bottom:18px;">1:1 Coaching.<br><span style="color:var(--oxide);">Built On Your Target.</span></h2>
-      <p style="color:var(--paper-dim); font-size:1.02rem; max-width:520px; margin-bottom:16px;">No off-the-shelf programming. Every 1:1 protocol is built and run around <strong style="color:var(--paper);">you</strong> — the HVA, the High-Value Asset — and the specific target you're training to hit. Your data, your terrain, your mission profile.</p>
-      <p style="color:var(--paper-dim); font-size:1.02rem; max-width:520px; margin-bottom:30px;">Direct access to the Commander. Limited roster, filled on a first-contact basis.</p>
-      <a href="https://wa.me/96599992990?text=Hi%2C%20I%20want%20to%20reserve%20a%201%3A1%20Coaching%20spot." target="_blank" rel="noopener noreferrer" class="btn-primary">Contact TAC-FREQ to Reserve a Spot</a>
+      <div class="sec-head" style="margin-bottom:24px;"><span class="code" data-i18n="sec01_code">01 / ON TARGET</span><div class="rule"></div></div>
+      <h2 style="font-family:'Anton',sans-serif; font-size:clamp(1.9rem,4.2vw,2.7rem); text-transform:uppercase; line-height:1.05; margin-bottom:18px;" data-i18n-html="sec01_h2">1:1 Coaching.<br><span style="color:var(--oxide);">Built On Your Target.</span></h2>
+      <p style="color:var(--paper-dim); font-size:1.02rem; max-width:520px; margin-bottom:16px;" data-i18n-html="sec01_p1">No off-the-shelf programming. Every 1:1 protocol is built and run around <strong style="color:var(--paper);">you</strong> — the HVA, the High-Value Asset — and the specific target you're training to hit. Your data, your terrain, your mission profile.</p>
+      <p style="color:var(--paper-dim); font-size:1.02rem; max-width:520px; margin-bottom:30px;" data-i18n="sec01_p2">Direct access to the Commander. Limited roster, filled on a first-contact basis.</p>
+      <a href="https://wa.me/96599992990?text=Hi%2C%20I%20want%20to%20reserve%20a%201%3A1%20Coaching%20spot." target="_blank" rel="noopener noreferrer" class="btn-primary" data-i18n="sec01_cta">Contact TAC-FREQ to Reserve a Spot</a>
     </div>
     <div class="reveal" style="display:flex; justify-content:center; transition-delay:120ms;">
-      <img src="assets/badge-cadre-access.png" alt="On Target — 1:1 Coaching" style="width:100%; max-width:340px; filter: drop-shadow(0 0 24px rgba(192,69,29,0.28));">
+      <img src="assets/badge-cadre-access.png" alt="On Target — 1:1 Coaching" data-i18n-alt="alt_ontarget" style="width:100%; max-width:340px; filter: drop-shadow(0 0 24px rgba(192,69,29,0.28));">
     </div>
   </div>
 </section>
 
 <section id="situation" class="situation">
   <div class="wrap">
-    <div class="sec-head reveal"><span class="code">02 / SITUATION</span><div class="rule"></div></div>
-    <p class="reveal" style="transition-delay:80ms;"><strong>You're not broken. You're undisciplined by design.</strong> Comfort did that — not weakness. Somewhere between the job, the routine, and the noise, the standard slipped, and no one called it.</p>
-    <p class="reveal" style="transition-delay:160ms;">This isn't a mindset course. It's a recovery operation. Built by a man who was raised in wreckage, flew combat search and rescue, earned three black belts, and rebuilt a family from nothing — because no one was ever coming for him either.</p>
+    <div class="sec-head reveal"><span class="code" data-i18n="sec02_code">02 / SITUATION</span><div class="rule"></div></div>
+    <p class="reveal" style="transition-delay:80ms;" data-i18n-html="sec02_p1"><strong>You're not broken. You're undisciplined by design.</strong> Comfort did that — not weakness. Somewhere between the job, the routine, and the noise, the standard slipped, and no one called it.</p>
+    <p class="reveal" style="transition-delay:160ms;" data-i18n="sec02_p2">This isn't a mindset course. It's a recovery operation. Built by a man who was raised in wreckage, flew combat search and rescue, earned three black belts, and rebuilt a family from nothing — because no one was ever coming for him either.</p>
   </div>
 </section>
 
 <section class="mission">
   <div class="wrap">
-    <div class="sec-head reveal"><span class="code">03 / MISSION</span><div class="rule"></div></div>
-    <p class="reveal" style="color:var(--paper-dim); max-width:640px; margin-bottom:38px; transition-delay:80ms;">Every operation starts with a distress call — Phase 0: MAYDAY, your intake and readiness screening. From there, four phases across thirteen weeks. Each one closes off the exit behind you before the next begins.</p>
+    <div class="sec-head reveal"><span class="code" data-i18n="sec03_code">03 / MISSION</span><div class="rule"></div></div>
+    <p class="reveal" style="color:var(--paper-dim); max-width:640px; margin-bottom:38px; transition-delay:80ms;" data-i18n="sec03_intro">Every operation starts with a distress call — Phase 0: MAYDAY, your intake and readiness screening. From there, four phases across thirteen weeks. Each one closes off the exit behind you before the next begins.</p>
     <div class="phases">
       <div class="phase">
-        <span class="range">WEEKS 01–03</span>
-        <h3>Designate Your Heading</h3>
-        <p>Find your real starting point. Movement quality, foundational strength, and a full habit audit — accurate data, not aspiration.</p>
+        <span class="range" data-i18n="phase1_range">WEEKS 01–03</span>
+        <h3 data-i18n="phase1_h3">Designate Your Heading</h3>
+        <p data-i18n="phase1_p">Find your real starting point. Movement quality, foundational strength, and a full habit audit — accurate data, not aspiration.</p>
       </div>
       <div class="phase">
-        <span class="range">WEEKS 04–07</span>
-        <h3>Golden Hour</h3>
-        <p>Progressive overload begins. Structural strength and work capacity build while the heaviest habit-formation work locks in.</p>
+        <span class="range" data-i18n="phase2_range">WEEKS 04–07</span>
+        <h3 data-i18n="phase2_h3">Golden Hour</h3>
+        <p data-i18n="phase2_p">Progressive overload begins. Structural strength and work capacity build while the heaviest habit-formation work locks in.</p>
       </div>
       <div class="phase">
-        <span class="range">WEEKS 08–11</span>
-        <h3>Hold the Line</h3>
-        <p>The critical window where intervention determines outcome. Peak intensity, hardest mental toughness work, nutrition dialed to goal.</p>
+        <span class="range" data-i18n="phase3_range">WEEKS 08–11</span>
+        <h3 data-i18n="phase3_h3">Hold the Line</h3>
+        <p data-i18n="phase3_p">The critical window where intervention determines outcome. Peak intensity, hardest mental toughness work, nutrition dialed to goal.</p>
       </div>
       <div class="phase">
-        <span class="range">WEEKS 12–13</span>
-        <h3>RTB</h3>
-        <p>Return to Base. Deload, retest benchmarks, lock in the data — and build the sustainment plan most programs never give you.</p>
+        <span class="range" data-i18n="phase4_range">WEEKS 12–13</span>
+        <h3 data-i18n="phase4_h3">RTB</h3>
+        <p data-i18n="phase4_p">Return to Base. Deload, retest benchmarks, lock in the data — and build the sustainment plan most programs never give you.</p>
       </div>
     </div>
-    <p class="phase-note reveal" style="transition-delay:340ms;"><strong>ONGOING —</strong> Graduate and you're not done. Sustained Ops keeps the standard alive with monthly accountability.</p>
+    <p class="phase-note reveal" style="transition-delay:340ms;" data-i18n-html="phase_note"><strong>ONGOING —</strong> Graduate and you're not done. Sustained Ops keeps the standard alive with monthly accountability.</p>
   </div>
 </section>
 
 <section class="dossier">
   <div class="wrap" style="display:grid; grid-template-columns:1fr 1fr; gap:40px;">
     <div class="dossier-col">
-      <div class="sec-head" style="margin-bottom:24px;"><span class="code">04 / SERVICE RECORD</span></div>
-      <div class="dossier-item"><span class="k">Flight Service</span><span class="v">Fighter Pilot · Combat Search &amp; Rescue</span></div>
-      <div class="dossier-item"><span class="k">Martial Arts</span><span class="v">3rd Dan Black Belt</span></div>
-      <div class="dossier-item"><span class="k">Languages</span><span class="v">Trilingual</span></div>
+      <div class="sec-head" style="margin-bottom:24px;"><span class="code" data-i18n="sec04_code">04 / SERVICE RECORD</span></div>
+      <div class="dossier-item"><span class="k" data-i18n="dossier_k1">Flight Service</span><span class="v" data-i18n="dossier_v1">Fighter Pilot · Combat Search &amp; Rescue</span></div>
+      <div class="dossier-item"><span class="k" data-i18n="dossier_k2">Martial Arts</span><span class="v" data-i18n="dossier_v2">3rd Dan Black Belt</span></div>
+      <div class="dossier-item"><span class="k" data-i18n="dossier_k3">Languages</span><span class="v" data-i18n="dossier_v3">Trilingual</span></div>
     </div>
     <div class="dossier-col" style="display:flex; align-items:center; transition-delay:150ms;">
-      <p class="dossier-quote">"I went into other men's worst days to pull them out alive. <span class="oxide">Extraction is the same mission</span> — pointed at you."</p>
+      <p class="dossier-quote" data-i18n-html="dossier_quote">"I went into other men's worst days to pull them out alive. <span class="oxide">Extraction is the same mission</span> — pointed at you."</p>
     </div>
   </div>
 </section>
 
 <section id="offer">
   <div class="wrap">
-    <div class="sec-head reveal"><span class="code">05 / EXECUTION</span><div class="rule"></div></div>
+    <div class="sec-head reveal"><span class="code" data-i18n="sec05_code">05 / EXECUTION</span><div class="rule"></div></div>
     <div class="offer reveal" style="transition-delay:100ms;">
       <div>
-        <span class="price-label">One-time investment</span>
+        <span class="price-label" data-i18n="offer_label">One-time investment</span>
         <div class="price">$97<span class="cents">.00</span></div>
         <ul class="includes">
-          <li>Full 90-day Extraction Protocol — all 4 phases, all 13 weeks</li>
-          <li>Personalized to your training frequency — 3, 4, 5, or 6 days a week</li>
-          <li>Lifetime portal access + a downloadable manual, watermarked to you</li>
-          <li>Every exercise linked to a form-check video</li>
+          <li data-i18n="offer_li1">Full 90-day Extraction Protocol — all 4 phases, all 13 weeks</li>
+          <li data-i18n="offer_li2">Personalized to your training frequency — 3, 4, 5, or 6 days a week</li>
+          <li data-i18n="offer_li3">Lifetime portal access + a downloadable manual, watermarked to you</li>
+          <li data-i18n="offer_li4">Every exercise linked to a form-check video</li>
         </ul>
       </div>
-      <a href="https://wa.me/96599992990?text=Hi%2C%20I%20want%20to%20get%20the%2090-Day%20Extraction%20Protocol%20(%2497)." target="_blank" rel="noopener noreferrer" class="btn-primary">Get The Protocol</a>
+      <a href="https://wa.me/96599992990?text=Hi%2C%20I%20want%20to%20get%20the%2090-Day%20Extraction%20Protocol%20(%2497)." target="_blank" rel="noopener noreferrer" class="btn-primary" data-i18n="offer_cta">Get The Protocol</a>
     </div>
   </div>
 </section>
 
 <section id="cadre-access">
   <div class="wrap">
-    <div class="sec-head reveal"><span class="code">06 / COMMAND STRUCTURE</span><div class="rule"></div></div>
-    <p class="cadre-intro reveal" style="transition-delay:80ms;">A quick familiarization before you go further. The Extraction Protocol isn't one man shouting instructions from the sideline — it's a chain of command built to run it, a roster who executes it, a philosophy that outlasts the 90 days, and a rhythm that keeps you honest after RTB. Discipline gets you out of the wreckage. This is where your compass starts pointing to what comes next.</p>
+    <div class="sec-head reveal"><span class="code" data-i18n="sec06_code">06 / COMMAND STRUCTURE</span><div class="rule"></div></div>
+    <p class="cadre-intro reveal" style="transition-delay:80ms;" data-i18n="sec06_intro">A quick familiarization before you go further. The Extraction Protocol isn't one man shouting instructions from the sideline — it's a chain of command built to run it, a roster who executes it, a philosophy that outlasts the 90 days, and a rhythm that keeps you honest after RTB. Discipline gets you out of the wreckage. This is where your compass starts pointing to what comes next.</p>
     <div class="cadre-grid">
       <div class="cadre-card">
-        <img src="assets/badge-cadre-access.png" alt="On Target — 1:1 Coaching" class="cadre-badge">
-        <span class="tag">Featured</span>
-        <h3>1:1 On Target Coaching</h3>
-        <p>Direct, individualized coaching built around your target — you're the HVA. Limited roster. Contact TAC-FREQ to reserve a spot.</p>
-        <a href="#one-on-one" class="btn-ghost">See the briefing →</a>
+        <img src="assets/badge-cadre-access.png" alt="On Target — 1:1 Coaching" data-i18n-alt="alt_ontarget" class="cadre-badge">
+        <span class="tag" data-i18n="card1_tag">Featured</span>
+        <h3 data-i18n="card1_h3">1:1 On Target Coaching</h3>
+        <p data-i18n="card1_p">Direct, individualized coaching built around your target — you're the HVA. Limited roster. Contact TAC-FREQ to reserve a spot.</p>
+        <a href="#one-on-one" class="btn-ghost" data-i18n="card1_cta">See the briefing →</a>
       </div>
       <div class="cadre-card">
-        <img src="assets/badge-commander-access.jpg" alt="Commander Access — Restricted" class="cadre-badge">
-        <span class="tag">Restricted</span>
-        <h3>Commander Access</h3>
-        <p>The command console — MAYDAY intake, manual assignment, and Operator progress. For the Commander running the Protocol, not for Operators.</p>
-        <a href="dashboard.html" class="btn-ghost">Sign in as Commander →</a>
+        <img src="assets/badge-commander-access.jpg" alt="Commander Access — Restricted" data-i18n-alt="alt_commander" class="cadre-badge">
+        <span class="tag" data-i18n="card2_tag">Restricted</span>
+        <h3 data-i18n="card2_h3">Commander Access</h3>
+        <p data-i18n="card2_p">The command console — MAYDAY intake, manual assignment, and Operator progress. For the Commander running the Protocol, not for Operators.</p>
+        <a href="dashboard.html" class="btn-ghost" data-i18n="card2_cta">Sign in as Commander →</a>
       </div>
       <div class="cadre-card" id="team">
-<img src="assets/badge-team-of-six.jpg" alt="Team of Six — The Roster" class="cadre-badge">
-        <span class="tag">Roster</span>
-        <h3>Team of Six</h3>
-        <p>Six roles, one standard. The Commander built to run intake, coaching, and accountability without a gap — full roster live soon.</p>
+<img src="assets/badge-team-of-six.jpg" alt="Team of Six — The Roster" data-i18n-alt="alt_teamofsix" class="cadre-badge">
+        <span class="tag" data-i18n="card3_tag">Roster</span>
+        <h3 data-i18n="card3_h3">Team of Six</h3>
+        <p data-i18n="card3_p">Six roles, one standard. The Commander built to run intake, coaching, and accountability without a gap — full roster live soon.</p>
       </div>
       <div class="cadre-card" id="leadership">
-        <img src="assets/badge-leadership.jpg" alt="The Commander Program — Leadership" class="cadre-badge">
-        <span class="tag">Philosophy</span>
-        <h3>Leadership</h3>
-        <p>Discipline gets you out of the wreckage. It doesn't tell you what to do once you're standing on solid ground — that's command, and it's earned, not ranked.</p>
+        <img src="assets/badge-leadership.jpg" alt="The Commander Program — Leadership" data-i18n-alt="alt_leadership" class="cadre-badge">
+        <span class="tag" data-i18n="card4_tag">Philosophy</span>
+        <h3 data-i18n="card4_h3">Leadership</h3>
+        <p data-i18n="card4_p">Discipline gets you out of the wreckage. It doesn't tell you what to do once you're standing on solid ground — that's command, and it's earned, not ranked.</p>
       </div>
       <div class="cadre-card" id="events">
-        <img src="assets/badge-events.jpg" alt="Sustained Ops — Monthly" class="cadre-badge">
-        <span class="tag">Coming Soon</span>
-        <h3>Events</h3>
-        <p>Sustained Ops — Monthly musters, in-person and virtual, for graduated Operators to stay sharp after RTB. Details drop soon.</p>
+        <img src="assets/badge-events.jpg" alt="Sustained Ops — Monthly" data-i18n-alt="alt_events" class="cadre-badge">
+        <span class="tag" data-i18n="card5_tag">Coming Soon</span>
+        <h3 data-i18n="card5_h3">Events</h3>
+        <p data-i18n="card5_p">Sustained Ops — Monthly musters, in-person and virtual, for graduated Operators to stay sharp after RTB. Details drop soon.</p>
       </div>
     </div>
 
     <div class="roster-note reveal">
-      <span class="code">TEAM OF SIX // ROSTER — TBD</span>
+      <span class="code" data-i18n="roster_note">TEAM OF SIX // ROSTER — TBD</span>
     </div>
     <div class="roster-grid">
-      <div class="roster-card"><div class="roster-avatar">01</div><div class="rname">Callsign TBD</div><div class="rrole">Role TBD</div></div>
-      <div class="roster-card"><div class="roster-avatar">02</div><div class="rname">Callsign TBD</div><div class="rrole">Role TBD</div></div>
-      <div class="roster-card"><div class="roster-avatar">03</div><div class="rname">Callsign TBD</div><div class="rrole">Role TBD</div></div>
-      <div class="roster-card"><div class="roster-avatar">04</div><div class="rname">Callsign TBD</div><div class="rrole">Role TBD</div></div>
-      <div class="roster-card"><div class="roster-avatar">05</div><div class="rname">Callsign TBD</div><div class="rrole">Role TBD</div></div>
-      <div class="roster-card"><div class="roster-avatar">06</div><div class="rname">Callsign TBD</div><div class="rrole">Role TBD</div></div>
+      <div class="roster-card"><div class="roster-avatar">01</div><div class="rname" data-i18n="roster_callsign">Callsign TBD</div><div class="rrole" data-i18n="roster_role">Role TBD</div></div>
+      <div class="roster-card"><div class="roster-avatar">02</div><div class="rname" data-i18n="roster_callsign">Callsign TBD</div><div class="rrole" data-i18n="roster_role">Role TBD</div></div>
+      <div class="roster-card"><div class="roster-avatar">03</div><div class="rname" data-i18n="roster_callsign">Callsign TBD</div><div class="rrole" data-i18n="roster_role">Role TBD</div></div>
+      <div class="roster-card"><div class="roster-avatar">04</div><div class="rname" data-i18n="roster_callsign">Callsign TBD</div><div class="rrole" data-i18n="roster_role">Role TBD</div></div>
+      <div class="roster-card"><div class="roster-avatar">05</div><div class="rname" data-i18n="roster_callsign">Callsign TBD</div><div class="rrole" data-i18n="roster_role">Role TBD</div></div>
+      <div class="roster-card"><div class="roster-avatar">06</div><div class="rname" data-i18n="roster_callsign">Callsign TBD</div><div class="rrole" data-i18n="roster_role">Role TBD</div></div>
     </div>
   </div>
 </section>
@@ -566,18 +583,207 @@
 <div class="hazard"></div>
 
 <footer>
-  <span class="code">EXTRACTION // FROM MEDIOCRITY // NO ONE IS COMING</span>
+  <span class="code" data-i18n="footer_code">EXTRACTION // FROM MEDIOCRITY // NO ONE IS COMING</span>
   <div style="margin-top:14px;">
     <a href="mailto:contact@extraction.fit" style="color:var(--paper-dim); font-size:0.72rem; letter-spacing:0.08em; text-decoration:none; font-family:'IBM Plex Mono',monospace;">contact@extraction.fit</a>
   </div>
 </footer>
 
-<a class="ops-freq" href="https://wa.me/96599992990?text=Hi%2C%20I%20want%20to%20request%20Extraction." target="_blank" rel="noopener noreferrer" aria-label="Message Extraction on WhatsApp">
+<a class="ops-freq" href="https://wa.me/96599992990?text=Hi%2C%20I%20want%20to%20request%20Extraction." target="_blank" rel="noopener noreferrer" aria-label="Message Extraction on WhatsApp" data-i18n-aria="aria_whatsapp">
   <svg class="ops-freq-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <path d="M16 3C9.373 3 4 8.373 4 15c0 2.53.79 4.877 2.137 6.807L4.6 27.6l5.94-1.556A11.93 11.93 0 0 0 16 27c6.627 0 12-5.373 12-12S22.627 3 16 3Zm0 21.8a9.77 9.77 0 0 1-4.98-1.36l-.357-.212-3.527.924.94-3.436-.232-.353A9.77 9.77 0 0 1 6.2 15C6.2 9.585 10.585 5.2 16 5.2S25.8 9.585 25.8 15 21.415 24.8 16 24.8Zm5.373-7.36c-.294-.147-1.74-.858-2.01-.956-.27-.098-.467-.147-.664.147-.196.294-.76.956-.933 1.152-.171.196-.343.22-.637.073-.294-.147-1.24-.457-2.362-1.457-.873-.779-1.463-1.741-1.635-2.035-.171-.294-.018-.453.129-.6.132-.132.294-.343.441-.514.147-.171.196-.294.294-.49.098-.196.049-.367-.024-.514-.073-.147-.664-1.6-.91-2.192-.24-.577-.484-.499-.664-.508l-.566-.01c-.196 0-.514.073-.784.367-.27.294-1.03 1.007-1.03 2.456s1.054 2.848 1.201 3.045c.147.196 2.075 3.168 5.028 4.44.703.303 1.251.484 1.679.62.705.224 1.347.192 1.854.117.566-.085 1.74-.712 1.985-1.4.245-.688.245-1.278.171-1.4-.073-.123-.269-.196-.563-.343Z" fill="currentColor"/>
   </svg>
-  <span class="ops-freq-label">Ops Freq</span>
+  <span class="ops-freq-label" data-i18n="ops_freq_label">Ops Freq</span>
 </a>
+
+<script>
+(function(){
+  var LANGS = [
+    { code: "en", label: "EN" },
+    { code: "tr", label: "TR" },
+    { code: "ar", label: "AR" },
+  ];
+  var RTL_LANGS = ["ar"];
+
+  var TRANSLATIONS = {
+    en: {
+      nav_coaching: "1:1 Coaching", nav_leadership: "Leadership", nav_shop: "Shop", nav_portal: "Operator Login", nav_request: "Request Extraction",
+      ticker_phrases: ["NO ONE IS COMING", "90 DAYS", "EXTRACTION IS EARNED, NOT GRANTED", "DISCIPLINE EQUALS DISTANCE FROM WRECKAGE"],
+      boot_lines: ["UPLINK ESTABLISHED", "CLEARANCE VERIFIED", "EXTRACTION PROTOCOL — STANDING BY"],
+      hero_stamp: "Extraction<br>Authorized", hero_order: "Order No. 90-EXT-01", hero_status: "Status: Open Enrollment",
+      hero_h1: "The Extraction<br><span class=\"accent\">Protocol.</span>",
+      hero_sub: "You don't need motivation. You need extraction. A 90-day operation to pull yourself out of stagnation and rebuild under a standard — not a slogan.",
+      hero_briefing: "Read the briefing ↓",
+      sec01_code: "01 / ON TARGET",
+      sec01_h2: "1:1 Coaching.<br><span style=\"color:var(--oxide);\">Built On Your Target.</span>",
+      sec01_p1: "No off-the-shelf programming. Every 1:1 protocol is built and run around <strong style=\"color:var(--paper);\">you</strong> — the HVA, the High-Value Asset — and the specific target you're training to hit. Your data, your terrain, your mission profile.",
+      sec01_p2: "Direct access to the Commander. Limited roster, filled on a first-contact basis.",
+      sec01_cta: "Contact TAC-FREQ to Reserve a Spot", alt_ontarget: "On Target — 1:1 Coaching",
+      sec02_code: "02 / SITUATION",
+      sec02_p1: "<strong>You're not broken. You're undisciplined by design.</strong> Comfort did that — not weakness. Somewhere between the job, the routine, and the noise, the standard slipped, and no one called it.",
+      sec02_p2: "This isn't a mindset course. It's a recovery operation. Built by a man who was raised in wreckage, flew combat search and rescue, earned three black belts, and rebuilt a family from nothing — because no one was ever coming for him either.",
+      sec03_code: "03 / MISSION",
+      sec03_intro: "Every operation starts with a distress call — Phase 0: MAYDAY, your intake and readiness screening. From there, four phases across thirteen weeks. Each one closes off the exit behind you before the next begins.",
+      phase1_range: "WEEKS 01–03", phase1_h3: "Designate Your Heading", phase1_p: "Find your real starting point. Movement quality, foundational strength, and a full habit audit — accurate data, not aspiration.",
+      phase2_range: "WEEKS 04–07", phase2_h3: "Golden Hour", phase2_p: "Progressive overload begins. Structural strength and work capacity build while the heaviest habit-formation work locks in.",
+      phase3_range: "WEEKS 08–11", phase3_h3: "Hold the Line", phase3_p: "The critical window where intervention determines outcome. Peak intensity, hardest mental toughness work, nutrition dialed to goal.",
+      phase4_range: "WEEKS 12–13", phase4_h3: "RTB", phase4_p: "Return to Base. Deload, retest benchmarks, lock in the data — and build the sustainment plan most programs never give you.",
+      phase_note: "<strong>ONGOING —</strong> Graduate and you're not done. Sustained Ops keeps the standard alive with monthly accountability.",
+      sec04_code: "04 / SERVICE RECORD", dossier_k1: "Flight Service", dossier_v1: "Fighter Pilot · Combat Search & Rescue",
+      dossier_k2: "Martial Arts", dossier_v2: "3rd Dan Black Belt", dossier_k3: "Languages", dossier_v3: "Trilingual",
+      dossier_quote: "\"I went into other men's worst days to pull them out alive. <span class=\"oxide\">Extraction is the same mission</span> — pointed at you.\"",
+      sec05_code: "05 / EXECUTION", offer_label: "One-time investment",
+      offer_li1: "Full 90-day Extraction Protocol — all 4 phases, all 13 weeks",
+      offer_li2: "Personalized to your training frequency — 3, 4, 5, or 6 days a week",
+      offer_li3: "Lifetime portal access + a downloadable manual, watermarked to you",
+      offer_li4: "Every exercise linked to a form-check video", offer_cta: "Get The Protocol",
+      sec06_code: "06 / COMMAND STRUCTURE",
+      sec06_intro: "A quick familiarization before you go further. The Extraction Protocol isn't one man shouting instructions from the sideline — it's a chain of command built to run it, a roster who executes it, a philosophy that outlasts the 90 days, and a rhythm that keeps you honest after RTB. Discipline gets you out of the wreckage. This is where your compass starts pointing to what comes next.",
+      card1_tag: "Featured", card1_h3: "1:1 On Target Coaching", card1_p: "Direct, individualized coaching built around your target — you're the HVA. Limited roster. Contact TAC-FREQ to reserve a spot.", card1_cta: "See the briefing →", alt_commander: "Commander Access — Restricted",
+      card2_tag: "Restricted", card2_h3: "Commander Access", card2_p: "The command console — MAYDAY intake, manual assignment, and Operator progress. For the Commander running the Protocol, not for Operators.", card2_cta: "Sign in as Commander →", alt_teamofsix: "Team of Six — The Roster",
+      card3_tag: "Roster", card3_h3: "Team of Six", card3_p: "Six roles, one standard. The Commander built to run intake, coaching, and accountability without a gap — full roster live soon.", alt_leadership: "The Commander Program — Leadership",
+      card4_tag: "Philosophy", card4_h3: "Leadership", card4_p: "Discipline gets you out of the wreckage. It doesn't tell you what to do once you're standing on solid ground — that's command, and it's earned, not ranked.", alt_events: "Sustained Ops — Monthly",
+      card5_tag: "Coming Soon", card5_h3: "Events", card5_p: "Sustained Ops — Monthly musters, in-person and virtual, for graduated Operators to stay sharp after RTB. Details drop soon.",
+      roster_note: "TEAM OF SIX // ROSTER — TBD", roster_callsign: "Callsign TBD", roster_role: "Role TBD",
+      footer_code: "EXTRACTION // FROM MEDIOCRITY // NO ONE IS COMING", ops_freq_label: "Ops Freq", aria_whatsapp: "Message Extraction on WhatsApp",
+    },
+    tr: {
+      nav_coaching: "Birebir Koçluk", nav_leadership: "Liderlik", nav_shop: "Mağaza", nav_portal: "Operatör Girişi", nav_request: "Extraction Talep Et",
+      ticker_phrases: ["KİMSE GELMİYOR", "90 GÜN", "EXTRACTION KAZANILIR, VERİLMEZ", "DİSİPLİN, ENKAZDAN UZAKLIKTIR"],
+      boot_lines: ["BAĞLANTI KURULDU", "YETKİ DOĞRULANDI", "EXTRACTION PROTOKOLÜ — BEKLEMEDE"],
+      hero_stamp: "Extraction<br>Onaylandı", hero_order: "Emir No. 90-EXT-01", hero_status: "Durum: Kayıtlar Açık",
+      hero_h1: "The Extraction<br><span class=\"accent\">Protokolü.</span>",
+      hero_sub: "Motivasyona ihtiyacın yok. Extraction'a ihtiyacın var. Durgunluktan kendini çıkarıp bir slogan değil, bir standart üzerine yeniden inşa etmek için 90 günlük bir operasyon.",
+      hero_briefing: "Brifingi oku ↓",
+      sec01_code: "01 / HEDEFTE",
+      sec01_h2: "Birebir Koçluk.<br><span style=\"color:var(--oxide);\">Hedefine Göre İnşa Edildi.</span>",
+      sec01_p1: "Hazır program yok. Her birebir protokol <strong style=\"color:var(--paper);\">senin</strong> etrafında inşa edilir ve yürütülür — Yüksek Değerli Hedef sensin — ve vurmak için antrenman yaptığın belirli hedef etrafında. Senin verilerin, senin arazin, senin görev profilin.",
+      sec01_p2: "Komutan'a doğrudan erişim. Sınırlı kadro, ilk temas esasına göre doldurulur.",
+      sec01_cta: "Yer Ayırtmak İçin TAC-FREQ İle İletişime Geç", alt_ontarget: "Hedefte — Birebir Koçluk",
+      sec02_code: "02 / DURUM",
+      sec02_p1: "<strong>Sen bozuk değilsin. Tasarım gereği disiplinsizsin.</strong> Bunu konfor yaptı — zayıflık değil. İş, rutin ve gürültü arasında bir yerde standart düştü ve kimse bunu fark etmedi.",
+      sec02_p2: "Bu bir zihniyet kursu değil. Bu bir kurtarma operasyonu. Enkazda büyümüş, muharebe arama kurtarma uçuşu yapmış, üç kara kuşak kazanmış ve hiçliğin içinden bir aile yeniden inşa etmiş bir adam tarafından kuruldu — çünkü onun için de kimse hiç gelmedi.",
+      sec03_code: "03 / GÖREV",
+      sec03_intro: "Her operasyon bir imdat çağrısıyla başlar — Faz 0: MAYDAY, senin kayıt ve hazır olma taraman. Oradan itibaren, on üç hafta boyunca dört faz. Her biri bir sonraki başlamadan önce arkandaki çıkışı kapatır.",
+      phase1_range: "1–3. HAFTALAR", phase1_h3: "Rotanı Belirle", phase1_p: "Gerçek başlangıç noktanı bul. Hareket kalitesi, temel kuvvet ve tam bir alışkanlık denetimi — beklenti değil, doğru veri.",
+      phase2_range: "4–7. HAFTALAR", phase2_h3: "Altın Saat", phase2_p: "Progresif yüklenme başlar. En ağır alışkanlık oluşturma çalışması kilitlenirken yapısal kuvvet ve iş kapasitesi gelişir.",
+      phase3_range: "8–11. HAFTALAR", phase3_h3: "Hattı Koru", phase3_p: "Müdahalenin sonucu belirlediği kritik pencere. Zirve yoğunluk, en zorlu zihinsel dayanıklılık çalışması, hedefe göre ayarlanmış beslenme.",
+      phase4_range: "12–13. HAFTALAR", phase4_h3: "Üsse Dönüş", phase4_p: "Üsse Dönüş. Yükü azalt, referans testleri tekrarla, veriyi kilitle — ve çoğu programın sana asla vermediği sürdürme planını kur.",
+      phase_note: "<strong>DEVAM EDEN —</strong> Mezun oldun ama işin bitmedi. Sustained Ops, aylık hesap verebilirlikle standardı canlı tutar.",
+      sec04_code: "04 / HİZMET SİCİLİ", dossier_k1: "Uçuş Hizmeti", dossier_v1: "Savaş Pilotu · Muharebe Arama Kurtarma",
+      dossier_k2: "Dövüş Sanatları", dossier_v2: "3. Dan Kara Kuşak", dossier_k3: "Diller", dossier_v3: "Üç Dilli",
+      dossier_quote: "\"Diğer adamların en kötü günlerine girdim, onları canlı çıkardım. <span class=\"oxide\">Extraction aynı görev</span> — bu sefer sana yönelik.\"",
+      sec05_code: "05 / İCRA", offer_label: "Tek seferlik yatırım",
+      offer_li1: "Tam 90 günlük Extraction Protokolü — 4 fazın, 13 haftanın tamamı",
+      offer_li2: "Antrenman sıklığına göre kişiselleştirilir — haftada 3, 4, 5 veya 6 gün",
+      offer_li3: "Ömür boyu portal erişimi + sana özel filigranlı, indirilebilir bir kılavuz",
+      offer_li4: "Her egzersiz bir form kontrol videosuna bağlı", offer_cta: "Protokolü Al",
+      sec06_code: "06 / KOMUTA YAPISI",
+      sec06_intro: "Devam etmeden önce kısa bir tanışma. Extraction Protokolü, kenardan talimat bağıran tek bir adam değil — onu yürütecek bir komuta zinciri, onu uygulayacak bir kadro, 90 günü aşan bir felsefe ve Üsse Dönüş'ten sonra seni dürüst tutan bir ritim. Disiplin seni enkazdan çıkarır. Burası pusulanın sıradakine işaret etmeye başladığı yer.",
+      card1_tag: "Öne Çıkan", card1_h3: "Birebir Hedefte Koçluk", card1_p: "Hedefin etrafında inşa edilmiş doğrudan, bireysel koçluk — Yüksek Değerli Hedef sensin. Sınırlı kadro. Yer ayırtmak için TAC-FREQ ile iletişime geç.", card1_cta: "Brifingi gör →", alt_commander: "Komutan Erişimi — Kısıtlı",
+      card2_tag: "Kısıtlı", card2_h3: "Komutan Erişimi", card2_p: "Komuta konsolu — MAYDAY kaydı, kılavuz ataması ve Operatör ilerlemesi. Protokolü yürüten Komutan için, Operatörler için değil.", card2_cta: "Komutan olarak giriş yap →", alt_teamofsix: "Altılı Ekip — Kadro",
+      card3_tag: "Kadro", card3_h3: "Altılı Ekip", card3_p: "Altı rol, tek standart. Kaydı, koçluğu ve hesap verebilirliği boşluksuz yürütmek için kurulmuş Komuta — tam kadro yakında yayında.", alt_leadership: "Komutan Programı — Liderlik",
+      card4_tag: "Felsefe", card4_h3: "Liderlik", card4_p: "Disiplin seni enkazdan çıkarır. Sağlam zeminde durduğunda ne yapacağını söylemez — o komutadır ve rütbeyle değil, kazanılarak elde edilir.", alt_events: "Sustained Ops — Aylık",
+      card5_tag: "Yakında", card5_h3: "Etkinlikler", card5_p: "Sustained Ops — mezun Operatörlerin Üsse Dönüş sonrası formda kalması için aylık, yüz yüze ve sanal buluşmalar. Detaylar yakında.",
+      roster_note: "ALTILI EKİP // KADRO — BELİRLENECEK", roster_callsign: "Çağrı Kodu Belirlenecek", roster_role: "Rol Belirlenecek",
+      footer_code: "EXTRACTION // VASATLIKTAN // KİMSE GELMİYOR", ops_freq_label: "Ops Freq", aria_whatsapp: "Extraction'a WhatsApp'tan mesaj gönder",
+    },
+    ar: {
+      nav_coaching: "التدريب الفردي", nav_leadership: "القيادة", nav_shop: "المتجر", nav_portal: "دخول المتدرب", nav_request: "اطلب الإخلاء",
+      ticker_phrases: ["لا أحد قادم", "٩٠ يومًا", "الإخلاء يُكتسب، لا يُمنح", "الانضباط يساوي المسافة عن الحطام"],
+      boot_lines: ["تم إنشاء الاتصال", "تم التحقق من التصريح", "بروتوكول الإخلاء — في وضع الاستعداد"],
+      hero_stamp: "الإخلاء<br>مصرّح به", hero_order: "أمر رقم 90-EXT-01", hero_status: "الحالة: التسجيل مفتوح",
+      hero_h1: "بروتوكول<br><span class=\"accent\">الإخلاء.</span>",
+      hero_sub: "أنت لا تحتاج إلى تحفيز. أنت تحتاج إلى الإخلاء. عملية مدتها ٩٠ يومًا لانتشالك من الركود وإعادة بنائك وفق معيار — لا شعار.",
+      hero_briefing: "اقرأ الإحاطة ↓",
+      sec01_code: "01 / الهدف المحدد",
+      sec01_h2: "تدريب فردي.<br><span style=\"color:var(--oxide);\">مبني على هدفك.</span>",
+      sec01_p1: "لا برامج جاهزة. كل بروتوكول فردي يُبنى ويُدار حول <strong style=\"color:var(--paper);\">أنت</strong> — الهدف عالي القيمة — والهدف المحدد الذي تتدرب لإصابته. بياناتك، أرضك، ملف مهمتك.",
+      sec01_p2: "وصول مباشر إلى القائد. عدد محدود، يُملأ حسب أولوية التواصل.",
+      sec01_cta: "تواصل عبر واتساب لحجز مكانك", alt_ontarget: "الهدف المحدد — تدريب فردي",
+      sec02_code: "02 / الموقف",
+      sec02_p1: "<strong>أنت لست مكسورًا. أنت غير منضبط بالتصميم.</strong> الراحة فعلت ذلك — لا الضعف. في مكان ما بين العمل والروتين والضجيج، انزلق المعيار، ولم ينتبه له أحد.",
+      sec02_p2: "هذه ليست دورة في العقلية. إنها عملية إنقاذ. بناها رجل نشأ وسط الحطام، وطار في مهام البحث والإنقاذ القتالي، وحصل على الحزام الأسود ثلاث مرات، وأعاد بناء عائلة من العدم — لأن أحدًا لم يأتِ من أجله هو أيضًا.",
+      sec03_code: "03 / المهمة",
+      sec03_intro: "كل عملية تبدأ بنداء استغاثة — المرحلة صفر: MAYDAY، استمارة الالتحاق وتقييم الجاهزية. من هناك، أربع مراحل عبر ثلاثة عشر أسبوعًا. كل مرحلة تُغلق باب الخروج خلفك قبل أن تبدأ التالية.",
+      phase1_range: "الأسابيع 01–03", phase1_h3: "حدّد وجهتك", phase1_p: "اكتشف نقطة بدايتك الحقيقية. جودة الحركة، القوة الأساسية، وتدقيق كامل للعادات — بيانات دقيقة، لا طموح.",
+      phase2_range: "الأسابيع 04–07", phase2_h3: "الساعة الذهبية", phase2_p: "يبدأ الحمل التدريجي. تُبنى القوة البنيوية والقدرة على العمل بينما يترسخ أثقل عمل في بناء العادات.",
+      phase3_range: "الأسابيع 08–11", phase3_h3: "احتفظ بالخط", phase3_p: "النافذة الحرجة التي تحدد فيها النتيجة. أقصى شدة، وأصعب عمل على الصلابة الذهنية، وتغذية مضبوطة على الهدف.",
+      phase4_range: "الأسابيع 12–13", phase4_h3: "العودة للقاعدة", phase4_p: "العودة للقاعدة. تخفيف الحمل، إعادة اختبار المعايير، تثبيت البيانات — وبناء خطة الاستمرار التي لا تمنحها لك معظم البرامج أبدًا.",
+      phase_note: "<strong>مستمر —</strong> تخرجك لا يعني الانتهاء. Sustained Ops يبقي المعيار حيًا بمساءلة شهرية.",
+      sec04_code: "04 / السجل الخدمي", dossier_k1: "الخدمة الجوية", dossier_v1: "طيار مقاتل · بحث وإنقاذ قتالي",
+      dossier_k2: "الفنون القتالية", dossier_v2: "حزام أسود من الدرجة الثالثة", dossier_k3: "اللغات", dossier_v3: "متعدد اللغات",
+      dossier_quote: "\"دخلت أسوأ أيام رجال آخرين لأنتشلهم أحياء. <span class=\"oxide\">الإخلاء هي نفس المهمة</span> — موجّهة نحوك الآن.\"",
+      sec05_code: "05 / التنفيذ", offer_label: "استثمار لمرة واحدة",
+      offer_li1: "بروتوكول الإخلاء الكامل لتسعين يومًا — جميع المراحل الأربع، والأسابيع الثلاثة عشر",
+      offer_li2: "مخصص حسب وتيرة تدريبك — 3 أو 4 أو 5 أو 6 أيام في الأسبوع",
+      offer_li3: "وصول دائم للبوابة الإلكترونية + دليل قابل للتحميل موسوم باسمك",
+      offer_li4: "كل تمرين مرتبط بفيديو للتحقق من الأداء", offer_cta: "احصل على البروتوكول",
+      sec06_code: "06 / هيكل القيادة",
+      sec06_intro: "تعريف سريع قبل أن تُكمل. بروتوكول الإخلاء ليس رجلًا واحدًا يصرخ بالتعليمات من الهامش — إنه سلسلة قيادة بُنيت لتشغيله، وكادر يُنفذه، وفلسفة تدوم بعد التسعين يومًا، وإيقاع يبقيك صادقًا بعد العودة للقاعدة. الانضباط ينتشلك من الحطام. هنا تبدأ بوصلتك بالإشارة إلى ما يليه.",
+      card1_tag: "مميز", card1_h3: "تدريب فردي على الهدف المحدد", card1_p: "تدريب فردي مباشر مبني حول هدفك — أنت الهدف عالي القيمة. عدد محدود. تواصل عبر واتساب لحجز مكانك.", card1_cta: "شاهد الإحاطة ←", alt_commander: "دخول القائد — مقيّد",
+      card2_tag: "مقيّد", card2_h3: "دخول القائد", card2_p: "وحدة التحكم القيادية — استمارات MAYDAY، تعيين الأدلة، ومتابعة تقدم المتدربين. للقائد الذي يدير البروتوكول، لا للمتدربين.", card2_cta: "تسجيل الدخول كقائد ←", alt_teamofsix: "فريق الستة — الكادر",
+      card3_tag: "الكادر", card3_h3: "فريق الستة", card3_p: "ستة أدوار، معيار واحد. القيادة المبنية لتشغيل الالتحاق والتدريب والمساءلة دون أي فجوة — الكادر الكامل يُعلن قريبًا.", alt_leadership: "برنامج القائد — القيادة",
+      card4_tag: "الفلسفة", card4_h3: "القيادة", card4_p: "الانضباط ينتشلك من الحطام. لكنه لا يخبرك بما عليك فعله بعد أن تقف على أرض صلبة — تلك هي القيادة، وهي تُكتسب، لا تُمنح برتبة.", alt_events: "Sustained Ops — شهري",
+      card5_tag: "قريبًا", card5_h3: "الفعاليات", card5_p: "Sustained Ops — تجمعات شهرية، حضورية وافتراضية، للمتدربين الخريجين للحفاظ على جاهزيتهم بعد العودة للقاعدة. التفاصيل قريبًا.",
+      roster_note: "فريق الستة // الكادر — سيُحدد لاحقًا", roster_callsign: "الاسم الرمزي سيُحدد لاحقًا", roster_role: "الدور سيُحدد لاحقًا",
+      footer_code: "الإخلاء // من الرداءة // لا أحد قادم", ops_freq_label: "تردد العمليات", aria_whatsapp: "راسل الإخلاء عبر واتساب",
+    },
+  };
+
+  function applyLang(lang){
+    var t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+    document.documentElement.setAttribute('lang', lang);
+    document.body.classList.toggle('lang-ar', RTL_LANGS.indexOf(lang) !== -1);
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var key = el.getAttribute('data-i18n');
+      if(t[key] !== undefined) el.textContent = t[key];
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(function(el){
+      var key = el.getAttribute('data-i18n-html');
+      if(t[key] !== undefined) el.innerHTML = t[key];
+    });
+    document.querySelectorAll('[data-i18n-alt]').forEach(function(el){
+      var key = el.getAttribute('data-i18n-alt');
+      if(t[key] !== undefined) el.setAttribute('alt', t[key]);
+    });
+    document.querySelectorAll('[data-i18n-aria]').forEach(function(el){
+      var key = el.getAttribute('data-i18n-aria');
+      if(t[key] !== undefined) el.setAttribute('aria-label', t[key]);
+    });
+    var tickerEl = document.getElementById('ticker-inner');
+    if(tickerEl && t.ticker_phrases){
+      var dot = ' <span class="dot">•</span> ';
+      var line = t.ticker_phrases.join(dot) + dot;
+      tickerEl.innerHTML = line + line;
+    }
+    document.querySelectorAll('.lang-switch button').forEach(function(btn){
+      btn.classList.toggle('is-active', btn.getAttribute('data-lang') === lang);
+    });
+    window.EXT_LANG = lang;
+    window.EXT_T = t;
+    try{ localStorage.setItem('extraction:lang', lang); }catch(e){}
+  }
+
+  function initLangSwitch(){
+    var mount = document.getElementById('lang-switch');
+    if(!mount) return;
+    LANGS.forEach(function(l){
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = l.label;
+      btn.setAttribute('data-lang', l.code);
+      btn.addEventListener('click', function(){ applyLang(l.code); });
+      mount.appendChild(btn);
+    });
+  }
+
+  var savedLang = 'en';
+  try{ savedLang = localStorage.getItem('extraction:lang') || 'en'; }catch(e){}
+  initLangSwitch();
+  applyLang(savedLang);
+})();
+</script>
 
 <script>
 (function(){
@@ -591,7 +797,7 @@
       boot.remove();
     } else {
       try{ sessionStorage.setItem('extractionBootSeen','1'); }catch(e){}
-      var lines = [
+      var lines = (window.EXT_T && window.EXT_T.boot_lines) || [
         'UPLINK ESTABLISHED',
         'CLEARANCE VERIFIED',
         'EXTRACTION PROTOCOL — STANDING BY'
