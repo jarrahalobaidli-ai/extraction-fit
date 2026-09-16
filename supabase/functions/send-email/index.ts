@@ -3,9 +3,9 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const OUTBOX_SECRET = Deno.env.get("OUTBOX_SHARED_SECRET") ?? "";
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY") ?? "";
-// Resend's shared sandbox sender -- works with zero setup. Switch to a
-// verified extraction.fit address once the domain is verified in Resend.
-const FROM_ADDRESS = Deno.env.get("EMAIL_FROM") || "Extraction <onboarding@resend.dev>";
+// extraction.fit is verified in Resend, so this sends from the real domain by
+// default. EMAIL_FROM still overrides it if a different verified sender is set.
+const FROM_ADDRESS = Deno.env.get("EMAIL_FROM") || "Extraction <contact@extraction.fit>";
 
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL")!,
