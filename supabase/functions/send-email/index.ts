@@ -393,6 +393,122 @@ Orders are cut. Your personalized manual is ready to download.
   },
 };
 
+const MAYDAY_EQUIPMENT_LABELS: Record<string, string> = {
+  eq_fullgym: "Full gym",
+  eq_dbkb: "Functional training",
+  eq_bodyweight: "Bodyweight only",
+  eq_bands: "Bands only",
+};
+
+// Fired automatically by on_mayday_submission_created whenever a MAYDAY intake form is
+// submitted (see supabase migration). Notifies the Extraction command inbox so a report
+// never depends on the applicant's own mail app or WhatsApp actually going through --
+// row.data carries the raw mayday_submissions row (name/email/phone/equipment/lang/
+// submittedAt) plus the full `answers` form object.
+const MAYDAY_ALERT: Template = {
+  subject: (row) => `MAYDAY — ${String(row.data?.name ?? "New applicant")}`,
+  html: (row) => {
+    const a = (row.data?.answers ?? {}) as Record<string, unknown>;
+    const name = String(row.data?.name ?? a.name ?? "-");
+    const email = String(row.data?.email ?? a.email ?? "-");
+    const phone = String(row.data?.phone ?? "").trim();
+    const equipmentKey = String(row.data?.equipment ?? a.equipment ?? "");
+    const equipment = MAYDAY_EQUIPMENT_LABELS[equipmentKey] || equipmentKey || "-";
+    const submittedAt = String(row.data?.submittedAt ?? "");
+    const commitments = [
+      a.agreePhotos ? "Progress photos" : null,
+      a.agreeFinancial ? "Financial commitment" : null,
+      a.agreeCode ? "Code of conduct" : null,
+    ].filter(Boolean).join(", ") || "None flagged";
+    const line = (n: string, tag: string, label: string, value: string) => `
+        <tr>
+          <td style="padding:10px 0;border-top:1px solid rgba(245,223,184,0.14);font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#F5DFB8;vertical-align:top;">
+            <strong style="color:#C0451D;">${n} — ${tag}.</strong> ${label}: ${value}
+          </td>
+        </tr>`;
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Extraction — MAYDAY Received</title>
+</head>
+<body style="margin:0;padding:0;background:#0C0C0A;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">
+New MAYDAY report from ${name} — ${equipment}.
+</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0C0C0A;padding:32px 0;">
+<tr><td align="center">
+<table role="presentation" width="560" cellpadding="0" cellspacing="0" style="width:560px;max-width:92%;background:#17140F;border:1px solid rgba(245,223,184,0.14);">
+  <tr>
+    <td align="center" style="padding:36px 32px 20px;border-bottom:1px solid rgba(245,223,184,0.14);">
+      <img src="https://extraction.fit/assets/logo-circle.png" width="56" height="56" alt="Extraction" style="display:block;margin:0 auto 14px;">
+      <div style="font-family:Arial,Helvetica,sans-serif;font-weight:800;font-size:20px;letter-spacing:2px;color:#F5DFB8;text-transform:uppercase;">
+        EXTRACTION<span style="color:#C0451D;">.</span>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="padding:22px 32px 0;">
+      <div style="display:inline-block;font-family:'Courier New',monospace;font-size:11px;letter-spacing:1.5px;color:#C0451D;text-transform:uppercase;border:1px solid rgba(192,69,29,0.5);padding:8px 16px;">
+        MAYDAY Received
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="padding:24px 32px 0;">
+      <div style="font-family:Arial,Helvetica,sans-serif;font-weight:800;font-size:24px;line-height:1.3;color:#F5DFB8;text-transform:uppercase;letter-spacing:0.5px;">
+        ${name}
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#A6926F;margin-top:6px;">
+        ${email}${phone ? " · " + phone : ""}
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:20px 40px 4px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+        ${line("1", "ID", "Contact", `${name} · ${email}${phone ? " · " + phone : ""}`)}
+        ${line("2", "M", "Mission (why now)", String(a.whyNow ?? "-"))}
+        ${line("3", "I", "Injuries", `${String(a.injuries ?? "None reported")}${a.failureResponse === "spiral" ? " -- spirals after a missed day" : ""}`)}
+        ${line("4", "S", "Status", `${String(a.trainingAge ?? "-")} · Discipline ${String(a.disciplineRating ?? "-")}/10 · ${String(a.medicalClearance ?? "Not stated")}`)}
+        ${line("5", "RES", "Resources", equipment)}
+        ${line("6", "PRI", "Program", `${String(a.daysPerWeek ?? "-")} days/week, ${String(a.sessionLength ?? "-")} min`)}
+        ${line("7", "T", "Target (becoming)", String(a.becoming ?? "-"))}
+        ${line("8", "SEC", "Support system", String(a.supportSystem ?? "Not stated"))}
+        ${line("9", "HAZ", "Commitments flagged", commitments)}
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="padding:28px 40px 8px;">
+      <a href="https://extraction.fit/dashboard.html" style="display:inline-block;background:#C0451D;color:#0C0C0A;font-family:Arial,Helvetica,sans-serif;font-weight:800;font-size:14px;letter-spacing:1px;text-transform:uppercase;text-decoration:none;padding:15px 30px;border:1px solid #C0451D;">
+        Open Coach Dashboard
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:20px 40px 8px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5C544A;">
+      Submitted ${submittedAt} · Lang: ${String(row.data?.lang ?? "en")}
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="padding:24px 32px 32px;border-top:1px solid rgba(245,223,184,0.14);">
+      <div style="font-family:'Courier New',monospace;font-size:10px;letter-spacing:1.5px;color:#7A6E5C;text-transform:uppercase;">
+        EXTRACTION // FROM MEDIOCRITY // NO ONE IS COMING
+      </div>
+    </td>
+  </tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>
+`;
+  },
+};
+TEMPLATES.mayday_alert = MAYDAY_ALERT;
+
 Deno.serve(async (req: Request) => {
   try {
     if (!OUTBOX_SECRET || req.headers.get("x-outbox-secret") !== OUTBOX_SECRET) {
