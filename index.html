@@ -289,6 +289,21 @@
   .includes li{ font-size:0.9rem; color:var(--paper-dim); padding: 5px 0; }
   .includes li::before{ content:'—'; color:var(--oxide); margin-right:10px;}
 
+  .coaching-order{ display:flex; flex-direction:column; gap:12px; max-width:420px; }
+  .coaching-config-row{ display:flex; flex-direction:column; gap:6px; }
+  .coaching-config-row label{ font-family:'IBM Plex Mono',monospace; font-size:0.62rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--paper-dim); }
+  .coaching-config-row input[type=text],
+  .coaching-phone-row input[type=tel]{
+    background:var(--bg); border:1px solid var(--line-strong); color:var(--paper);
+    padding:13px 14px; font-family:'Inter',sans-serif; font-size:0.9rem; width:100%;
+  }
+  .coaching-config-row input[type=text]:focus,
+  .coaching-phone-row input[type=tel]:focus{ outline:none; border-color:var(--oxide); }
+  .coaching-phone-row{ display:flex; gap:10px; flex-wrap:wrap; }
+  .coaching-phone-row input[type=tel]{ flex:1 1 160px; width:auto; }
+  .coaching-order-msg{ font-family:'IBM Plex Mono',monospace; font-size:0.68rem; letter-spacing:0.04em; color:var(--oxide); min-height:1em; }
+  @media (max-width:640px){ .coaching-order{ max-width:100%; } }
+
   .offer-order{ display:flex; flex-direction:column; align-items:flex-end; gap:14px; }
   .offer-config{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
   .offer-config-row{ display:flex; flex-direction:column; gap:6px; min-width:180px; }
@@ -475,7 +490,17 @@
       <h2 style="font-family:'Anton',sans-serif; font-size:clamp(1.9rem,4.2vw,2.7rem); text-transform:uppercase; line-height:1.05; margin-bottom:18px;" data-i18n-html="sec01_h2">1:1 Coaching.<br><span style="color:var(--oxide);">Built On Your Target.</span></h2>
       <p style="color:var(--paper-dim); font-size:1.02rem; max-width:520px; margin-bottom:16px;" data-i18n-html="sec01_p1">No off-the-shelf programming. Every 1:1 protocol is built and run around <strong style="color:var(--paper);">you</strong> — the HVA, the High-Value Asset — and the specific target you're training to hit. Your data, your terrain, your mission profile.</p>
       <p style="color:var(--paper-dim); font-size:1.02rem; max-width:520px; margin-bottom:30px;" data-i18n="sec01_p2">Direct access to the Commander. Limited roster, filled on a first-contact basis.</p>
-      <a href="mailto:contact@extraction.fit?subject=Hi%2C%20I%20want%20to%20reserve%20a%201%3A1%20Coaching%20spot." class="btn-primary" data-i18n="sec01_cta">Contact TAC-FREQ to Reserve a Spot</a>
+      <div class="coaching-order">
+        <div class="coaching-config-row">
+          <label for="coaching-target" data-i18n="coaching_target_label">Your target</label>
+          <input id="coaching-target" type="text" data-i18n-placeholder="coaching_target_placeholder" placeholder="What are you training to hit?" autocomplete="off">
+        </div>
+        <div class="coaching-phone-row">
+          <input id="coaching-phone" type="tel" data-i18n-placeholder="coaching_phone_placeholder" placeholder="Phone" autocomplete="tel" inputmode="tel">
+          <button id="coaching-checkout" class="btn-primary" type="button" data-i18n="sec01_cta">Contact TAC-FREQ to Reserve a Spot</button>
+        </div>
+        <div id="coaching-order-msg" class="coaching-order-msg"></div>
+      </div>
     </div>
     <div class="reveal" style="display:flex; justify-content:center; transition-delay:120ms;">
       <img src="assets/badge-cadre-access.png" alt="On Target — 1:1 Coaching" data-i18n-alt="alt_ontarget" style="width:100%; max-width:340px; filter: drop-shadow(0 0 24px rgba(192,69,29,0.28));">
@@ -676,6 +701,10 @@
       sec01_p1: "No off-the-shelf programming. Every 1:1 protocol is built and run around <strong style=\"color:var(--paper);\">you</strong> — the HVA, the High-Value Asset — and the specific target you're training to hit. Your data, your terrain, your mission profile.",
       sec01_p2: "Direct access to the Commander. Limited roster, filled on a first-contact basis.",
       sec01_cta: "Contact TAC-FREQ to Reserve a Spot", alt_ontarget: "On Target — 1:1 Coaching",
+      coaching_target_label: "Your target", coaching_target_placeholder: "What are you training to hit?",
+      coaching_phone_placeholder: "Phone",
+      coaching_msg_target: "Tell us your target so we can prep the right protocol.",
+      coaching_msg_phone: "Add a phone number so the Commander can reach you.",
       sec02_code: "02 / SITUATION",
       sec02_p1: "<strong>You're not broken. You're undisciplined by design.</strong> Comfort did that — not weakness. Somewhere between the job, the routine, and the noise, the standard slipped, and no one called it.",
       sec02_p2: "This isn't a mindset course. It's a recovery operation. Built by a man who was raised in wreckage, flew combat search and rescue, earned three black belts, and rebuilt a family from nothing — because no one was ever coming for him either.",
@@ -726,6 +755,10 @@
       sec01_p1: "Hazır program yok. Her birebir protokol <strong style=\"color:var(--paper);\">senin</strong> etrafında inşa edilir ve yürütülür — Yüksek Değerli Hedef sensin — ve vurmak için antrenman yaptığın belirli hedef etrafında. Senin verilerin, senin arazin, senin görev profilin.",
       sec01_p2: "Komutan'a doğrudan erişim. Sınırlı kadro, ilk temas esasına göre doldurulur.",
       sec01_cta: "Yer Ayırtmak İçin TAC-FREQ İle İletişime Geç", alt_ontarget: "Hedefte — Birebir Koçluk",
+      coaching_target_label: "Hedefin", coaching_target_placeholder: "Ne için antrenman yapıyorsun?",
+      coaching_phone_placeholder: "Telefon",
+      coaching_msg_target: "Doğru protokolü hazırlayabilmemiz için hedefini yaz.",
+      coaching_msg_phone: "Komutanın sana ulaşabilmesi için telefon numaranı ekle.",
       sec02_code: "02 / DURUM",
       sec02_p1: "<strong>Sen bozuk değilsin. Tasarım gereği disiplinsizsin.</strong> Bunu konfor yaptı — zayıflık değil. İş, rutin ve gürültü arasında bir yerde standart düştü ve kimse bunu fark etmedi.",
       sec02_p2: "Bu bir zihniyet kursu değil. Bu bir kurtarma operasyonu. Enkazda büyümüş, muharebe arama kurtarma uçuşu yapmış, üç kara kuşak kazanmış ve hiçliğin içinden bir aile yeniden inşa etmiş bir adam tarafından kuruldu — çünkü onun için de kimse hiç gelmedi.",
@@ -775,7 +808,11 @@
       sec01_h2: "تدريب فردي.<br><span style=\"color:var(--oxide);\">مبني على هدفك.</span>",
       sec01_p1: "لا برامج جاهزة. كل بروتوكول فردي يُبنى ويُدار حول <strong style=\"color:var(--paper);\">أنت</strong> — الهدف عالي القيمة — والهدف المحدد الذي تتدرب لإصابته. بياناتك، أرضك، ملف مهمتك.",
       sec01_p2: "وصول مباشر إلى القائد. عدد محدود، يُملأ حسب أولوية التواصل.",
-      sec01_cta: "تواصل عبر واتساب لحجز مكانك", alt_ontarget: "الهدف المحدد — تدريب فردي",
+      sec01_cta: "تواصل عبر تردد العمليات لحجز مكانك", alt_ontarget: "الهدف المحدد — تدريب فردي",
+      coaching_target_label: "هدفك", coaching_target_placeholder: "ما الذي تتدرب لتحقيقه؟",
+      coaching_phone_placeholder: "رقم الهاتف",
+      coaching_msg_target: "اكتب هدفك حتى نُجهّز البروتوكول المناسب.",
+      coaching_msg_phone: "أضف رقم هاتفك حتى يتمكن القائد من التواصل معك.",
       sec02_code: "02 / الموقف",
       sec02_p1: "<strong>أنت لست مكسورًا. أنت غير منضبط بالتصميم.</strong> الراحة فعلت ذلك — لا الضعف. في مكان ما بين العمل والروتين والضجيج، انزلق المعيار، ولم ينتبه له أحد.",
       sec02_p2: "هذه ليست دورة في العقلية. إنها عملية إنقاذ. بناها رجل نشأ وسط الحطام، وطار في مهام البحث والإنقاذ القتالي، وحصل على الحزام الأسود ثلاث مرات، وأعاد بناء عائلة من العدم — لأن أحدًا لم يأتِ من أجله هو أيضًا.",
@@ -841,6 +878,8 @@
     });
     var offerMsgEl = document.getElementById('offer-order-msg');
     if(offerMsgEl) offerMsgEl.textContent = '';
+    var coachingMsgEl = document.getElementById('coaching-order-msg');
+    if(coachingMsgEl) coachingMsgEl.textContent = '';
     var tickerEl = document.getElementById('ticker-inner');
     if(tickerEl && t.ticker_phrases){
       var dot = ' <span class="dot">•</span> ';
@@ -909,6 +948,36 @@
       'Equipment track: ' + type + '\n' +
       'Phone (for payment link): ' + phone;
     window.location.href = 'mailto:contact@extraction.fit?subject=' + encodeURIComponent('90-Day Extraction Protocol order') + '&body=' + encodeURIComponent(body);
+  });
+})();
+</script>
+
+<script>
+(function(){
+  var coachingTarget = document.getElementById('coaching-target');
+  var coachingPhone = document.getElementById('coaching-phone');
+  var coachingCheckout = document.getElementById('coaching-checkout');
+  var coachingMsg = document.getElementById('coaching-order-msg');
+  if (!coachingCheckout) return;
+  coachingCheckout.addEventListener('click', function(){
+    var t = window.EXT_T || {};
+    var target = coachingTarget.value.trim();
+    var phone = coachingPhone.value.trim();
+    if (!target) {
+      coachingMsg.textContent = t.coaching_msg_target || 'Tell us your target so we can prep the right protocol.';
+      coachingTarget.focus();
+      return;
+    }
+    if (!phone) {
+      coachingMsg.textContent = t.coaching_msg_phone || 'Add a phone number so the Commander can reach you.';
+      coachingPhone.focus();
+      return;
+    }
+    coachingMsg.textContent = '';
+    var body = 'Hi, I want to reserve a 1:1 Coaching spot.\n' +
+      'Target: ' + target + '\n' +
+      'Phone: ' + phone;
+    window.location.href = 'mailto:contact@extraction.fit?subject=' + encodeURIComponent('1:1 Coaching reservation') + '&body=' + encodeURIComponent(body);
   });
 })();
 </script>
