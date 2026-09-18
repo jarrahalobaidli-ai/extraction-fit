@@ -121,7 +121,7 @@
   }
 
   /* Arabic reading direction — scoped to text content only; layout containers
-     (nav, grids, fixed/absolute-positioned badges and the floating WhatsApp
+     (nav, grids, fixed/absolute-positioned badges and the floating Ops Freq
      button) stay put so hand-positioned decorative elements don't mirror. */
   body.lang-ar :is(p, li, h1, h2, h3, .label, .code, .sub, .dossier-quote, .price-label, .k, .v, .rname, .rrole, .tag){
     direction: rtl; text-align: right;
@@ -448,7 +448,7 @@
       <h2 style="font-family:'Anton',sans-serif; font-size:clamp(1.9rem,4.2vw,2.7rem); text-transform:uppercase; line-height:1.05; margin-bottom:18px;" data-i18n-html="sec01_h2">1:1 Coaching.<br><span style="color:var(--oxide);">Built On Your Target.</span></h2>
       <p style="color:var(--paper-dim); font-size:1.02rem; max-width:520px; margin-bottom:16px;" data-i18n-html="sec01_p1">No off-the-shelf programming. Every 1:1 protocol is built and run around <strong style="color:var(--paper);">you</strong> — the HVA, the High-Value Asset — and the specific target you're training to hit. Your data, your terrain, your mission profile.</p>
       <p style="color:var(--paper-dim); font-size:1.02rem; max-width:520px; margin-bottom:30px;" data-i18n="sec01_p2">Direct access to the Commander. Limited roster, filled on a first-contact basis.</p>
-      <a href="https://wa.me/96599992990?text=Hi%2C%20I%20want%20to%20reserve%20a%201%3A1%20Coaching%20spot." target="_blank" rel="noopener noreferrer" class="btn-primary" data-i18n="sec01_cta">Contact TAC-FREQ to Reserve a Spot</a>
+      <a href="mailto:contact@extraction.fit?subject=Hi%2C%20I%20want%20to%20reserve%20a%201%3A1%20Coaching%20spot." class="btn-primary" data-i18n="sec01_cta">Contact TAC-FREQ to Reserve a Spot</a>
     </div>
     <div class="reveal" style="display:flex; justify-content:center; transition-delay:120ms;">
       <img src="assets/badge-cadre-access.png" alt="On Target — 1:1 Coaching" data-i18n-alt="alt_ontarget" style="width:100%; max-width:340px; filter: drop-shadow(0 0 24px rgba(192,69,29,0.28));">
@@ -522,7 +522,7 @@
           <li data-i18n="offer_li4">Every exercise linked to a form-check video</li>
         </ul>
       </div>
-      <a href="https://wa.me/96599992990?text=Hi%2C%20I%20want%20to%20get%20the%2090-Day%20Extraction%20Protocol%20(%2497)." target="_blank" rel="noopener noreferrer" class="btn-primary" data-i18n="offer_cta">Get The Protocol</a>
+      <a href="mailto:contact@extraction.fit?subject=Hi%2C%20I%20want%20to%20get%20the%2090-Day%20Extraction%20Protocol%20(%2497)." class="btn-primary" data-i18n="offer_cta">Get The Protocol</a>
     </div>
   </div>
 </section>
@@ -589,9 +589,10 @@
   </div>
 </footer>
 
-<a class="ops-freq" href="https://wa.me/96599992990?text=Hi%2C%20I%20want%20to%20request%20Extraction." target="_blank" rel="noopener noreferrer" aria-label="Message Extraction on WhatsApp" data-i18n-aria="aria_whatsapp">
+<a class="ops-freq" href="mailto:contact@extraction.fit?subject=Hi%2C%20I%20want%20to%20request%20Extraction." aria-label="Email Extraction" data-i18n-aria="aria_whatsapp">
   <svg class="ops-freq-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <path d="M16 3C9.373 3 4 8.373 4 15c0 2.53.79 4.877 2.137 6.807L4.6 27.6l5.94-1.556A11.93 11.93 0 0 0 16 27c6.627 0 12-5.373 12-12S22.627 3 16 3Zm0 21.8a9.77 9.77 0 0 1-4.98-1.36l-.357-.212-3.527.924.94-3.436-.232-.353A9.77 9.77 0 0 1 6.2 15C6.2 9.585 10.585 5.2 16 5.2S25.8 9.585 25.8 15 21.415 24.8 16 24.8Zm5.373-7.36c-.294-.147-1.74-.858-2.01-.956-.27-.098-.467-.147-.664.147-.196.294-.76.956-.933 1.152-.171.196-.343.22-.637.073-.294-.147-1.24-.457-2.362-1.457-.873-.779-1.463-1.741-1.635-2.035-.171-.294-.018-.453.129-.6.132-.132.294-.343.441-.514.147-.171.196-.294.294-.49.098-.196.049-.367-.024-.514-.073-.147-.664-1.6-.91-2.192-.24-.577-.484-.499-.664-.508l-.566-.01c-.196 0-.514.073-.784.367-.27.294-1.03 1.007-1.03 2.456s1.054 2.848 1.201 3.045c.147.196 2.075 3.168 5.028 4.44.703.303 1.251.484 1.679.62.705.224 1.347.192 1.854.117.566-.085 1.74-.712 1.985-1.4.245-.688.245-1.278.171-1.4-.073-.123-.269-.196-.563-.343Z" fill="currentColor"/>
+    <rect x="4" y="8" width="24" height="17" rx="2" stroke="currentColor" stroke-width="2"/>
+    <path d="M5.5 9.5 16 18l10.5-8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
   <span class="ops-freq-label" data-i18n="ops_freq_label">Ops Freq</span>
 </a>
@@ -645,7 +646,7 @@
       card4_tag: "Philosophy", card4_h3: "Leadership", card4_p: "Discipline gets you out of the wreckage. It doesn't tell you what to do once you're standing on solid ground — that's command, and it's earned, not ranked.", alt_events: "Sustained Ops — Monthly",
       card5_tag: "Coming Soon", card5_h3: "Events", card5_p: "Sustained Ops — Monthly musters, in-person and virtual, for graduated Operators to stay sharp after RTB. Details drop soon.",
       roster_note: "TEAM OF SIX // ROSTER — TBD", roster_callsign: "Callsign TBD", roster_role: "Role TBD",
-      footer_code: "EXTRACTION // FROM MEDIOCRITY // NO ONE IS COMING", ops_freq_label: "Ops Freq", aria_whatsapp: "Message Extraction on WhatsApp",
+      footer_code: "EXTRACTION // FROM MEDIOCRITY // NO ONE IS COMING", ops_freq_label: "Ops Freq", aria_whatsapp: "Email Extraction",
     },
     tr: {
       nav_coaching: "Birebir Koçluk", nav_leadership: "Liderlik", nav_shop: "Mağaza", nav_portal: "Operatör Girişi", nav_request: "Extraction Talep Et",
@@ -686,7 +687,7 @@
       card4_tag: "Felsefe", card4_h3: "Liderlik", card4_p: "Disiplin seni enkazdan çıkarır. Sağlam zeminde durduğunda ne yapacağını söylemez — o komutadır ve rütbeyle değil, kazanılarak elde edilir.", alt_events: "Sustained Ops — Aylık",
       card5_tag: "Yakında", card5_h3: "Etkinlikler", card5_p: "Sustained Ops — mezun Operatörlerin Üsse Dönüş sonrası formda kalması için aylık, yüz yüze ve sanal buluşmalar. Detaylar yakında.",
       roster_note: "ALTILI EKİP // KADRO — BELİRLENECEK", roster_callsign: "Çağrı Kodu Belirlenecek", roster_role: "Rol Belirlenecek",
-      footer_code: "EXTRACTION // VASATLIKTAN // KİMSE GELMİYOR", ops_freq_label: "Ops Freq", aria_whatsapp: "Extraction'a WhatsApp'tan mesaj gönder",
+      footer_code: "EXTRACTION // VASATLIKTAN // KİMSE GELMİYOR", ops_freq_label: "Ops Freq", aria_whatsapp: "Extraction'a e-posta gönder",
     },
     ar: {
       nav_coaching: "التدريب الفردي", nav_leadership: "القيادة", nav_shop: "المتجر", nav_portal: "دخول المتدرب", nav_request: "اطلب الإخلاء",
@@ -727,7 +728,7 @@
       card4_tag: "الفلسفة", card4_h3: "القيادة", card4_p: "الانضباط ينتشلك من الحطام. لكنه لا يخبرك بما عليك فعله بعد أن تقف على أرض صلبة — تلك هي القيادة، وهي تُكتسب، لا تُمنح برتبة.", alt_events: "Sustained Ops — شهري",
       card5_tag: "قريبًا", card5_h3: "الفعاليات", card5_p: "Sustained Ops — تجمعات شهرية، حضورية وافتراضية، للمتدربين الخريجين للحفاظ على جاهزيتهم بعد العودة للقاعدة. التفاصيل قريبًا.",
       roster_note: "فريق الستة // الكادر — سيُحدد لاحقًا", roster_callsign: "الاسم الرمزي سيُحدد لاحقًا", roster_role: "الدور سيُحدد لاحقًا",
-      footer_code: "الإخلاء // من الرداءة // لا أحد قادم", ops_freq_label: "تردد العمليات", aria_whatsapp: "راسل الإخلاء عبر واتساب",
+      footer_code: "الإخلاء // من الرداءة // لا أحد قادم", ops_freq_label: "تردد العمليات", aria_whatsapp: "راسل الإخلاء عبر البريد الإلكتروني",
     },
   };
 

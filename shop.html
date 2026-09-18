@@ -342,9 +342,9 @@
             <span class="amt">$97<span style="font-size:1rem;">.00</span></span>
             <span class="note">One-time investment</span>
           </div>
-          <a href="https://wa.me/96599992990?text=Hi%2C%20I%20want%20to%20get%20the%2090-Day%20Extraction%20Protocol%20(%2497)." target="_blank" rel="noopener noreferrer" class="btn-primary">Get The Protocol</a>
+          <a href="mailto:contact@extraction.fit?subject=Hi%2C%20I%20want%20to%20get%20the%2090-Day%20Extraction%20Protocol%20(%2497)." class="btn-primary">Get The Protocol</a>
         </div>
-        <div class="protocol-order-note">Self-serve checkout is being wired up — message Ops Freq now for instant manual access while it finishes rolling out.</div>
+        <div class="protocol-order-note">Self-serve checkout is being wired up — email Ops Freq now for instant manual access while it finishes rolling out.</div>
       </div>
     </div>
   </div>
@@ -523,7 +523,7 @@
       </form>
       <div id="waitlist-msg" class="waitlist-msg"></div>
       <div class="waitlist-alt">
-        <a href="https://wa.me/96599992990?text=Hi%2C%20I%20want%20on%20the%20Extraction%20Shop%20waitlist." target="_blank" rel="noopener noreferrer" class="btn-ghost">or message Ops Freq on WhatsApp</a>
+        <a href="mailto:contact@extraction.fit?subject=Hi%2C%20I%20want%20on%20the%20Extraction%20Shop%20waitlist." class="btn-ghost">or email Ops Freq</a>
       </div>
     </div>
     <script>
@@ -540,7 +540,7 @@
         msg.textContent = "";
         msg.className = "waitlist-msg";
         if (!window.sb) {
-          msg.textContent = "Waitlist is temporarily unavailable — message Ops Freq instead.";
+          msg.textContent = "Waitlist is temporarily unavailable — email Ops Freq instead.";
           msg.classList.add("err");
           return;
         }
@@ -554,7 +554,7 @@
             msg.textContent = "You're already on the list — coordinates locked.";
             msg.classList.add("ok");
           } else {
-            msg.textContent = "Couldn't reach the armory — message Ops Freq instead.";
+            msg.textContent = "Couldn't reach the armory — email Ops Freq instead.";
             msg.classList.add("err");
           }
           return;
@@ -577,9 +577,10 @@
   </div>
 </footer>
 
-<a class="ops-freq" href="https://wa.me/96599992990?text=Hi%2C%20I%20want%20on%20the%20Extraction%20Shop%20waitlist." target="_blank" rel="noopener noreferrer" aria-label="Message Extraction on WhatsApp">
+<a class="ops-freq" href="mailto:contact@extraction.fit?subject=Hi%2C%20I%20want%20on%20the%20Extraction%20Shop%20waitlist." aria-label="Email Extraction">
   <svg class="ops-freq-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <path d="M16 3C9.373 3 4 8.373 4 15c0 2.53.79 4.877 2.137 6.807L4.6 27.6l5.94-1.556A11.93 11.93 0 0 0 16 27c6.627 0 12-5.373 12-12S22.627 3 16 3Zm0 21.8a9.77 9.77 0 0 1-4.98-1.36l-.357-.212-3.527.924.94-3.436-.232-.353A9.77 9.77 0 0 1 6.2 15C6.2 9.585 10.585 5.2 16 5.2S25.8 9.585 25.8 15 21.415 24.8 16 24.8Zm5.373-7.36c-.294-.147-1.74-.858-2.01-.956-.27-.098-.467-.147-.664.147-.196.294-.76.956-.933 1.152-.171.196-.343.22-.637.073-.294-.147-1.24-.457-2.362-1.457-.873-.779-1.463-1.741-1.635-2.035-.171-.294-.018-.453.129-.6.132-.132.294-.343.441-.514.147-.171.196-.294.294-.49.098-.196.049-.367-.024-.514-.073-.147-.664-1.6-.91-2.192-.24-.577-.484-.499-.664-.508l-.566-.01c-.196 0-.514.073-.784.367-.27.294-1.03 1.007-1.03 2.456s1.054 2.848 1.201 3.045c.147.196 2.075 3.168 5.028 4.44.703.303 1.251.484 1.679.62.705.224 1.347.192 1.854.117.566-.085 1.74-.712 1.985-1.4.245-.688.245-1.278.171-1.4-.073-.123-.269-.196-.563-.343Z" fill="currentColor"/>
+    <rect x="4" y="8" width="24" height="17" rx="2" stroke="currentColor" stroke-width="2"/>
+    <path d="M5.5 9.5 16 18l10.5-8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
   <span class="ops-freq-label">Ops Freq</span>
 </a>
@@ -594,7 +595,7 @@
   <div id="cart-empty" class="cart-empty">Cart is empty. Add gear from any section above — max 5 of each item.</div>
   <div class="cart-foot">
     <div class="cart-subtotal">Subtotal <span id="cart-subtotal">0.000 KWD</span></div>
-    <a id="cart-checkout" class="btn-primary is-disabled" href="#" target="_blank" rel="noopener noreferrer">Checkout via WhatsApp</a>
+    <a id="cart-checkout" class="btn-primary is-disabled" href="#">Checkout via Email</a>
   </div>
 </aside>
 
@@ -602,7 +603,6 @@
 (function () {
   var CART_KEY = "extraction_shop_cart";
   var MAX_QTY = 5;
-  var WHATSAPP_NUMBER = "96599992990";
 
   function loadCart() {
     try {
@@ -682,7 +682,7 @@
       lines.push("- " + item.name + " (" + item.meta + ") x" + item.qty);
     });
     if (ids.length) lines.push("Total: " + subtotal.toFixed(3) + " KWD");
-    cartCheckoutEl.href = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(lines.join("\n"));
+    cartCheckoutEl.href = "mailto:contact@extraction.fit?subject=" + encodeURIComponent("Extraction Shop order") + "&body=" + encodeURIComponent(lines.join("\n"));
   }
 
   cartItemsEl.addEventListener("click", function (e) {
