@@ -289,6 +289,33 @@
   .includes li{ font-size:0.9rem; color:var(--paper-dim); padding: 5px 0; }
   .includes li::before{ content:'—'; color:var(--oxide); margin-right:10px;}
 
+  .offer-order{ display:flex; flex-direction:column; align-items:flex-end; gap:14px; }
+  .offer-config{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+  .offer-config-row{ display:flex; flex-direction:column; gap:6px; min-width:180px; }
+  .offer-config-row label{ font-family:'IBM Plex Mono',monospace; font-size:0.62rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--paper-dim); }
+  .offer-select{
+    background:var(--bg); border:1px solid var(--line-strong); color:var(--paper);
+    padding:12px 14px; font-family:'Inter',sans-serif; font-size:0.88rem; width:100%;
+  }
+  .offer-select:focus{ outline:none; border-color:var(--oxide); }
+  .offer-phone-row{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+  .offer-phone-row input[type=tel]{
+    background:var(--bg); border:1px solid var(--line-strong); color:var(--paper);
+    padding:13px 14px; font-family:'Inter',sans-serif; font-size:0.88rem; min-width:190px;
+  }
+  .offer-phone-row input[type=tel]:focus{ outline:none; border-color:var(--oxide); }
+  .offer-order-msg{ font-family:'IBM Plex Mono',monospace; font-size:0.68rem; letter-spacing:0.04em; color:var(--oxide); min-height:1em; text-align:right; }
+  body.lang-ar .offer-order{ align-items:flex-start; }
+  body.lang-ar .offer-config,
+  body.lang-ar .offer-phone-row{ justify-content:flex-start; }
+  body.lang-ar .offer-order-msg{ text-align:left; }
+  @media (max-width:640px){
+    .offer-order{ align-items:stretch; width:100%; }
+    .offer-config, .offer-phone-row{ justify-content:stretch; }
+    .offer-config-row{ flex:1 1 140px; }
+    .offer-phone-row input[type=tel]{ flex:1 1 160px; }
+  }
+
   /* Command structure (Commander Access / Team of Six / Leadership / Events) */
   .cadre-intro{ max-width:640px; color:var(--paper-dim); font-size:1.02rem; margin-bottom:38px; }
   .cadre-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:var(--line-strong); border:1px solid var(--line-strong); }
@@ -518,11 +545,40 @@
         <ul class="includes">
           <li data-i18n="offer_li1">Full 90-day Extraction Protocol — all 4 phases, all 13 weeks</li>
           <li data-i18n="offer_li2">Personalized to your training frequency — 3, 4, 5, or 6 days a week</li>
+          <li data-i18n="offer_li_track">Choose your equipment track — Full Gym, Functional, Bodyweight, or Bands</li>
           <li data-i18n="offer_li3">Lifetime portal access + a downloadable manual, watermarked to you</li>
           <li data-i18n="offer_li4">Every exercise linked to a form-check video</li>
         </ul>
       </div>
-      <a href="mailto:contact@extraction.fit?subject=Hi%2C%20I%20want%20to%20get%20the%2090-Day%20Extraction%20Protocol%20(%2497)." class="btn-primary" data-i18n="offer_cta">Get The Protocol</a>
+      <div class="offer-order">
+        <div class="offer-config">
+          <div class="offer-config-row">
+            <label for="offer-days" data-i18n="offer_days_label">Training frequency</label>
+            <select id="offer-days" class="offer-select">
+              <option value="" data-i18n="offer_days_placeholder" disabled selected>Choose days / week</option>
+              <option value="3 days/week" data-i18n="offer_days_3">3 days / week</option>
+              <option value="4 days/week" data-i18n="offer_days_4">4 days / week</option>
+              <option value="5 days/week" data-i18n="offer_days_5">5 days / week</option>
+              <option value="6 days/week" data-i18n="offer_days_6">6 days / week</option>
+            </select>
+          </div>
+          <div class="offer-config-row">
+            <label for="offer-type" data-i18n="offer_type_label">Equipment track</label>
+            <select id="offer-type" class="offer-select">
+              <option value="" data-i18n="offer_type_placeholder" disabled selected>Choose program type</option>
+              <option value="Full Gym" data-i18n="offer_type_fullgym">Full Gym</option>
+              <option value="Functional Training" data-i18n="offer_type_functional">Functional Training</option>
+              <option value="Bodyweight Only" data-i18n="offer_type_bodyweight">Bodyweight Only</option>
+              <option value="Bands Only" data-i18n="offer_type_bands">Bands Only</option>
+            </select>
+          </div>
+        </div>
+        <div class="offer-phone-row">
+          <input id="offer-phone" type="tel" data-i18n-placeholder="offer_phone_placeholder" placeholder="Phone for payment link" autocomplete="tel" inputmode="tel">
+          <button id="offer-checkout" class="btn-primary" type="button" data-i18n="offer_cta">Get The Protocol</button>
+        </div>
+        <div id="offer-order-msg" class="offer-order-msg"></div>
+      </div>
     </div>
   </div>
 </section>
@@ -636,8 +692,17 @@
       sec05_code: "05 / EXECUTION", offer_label: "One-time investment",
       offer_li1: "Full 90-day Extraction Protocol — all 4 phases, all 13 weeks",
       offer_li2: "Personalized to your training frequency — 3, 4, 5, or 6 days a week",
+      offer_li_track: "Choose your equipment track — Full Gym, Functional, Bodyweight, or Bands",
       offer_li3: "Lifetime portal access + a downloadable manual, watermarked to you",
       offer_li4: "Every exercise linked to a form-check video", offer_cta: "Get The Protocol",
+      offer_days_label: "Training frequency", offer_days_placeholder: "Choose days / week",
+      offer_days_3: "3 days / week", offer_days_4: "4 days / week", offer_days_5: "5 days / week", offer_days_6: "6 days / week",
+      offer_type_label: "Equipment track", offer_type_placeholder: "Choose program type",
+      offer_type_fullgym: "Full Gym", offer_type_functional: "Functional Training", offer_type_bodyweight: "Bodyweight Only", offer_type_bands: "Bands Only",
+      offer_phone_placeholder: "Phone for payment link",
+      offer_msg_days: "Choose your training frequency so we can build the right manual.",
+      offer_msg_type: "Choose your equipment track so we can build the right manual.",
+      offer_msg_phone: "Add a phone number so we can send your payment link.",
       sec06_code: "06 / COMMAND STRUCTURE",
       sec06_intro: "A quick familiarization before you go further. The Extraction Protocol isn't one man shouting instructions from the sideline — it's a chain of command built to run it, a roster who executes it, a philosophy that outlasts the 90 days, and a rhythm that keeps you honest after RTB. Discipline gets you out of the wreckage. This is where your compass starts pointing to what comes next.",
       card1_tag: "Featured", card1_h3: "1:1 On Target Coaching", card1_p: "Direct, individualized coaching built around your target — you're the HVA. Limited roster. Contact TAC-FREQ to reserve a spot.", card1_cta: "See the briefing →", alt_commander: "Commander Access — Restricted",
@@ -677,8 +742,17 @@
       sec05_code: "05 / İCRA", offer_label: "Tek seferlik yatırım",
       offer_li1: "Tam 90 günlük Extraction Protokolü — 4 fazın, 13 haftanın tamamı",
       offer_li2: "Antrenman sıklığına göre kişiselleştirilir — haftada 3, 4, 5 veya 6 gün",
+      offer_li_track: "Ekipman parkurunu seç — Tam Donanımlı Salon, Fonksiyonel, Vücut Ağırlığı veya Direnç Bandı",
       offer_li3: "Ömür boyu portal erişimi + sana özel filigranlı, indirilebilir bir kılavuz",
       offer_li4: "Her egzersiz bir form kontrol videosuna bağlı", offer_cta: "Protokolü Al",
+      offer_days_label: "Antrenman sıklığı", offer_days_placeholder: "Haftalık gün sayısını seç",
+      offer_days_3: "Haftada 3 gün", offer_days_4: "Haftada 4 gün", offer_days_5: "Haftada 5 gün", offer_days_6: "Haftada 6 gün",
+      offer_type_label: "Ekipman parkuru", offer_type_placeholder: "Program türünü seç",
+      offer_type_fullgym: "Tam Donanımlı Salon", offer_type_functional: "Fonksiyonel Antrenman", offer_type_bodyweight: "Sadece Vücut Ağırlığı", offer_type_bands: "Sadece Direnç Bandı",
+      offer_phone_placeholder: "Ödeme bağlantısı için telefon",
+      offer_msg_days: "Doğru kılavuzu hazırlayabilmemiz için antrenman sıklığını seç.",
+      offer_msg_type: "Doğru kılavuzu hazırlayabilmemiz için ekipman parkurunu seç.",
+      offer_msg_phone: "Ödeme bağlantısını gönderebilmemiz için telefon numaranı ekle.",
       sec06_code: "06 / KOMUTA YAPISI",
       sec06_intro: "Devam etmeden önce kısa bir tanışma. Extraction Protokolü, kenardan talimat bağıran tek bir adam değil — onu yürütecek bir komuta zinciri, onu uygulayacak bir kadro, 90 günü aşan bir felsefe ve Üsse Dönüş'ten sonra seni dürüst tutan bir ritim. Disiplin seni enkazdan çıkarır. Burası pusulanın sıradakine işaret etmeye başladığı yer.",
       card1_tag: "Öne Çıkan", card1_h3: "Birebir Hedefte Koçluk", card1_p: "Hedefin etrafında inşa edilmiş doğrudan, bireysel koçluk — Yüksek Değerli Hedef sensin. Sınırlı kadro. Yer ayırtmak için TAC-FREQ ile iletişime geç.", card1_cta: "Brifingi gör →", alt_commander: "Komutan Erişimi — Kısıtlı",
@@ -718,8 +792,17 @@
       sec05_code: "05 / التنفيذ", offer_label: "استثمار لمرة واحدة",
       offer_li1: "بروتوكول الإخلاء الكامل لتسعين يومًا — جميع المراحل الأربع، والأسابيع الثلاثة عشر",
       offer_li2: "مخصص حسب وتيرة تدريبك — 3 أو 4 أو 5 أو 6 أيام في الأسبوع",
+      offer_li_track: "اختر مسار المعدات — نادي رياضي متكامل، تدريب وظيفي، وزن الجسم فقط، أو أحزمة مقاومة فقط",
       offer_li3: "وصول دائم للبوابة الإلكترونية + دليل قابل للتحميل موسوم باسمك",
       offer_li4: "كل تمرين مرتبط بفيديو للتحقق من الأداء", offer_cta: "احصل على البروتوكول",
+      offer_days_label: "وتيرة التدريب", offer_days_placeholder: "اختر عدد الأيام في الأسبوع",
+      offer_days_3: "3 أيام في الأسبوع", offer_days_4: "4 أيام في الأسبوع", offer_days_5: "5 أيام في الأسبوع", offer_days_6: "6 أيام في الأسبوع",
+      offer_type_label: "مسار المعدات", offer_type_placeholder: "اختر نوع البرنامج",
+      offer_type_fullgym: "نادي رياضي متكامل", offer_type_functional: "تدريب وظيفي", offer_type_bodyweight: "وزن الجسم فقط", offer_type_bands: "أحزمة مقاومة فقط",
+      offer_phone_placeholder: "رقم الهاتف لإرسال رابط الدفع",
+      offer_msg_days: "اختر وتيرة تدريبك حتى نتمكن من إعداد الدليل المناسب.",
+      offer_msg_type: "اختر مسار المعدات حتى نتمكن من إعداد الدليل المناسب.",
+      offer_msg_phone: "أضف رقم هاتفك حتى نتمكن من إرسال رابط الدفع.",
       sec06_code: "06 / هيكل القيادة",
       sec06_intro: "تعريف سريع قبل أن تُكمل. بروتوكول الإخلاء ليس رجلًا واحدًا يصرخ بالتعليمات من الهامش — إنه سلسلة قيادة بُنيت لتشغيله، وكادر يُنفذه، وفلسفة تدوم بعد التسعين يومًا، وإيقاع يبقيك صادقًا بعد العودة للقاعدة. الانضباط ينتشلك من الحطام. هنا تبدأ بوصلتك بالإشارة إلى ما يليه.",
       card1_tag: "مميز", card1_h3: "تدريب فردي على الهدف المحدد", card1_p: "تدريب فردي مباشر مبني حول هدفك — أنت الهدف عالي القيمة. عدد محدود. تواصل عبر واتساب لحجز مكانك.", card1_cta: "شاهد الإحاطة ←", alt_commander: "دخول القائد — مقيّد",
@@ -752,6 +835,12 @@
       var key = el.getAttribute('data-i18n-aria');
       if(t[key] !== undefined) el.setAttribute('aria-label', t[key]);
     });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){
+      var key = el.getAttribute('data-i18n-placeholder');
+      if(t[key] !== undefined) el.setAttribute('placeholder', t[key]);
+    });
+    var offerMsgEl = document.getElementById('offer-order-msg');
+    if(offerMsgEl) offerMsgEl.textContent = '';
     var tickerEl = document.getElementById('ticker-inner');
     if(tickerEl && t.ticker_phrases){
       var dot = ' <span class="dot">•</span> ';
@@ -783,6 +872,44 @@
   try{ savedLang = localStorage.getItem('extraction:lang') || 'en'; }catch(e){}
   initLangSwitch();
   applyLang(savedLang);
+})();
+</script>
+
+<script>
+(function(){
+  var offerDays = document.getElementById('offer-days');
+  var offerType = document.getElementById('offer-type');
+  var offerPhone = document.getElementById('offer-phone');
+  var offerCheckout = document.getElementById('offer-checkout');
+  var offerMsg = document.getElementById('offer-order-msg');
+  if (!offerCheckout) return;
+  offerCheckout.addEventListener('click', function(){
+    var t = window.EXT_T || {};
+    var days = offerDays.value;
+    var type = offerType.value;
+    var phone = offerPhone.value.trim();
+    if (!days) {
+      offerMsg.textContent = t.offer_msg_days || 'Choose your training frequency so we can build the right manual.';
+      offerDays.focus();
+      return;
+    }
+    if (!type) {
+      offerMsg.textContent = t.offer_msg_type || 'Choose your equipment track so we can build the right manual.';
+      offerType.focus();
+      return;
+    }
+    if (!phone) {
+      offerMsg.textContent = t.offer_msg_phone || 'Add a phone number so we can send your payment link.';
+      offerPhone.focus();
+      return;
+    }
+    offerMsg.textContent = '';
+    var body = 'Hi, I want to get the 90-Day Extraction Protocol ($97).\n' +
+      'Training frequency: ' + days + '\n' +
+      'Equipment track: ' + type + '\n' +
+      'Phone (for payment link): ' + phone;
+    window.location.href = 'mailto:contact@extraction.fit?subject=' + encodeURIComponent('90-Day Extraction Protocol order') + '&body=' + encodeURIComponent(body);
+  });
 })();
 </script>
 

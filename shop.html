@@ -158,6 +158,14 @@
   .protocol-list li::before{
     content:"›"; position:absolute; left:0; color:var(--oxide); font-weight:700;
   }
+  .protocol-config{ display:flex; gap:14px; flex-wrap:wrap; margin-bottom:22px; }
+  .protocol-config-row{ display:flex; flex-direction:column; gap:6px; flex:1 1 180px; }
+  .protocol-config-row label{ font-family:'IBM Plex Mono',monospace; font-size:0.64rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--tan); }
+  .protocol-select{
+    background:var(--bg); border:1px solid var(--line-strong); color:var(--paper);
+    padding:12px 14px; font-family:'Inter',sans-serif; font-size:0.88rem; width:100%;
+  }
+  .protocol-select:focus{ outline:none; border-color:var(--oxide); }
   .protocol-foot{ display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap; margin-top:auto; padding-top:10px; border-top:1px solid var(--line); }
   .protocol-price{ font-family:'IBM Plex Mono',monospace; }
   .protocol-price .amt{ font-family:'Anton',sans-serif; font-size:1.8rem; color:var(--bone); }
@@ -348,9 +356,32 @@
         <ul class="protocol-list">
           <li>Full 90-day Extraction Protocol — all 4 phases, all 13 weeks</li>
           <li>Personalized to your training frequency — 3, 4, 5, or 6 days a week</li>
+          <li>Choose your equipment track — Full Gym, Functional, Bodyweight, or Bands</li>
           <li>Lifetime portal access + a downloadable manual, watermarked to you</li>
           <li>Every exercise linked to a form-check video</li>
         </ul>
+        <div class="protocol-config">
+          <div class="protocol-config-row">
+            <label for="protocol-days">Training frequency</label>
+            <select id="protocol-days" class="protocol-select">
+              <option value="" disabled selected>Choose days / week</option>
+              <option value="3 days/week">3 days / week</option>
+              <option value="4 days/week">4 days / week</option>
+              <option value="5 days/week">5 days / week</option>
+              <option value="6 days/week">6 days / week</option>
+            </select>
+          </div>
+          <div class="protocol-config-row">
+            <label for="protocol-type">Equipment track</label>
+            <select id="protocol-type" class="protocol-select">
+              <option value="" disabled selected>Choose program type</option>
+              <option value="Full Gym">Full Gym</option>
+              <option value="Functional Training">Functional Training</option>
+              <option value="Bodyweight Only">Bodyweight Only</option>
+              <option value="Bands Only">Bands Only</option>
+            </select>
+          </div>
+        </div>
         <div class="protocol-foot">
           <div class="protocol-price">
             <span class="amt">$97<span style="font-size:1rem;">.00</span></span>
@@ -803,19 +834,36 @@
 
   renderCart();
 
+  var protocolDays = document.getElementById("protocol-days");
+  var protocolType = document.getElementById("protocol-type");
   var protocolPhone = document.getElementById("protocol-phone");
   var protocolCheckout = document.getElementById("protocol-checkout");
   var protocolMsg = document.getElementById("protocol-order-msg");
   if (protocolCheckout) {
     protocolCheckout.addEventListener("click", function () {
+      var days = protocolDays.value;
+      var type = protocolType.value;
       var phone = protocolPhone.value.trim();
+      if (!days) {
+        protocolMsg.textContent = "Choose your training frequency so we can build the right manual.";
+        protocolDays.focus();
+        return;
+      }
+      if (!type) {
+        protocolMsg.textContent = "Choose your equipment track so we can build the right manual.";
+        protocolType.focus();
+        return;
+      }
       if (!phone) {
         protocolMsg.textContent = "Add a phone number so we can send your payment link.";
         protocolPhone.focus();
         return;
       }
       protocolMsg.textContent = "";
-      var body = "Hi, I want to get the 90-Day Extraction Protocol ($97).\nPhone (for payment link): " + phone;
+      var body = "Hi, I want to get the 90-Day Extraction Protocol ($97).\n" +
+        "Training frequency: " + days + "\n" +
+        "Equipment track: " + type + "\n" +
+        "Phone (for payment link): " + phone;
       window.location.href = "mailto:contact@extraction.fit?subject=" + encodeURIComponent("90-Day Extraction Protocol order") + "&body=" + encodeURIComponent(body);
     });
   }
