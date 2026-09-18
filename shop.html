@@ -162,7 +162,14 @@
   .protocol-price{ font-family:'IBM Plex Mono',monospace; }
   .protocol-price .amt{ font-family:'Anton',sans-serif; font-size:1.8rem; color:var(--bone); }
   .protocol-price .note{ display:block; font-size:0.66rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--tan); margin-top:2px; }
-  .protocol-order-note{ font-family:'IBM Plex Mono',monospace; font-size:0.68rem; letter-spacing:0.04em; color:var(--tan); margin-top:14px; }
+  .protocol-order-form{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .protocol-order-form input[type=tel]{
+    background:var(--bg); border:1px solid var(--line-strong); color:var(--paper);
+    padding:13px 14px; font-family:'Inter',sans-serif; font-size:0.88rem; min-width:190px;
+  }
+  .protocol-order-form input[type=tel]:focus{ outline:none; border-color:var(--oxide); }
+  .protocol-order-msg{ font-family:'IBM Plex Mono',monospace; font-size:0.68rem; letter-spacing:0.04em; color:var(--oxide); margin-top:10px; min-height:1em; }
+  .protocol-order-note{ font-family:'IBM Plex Mono',monospace; font-size:0.68rem; letter-spacing:0.04em; color:var(--tan); margin-top:6px; }
   @media (max-width:780px){
     .protocol-card{ grid-template-columns:1fr; }
     .protocol-media{ min-height:180px; border-right:none; border-bottom:1px solid var(--line); }
@@ -256,6 +263,13 @@
   .cart-item .ci-remove:hover{ color:var(--oxide); }
   .cart-empty{ padding:44px 22px; text-align:center; color:var(--tan); font-family:'IBM Plex Mono',monospace; font-size:0.8rem; }
   .cart-foot{ padding:18px 22px 24px; border-top:1px solid var(--line-strong); }
+  .cart-phone-row{ margin-bottom:14px; }
+  .cart-phone-label{ display:block; font-family:'IBM Plex Mono',monospace; font-size:0.64rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--tan); margin-bottom:6px; }
+  .cart-phone-row input[type=tel]{
+    width:100%; background:var(--bg); border:1px solid var(--line-strong); color:var(--paper);
+    padding:12px 14px; font-family:'Inter',sans-serif; font-size:0.9rem;
+  }
+  .cart-phone-row input[type=tel]:focus{ outline:none; border-color:var(--oxide); }
   .cart-subtotal{ font-family:'IBM Plex Mono',monospace; font-size:0.85rem; color:var(--paper); margin-bottom:16px; display:flex; justify-content:space-between; }
   .cart-subtotal span{ color:var(--oxide); font-weight:700; }
   .cart-foot .btn-primary{ display:block; text-align:center; width:100%; }
@@ -342,8 +356,12 @@
             <span class="amt">$97<span style="font-size:1rem;">.00</span></span>
             <span class="note">One-time investment</span>
           </div>
-          <a href="mailto:contact@extraction.fit?subject=Hi%2C%20I%20want%20to%20get%20the%2090-Day%20Extraction%20Protocol%20(%2497)." class="btn-primary">Get The Protocol</a>
+          <div class="protocol-order-form">
+            <input id="protocol-phone" type="tel" placeholder="Phone for payment link" autocomplete="tel" inputmode="tel">
+            <button id="protocol-checkout" class="btn-primary" type="button">Get The Protocol</button>
+          </div>
         </div>
+        <div id="protocol-order-msg" class="protocol-order-msg"></div>
         <div class="protocol-order-note">Self-serve checkout is being wired up — email Ops Freq now for instant manual access while it finishes rolling out.</div>
       </div>
     </div>
@@ -616,6 +634,10 @@
   <div id="cart-items" class="cart-items"></div>
   <div id="cart-empty" class="cart-empty">Cart is empty. Add gear from any section above — max 5 of each item.</div>
   <div class="cart-foot">
+    <div class="cart-phone-row">
+      <label for="cart-phone" class="cart-phone-label">Phone (for payment link)</label>
+      <input id="cart-phone" type="tel" placeholder="+965 XXXX XXXX" autocomplete="tel" inputmode="tel">
+    </div>
     <div class="cart-subtotal">Subtotal <span id="cart-subtotal">0.000 KWD</span></div>
     <a id="cart-checkout" class="btn-primary is-disabled" href="#">Checkout via Email</a>
   </div>
@@ -626,6 +648,8 @@
   var CART_KEY = "extraction_shop_cart";
   var MAX_QTY = 5;
 
+  var PHONE_KEY = "extraction_shop_phone";
+
   function loadCart() {
     try {
       var raw = localStorage.getItem(CART_KEY);
@@ -634,6 +658,12 @@
   }
   function saveCart(cart) {
     try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch (e) {}
+  }
+  function loadPhone() {
+    try { return localStorage.getItem(PHONE_KEY) || ""; } catch (e) { return ""; }
+  }
+  function savePhone(phone) {
+    try { localStorage.setItem(PHONE_KEY, phone); } catch (e) {}
   }
 
   var cart = loadCart();
@@ -647,6 +677,15 @@
   var cartSubtotalEl = document.getElementById("cart-subtotal");
   var cartCountEl = document.getElementById("cart-count");
   var cartCheckoutEl = document.getElementById("cart-checkout");
+  var cartPhoneEl = document.getElementById("cart-phone");
+
+  if (cartPhoneEl) {
+    cartPhoneEl.value = loadPhone();
+    cartPhoneEl.addEventListener("input", function () {
+      savePhone(cartPhoneEl.value.trim());
+      renderCart();
+    });
+  }
 
   function openCart() { cartOverlay.hidden = false; cartDrawer.hidden = false; }
   function closeCart() { cartOverlay.hidden = true; cartDrawer.hidden = true; }
@@ -662,6 +701,7 @@
 
   function renderCart() {
     var ids = Object.keys(cart);
+    var phone = cartPhoneEl ? cartPhoneEl.value.trim() : "";
     cartItemsEl.innerHTML = "";
     var subtotal = 0;
     if (!ids.length) {
@@ -669,7 +709,7 @@
       cartCheckoutEl.classList.add("is-disabled");
     } else {
       cartEmptyEl.hidden = true;
-      cartCheckoutEl.classList.remove("is-disabled");
+      cartCheckoutEl.classList.toggle("is-disabled", !phone);
       ids.forEach(function (id) {
         var item = cart[id];
         subtotal += item.price * item.qty;
@@ -704,6 +744,7 @@
       lines.push("- " + item.name + " (" + item.meta + ") x" + item.qty);
     });
     if (ids.length) lines.push("Total: " + subtotal.toFixed(3) + " KWD");
+    if (phone) lines.push("Phone (for payment link): " + phone);
     cartCheckoutEl.href = "mailto:contact@extraction.fit?subject=" + encodeURIComponent("Extraction Shop order") + "&body=" + encodeURIComponent(lines.join("\n"));
   }
 
@@ -761,6 +802,23 @@
   });
 
   renderCart();
+
+  var protocolPhone = document.getElementById("protocol-phone");
+  var protocolCheckout = document.getElementById("protocol-checkout");
+  var protocolMsg = document.getElementById("protocol-order-msg");
+  if (protocolCheckout) {
+    protocolCheckout.addEventListener("click", function () {
+      var phone = protocolPhone.value.trim();
+      if (!phone) {
+        protocolMsg.textContent = "Add a phone number so we can send your payment link.";
+        protocolPhone.focus();
+        return;
+      }
+      protocolMsg.textContent = "";
+      var body = "Hi, I want to get the 90-Day Extraction Protocol ($97).\nPhone (for payment link): " + phone;
+      window.location.href = "mailto:contact@extraction.fit?subject=" + encodeURIComponent("90-Day Extraction Protocol order") + "&body=" + encodeURIComponent(body);
+    });
+  }
 })();
 </script>
 
