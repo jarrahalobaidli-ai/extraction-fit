@@ -304,6 +304,10 @@
   .coaching-order-msg{ font-family:'IBM Plex Mono',monospace; font-size:0.68rem; letter-spacing:0.04em; color:var(--oxide); min-height:1em; }
   @media (max-width:640px){ .coaching-order{ max-width:100%; } }
 
+  .tier-note{ font-family:'IBM Plex Mono',monospace; font-size:0.7rem; letter-spacing:0.02em; color:var(--paper-dim); max-width:400px; }
+  .tier-note a{ color:var(--oxide); }
+  .offer-order .tier-note{ text-align:right; }
+
   .offer-order{ display:flex; flex-direction:column; align-items:flex-end; gap:14px; }
   .offer-config{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
   .offer-config-row{ display:flex; flex-direction:column; gap:6px; min-width:180px; }
@@ -500,6 +504,7 @@
           <button id="coaching-checkout" class="btn-primary" type="button" data-i18n="sec01_cta">Contact TAC-FREQ to Reserve a Spot</button>
         </div>
         <div id="coaching-order-msg" class="coaching-order-msg"></div>
+        <p class="tier-note" data-i18n-html="coaching_tier_note">Want it instant instead of guided? Skip the intake and grab the self-serve <a href="#offer">90-Day Protocol manual</a> — no screening required.</p>
       </div>
     </div>
     <div class="reveal" style="display:flex; justify-content:center; transition-delay:120ms;">
@@ -603,6 +608,7 @@
           <button id="offer-checkout" class="btn-primary" type="button" data-i18n="offer_cta">Get The Protocol</button>
         </div>
         <div id="offer-order-msg" class="offer-order-msg"></div>
+        <p class="tier-note" data-i18n-html="offer_tier_note">This is the self-serve manual, personalized by your picks above — not your injury history. Want it fully built around you instead? <a href="#one-on-one">Reserve a 1:1 Coaching spot</a>.</p>
       </div>
     </div>
   </div>
@@ -705,6 +711,7 @@
       coaching_phone_placeholder: "Phone",
       coaching_msg_target: "Tell us your target so we can prep the right protocol.",
       coaching_msg_phone: "Add a phone number so the Commander can reach you.",
+      coaching_tier_note: "Want it instant instead of guided? Skip the intake and grab the self-serve <a href=\"#offer\">90-Day Protocol manual</a> — no screening required.",
       sec02_code: "02 / SITUATION",
       sec02_p1: "<strong>You're not broken. You're undisciplined by design.</strong> Comfort did that — not weakness. Somewhere between the job, the routine, and the noise, the standard slipped, and no one called it.",
       sec02_p2: "This isn't a mindset course. It's a recovery operation. Built by a man who was raised in wreckage, flew combat search and rescue, earned three black belts, and rebuilt a family from nothing — because no one was ever coming for him either.",
@@ -732,6 +739,7 @@
       offer_msg_days: "Choose your training frequency so we can build the right manual.",
       offer_msg_type: "Choose your equipment track so we can build the right manual.",
       offer_msg_phone: "Add a phone number so we can send your payment link.",
+      offer_tier_note: "This is the self-serve manual, personalized by your picks above — not your injury history. Want it fully built around you instead? <a href=\"#one-on-one\">Reserve a 1:1 Coaching spot</a>.",
       sec06_code: "06 / COMMAND STRUCTURE",
       sec06_intro: "A quick familiarization before you go further. The Extraction Protocol isn't one man shouting instructions from the sideline — it's a chain of command built to run it, a roster who executes it, a philosophy that outlasts the 90 days, and a rhythm that keeps you honest after RTB. Discipline gets you out of the wreckage. This is where your compass starts pointing to what comes next.",
       card1_tag: "Featured", card1_h3: "1:1 On Target Coaching", card1_p: "Direct, individualized coaching built around your target — you're the HVA. Limited roster. Contact TAC-FREQ to reserve a spot.", card1_cta: "See the briefing →", alt_commander: "Commander Access — Restricted",
@@ -759,6 +767,7 @@
       coaching_phone_placeholder: "Telefon",
       coaching_msg_target: "Doğru protokolü hazırlayabilmemiz için hedefini yaz.",
       coaching_msg_phone: "Komutanın sana ulaşabilmesi için telefon numaranı ekle.",
+      coaching_tier_note: "Rehberlik yerine anında mı istiyorsun? Kabul sürecini atla, kendin seç kendin al <a href=\"#offer\">90 Günlük Protokol kılavuzunu</a> edin — tarama gerekmez.",
       sec02_code: "02 / DURUM",
       sec02_p1: "<strong>Sen bozuk değilsin. Tasarım gereği disiplinsizsin.</strong> Bunu konfor yaptı — zayıflık değil. İş, rutin ve gürültü arasında bir yerde standart düştü ve kimse bunu fark etmedi.",
       sec02_p2: "Bu bir zihniyet kursu değil. Bu bir kurtarma operasyonu. Enkazda büyümüş, muharebe arama kurtarma uçuşu yapmış, üç kara kuşak kazanmış ve hiçliğin içinden bir aile yeniden inşa etmiş bir adam tarafından kuruldu — çünkü onun için de kimse hiç gelmedi.",
@@ -786,6 +795,7 @@
       offer_msg_days: "Doğru kılavuzu hazırlayabilmemiz için antrenman sıklığını seç.",
       offer_msg_type: "Doğru kılavuzu hazırlayabilmemiz için ekipman parkurunu seç.",
       offer_msg_phone: "Ödeme bağlantısını gönderebilmemiz için telefon numaranı ekle.",
+      offer_tier_note: "Bu, yukarıdaki seçimlerine göre kişiselleştirilen kendin-seç-kendin-al kılavuzdur — yaralanma geçmişine göre değil. Tamamen sana özel inşa edilsin istiyorsan? <a href=\"#one-on-one\">Birebir Koçluk için yer ayırt</a>.",
       sec06_code: "06 / KOMUTA YAPISI",
       sec06_intro: "Devam etmeden önce kısa bir tanışma. Extraction Protokolü, kenardan talimat bağıran tek bir adam değil — onu yürütecek bir komuta zinciri, onu uygulayacak bir kadro, 90 günü aşan bir felsefe ve Üsse Dönüş'ten sonra seni dürüst tutan bir ritim. Disiplin seni enkazdan çıkarır. Burası pusulanın sıradakine işaret etmeye başladığı yer.",
       card1_tag: "Öne Çıkan", card1_h3: "Birebir Hedefte Koçluk", card1_p: "Hedefin etrafında inşa edilmiş doğrudan, bireysel koçluk — Yüksek Değerli Hedef sensin. Sınırlı kadro. Yer ayırtmak için TAC-FREQ ile iletişime geç.", card1_cta: "Brifingi gör →", alt_commander: "Komutan Erişimi — Kısıtlı",
@@ -813,6 +823,7 @@
       coaching_phone_placeholder: "رقم الهاتف",
       coaching_msg_target: "اكتب هدفك حتى نُجهّز البروتوكول المناسب.",
       coaching_msg_phone: "أضف رقم هاتفك حتى يتمكن القائد من التواصل معك.",
+      coaching_tier_note: "تريده فوريًا بدلاً من موجَّه؟ تخطَّ نموذج الاستقبال واحصل على <a href=\"#offer\">دليل بروتوكول التسعين يومًا</a> ذاتي الخدمة — دون فحص.",
       sec02_code: "02 / الموقف",
       sec02_p1: "<strong>أنت لست مكسورًا. أنت غير منضبط بالتصميم.</strong> الراحة فعلت ذلك — لا الضعف. في مكان ما بين العمل والروتين والضجيج، انزلق المعيار، ولم ينتبه له أحد.",
       sec02_p2: "هذه ليست دورة في العقلية. إنها عملية إنقاذ. بناها رجل نشأ وسط الحطام، وطار في مهام البحث والإنقاذ القتالي، وحصل على الحزام الأسود ثلاث مرات، وأعاد بناء عائلة من العدم — لأن أحدًا لم يأتِ من أجله هو أيضًا.",
@@ -840,6 +851,7 @@
       offer_msg_days: "اختر وتيرة تدريبك حتى نتمكن من إعداد الدليل المناسب.",
       offer_msg_type: "اختر مسار المعدات حتى نتمكن من إعداد الدليل المناسب.",
       offer_msg_phone: "أضف رقم هاتفك حتى نتمكن من إرسال رابط الدفع.",
+      offer_tier_note: "هذا هو الدليل ذاتي الخدمة، المخصص حسب اختياراتك أعلاه — وليس حسب تاريخك الطبي أو الإصابات. تريده مبنيًا بالكامل حولك؟ <a href=\"#one-on-one\">احجز مكانك في التدريب الفردي</a>.",
       sec06_code: "06 / هيكل القيادة",
       sec06_intro: "تعريف سريع قبل أن تُكمل. بروتوكول الإخلاء ليس رجلًا واحدًا يصرخ بالتعليمات من الهامش — إنه سلسلة قيادة بُنيت لتشغيله، وكادر يُنفذه، وفلسفة تدوم بعد التسعين يومًا، وإيقاع يبقيك صادقًا بعد العودة للقاعدة. الانضباط ينتشلك من الحطام. هنا تبدأ بوصلتك بالإشارة إلى ما يليه.",
       card1_tag: "مميز", card1_h3: "تدريب فردي على الهدف المحدد", card1_p: "تدريب فردي مباشر مبني حول هدفك — أنت الهدف عالي القيمة. عدد محدود. تواصل عبر واتساب لحجز مكانك.", card1_cta: "شاهد الإحاطة ←", alt_commander: "دخول القائد — مقيّد",

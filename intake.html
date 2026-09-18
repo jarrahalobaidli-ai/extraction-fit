@@ -695,6 +695,11 @@ function ExtractionIntake() {
   return (
     <div style={S.app} dir={rtl ? "rtl" : "ltr"}>
       <Header {...commonProps} />
+      {step === 0 && (
+        <p style={{ color: T.color.textMuted, fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, textAlign: "center", margin: "0 0 14px", lineHeight: 1.6 }}>
+          This is the intake for 1:1 Coaching. Just want the instant manual? <a href="shop.html#protocol" style={{ color: T.color.accent }}>Buy The Protocol</a> — no screening required.
+        </p>
+      )}
       <div style={S.progressRow} className="ex-progress-row">
         {STEPS.map((s, i) => (
           <div key={s} style={S.progressItem}>
