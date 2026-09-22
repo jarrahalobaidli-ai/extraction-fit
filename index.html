@@ -501,7 +501,7 @@
         </div>
         <div class="coaching-phone-row">
           <input id="coaching-phone" type="tel" data-i18n-placeholder="coaching_phone_placeholder" placeholder="Phone" autocomplete="tel" inputmode="tel">
-          <button id="coaching-checkout" class="btn-primary" type="button" data-i18n="sec01_cta">Contact TAC-FREQ to Reserve a Spot</button>
+          <a id="coaching-checkout" class="btn-primary" href="#" data-i18n="sec01_cta">Contact TAC-FREQ to Reserve a Spot</a>
         </div>
         <div id="coaching-order-msg" class="coaching-order-msg"></div>
         <p class="tier-note" data-i18n-html="coaching_tier_note">Want it instant instead of guided? Skip the intake and grab the self-serve <a href="#offer">90-Day Protocol manual</a> — no screening required.</p>
@@ -607,7 +607,7 @@
         </div>
         <div class="offer-phone-row">
           <input id="offer-phone" type="tel" data-i18n-placeholder="offer_phone_placeholder" placeholder="Phone for payment link" autocomplete="tel" inputmode="tel">
-          <button id="offer-checkout" class="btn-primary" type="button" data-i18n="offer_cta">Get The Protocol</button>
+          <a id="offer-checkout" class="btn-primary" href="#" data-i18n="offer_cta">Get The Protocol</a>
         </div>
         <div id="offer-order-msg" class="offer-order-msg"></div>
         <p class="tier-note" data-i18n-html="offer_tier_note">This is the self-serve manual, personalized by your picks above — not your injury history. Want it fully built around you instead? <a href="#one-on-one">Reserve a 1:1 Coaching spot</a>.</p>
@@ -942,22 +942,25 @@
   var offerCheckout = document.getElementById('offer-checkout');
   var offerMsg = document.getElementById('offer-order-msg');
   if (!offerCheckout) return;
-  offerCheckout.addEventListener('click', function(){
+  offerCheckout.addEventListener('click', function(e){
     var t = window.EXT_T || {};
     var days = offerDays.value;
     var type = offerType.value;
     var phone = offerPhone.value.trim();
     if (!days) {
+      e.preventDefault();
       offerMsg.textContent = t.offer_msg_days || 'Choose your training frequency so we can build the right manual.';
       offerDays.focus();
       return;
     }
     if (!type) {
+      e.preventDefault();
       offerMsg.textContent = t.offer_msg_type || 'Choose your equipment track so we can build the right manual.';
       offerType.focus();
       return;
     }
     if (!phone) {
+      e.preventDefault();
       offerMsg.textContent = t.offer_msg_phone || 'Add a phone number so we can send your payment link.';
       offerPhone.focus();
       return;
@@ -967,7 +970,7 @@
       'Training frequency: ' + days + '\n' +
       'Equipment track: ' + type + '\n' +
       'Phone (for payment link): ' + phone;
-    window.location.href = 'mailto:contact@extraction.fit?subject=' + encodeURIComponent('90-Day Extraction Protocol order') + '&body=' + encodeURIComponent(body);
+    offerCheckout.href = 'mailto:contact@extraction.fit?subject=' + encodeURIComponent('90-Day Extraction Protocol order') + '&body=' + encodeURIComponent(body);
   });
 })();
 </script>
@@ -979,16 +982,18 @@
   var coachingCheckout = document.getElementById('coaching-checkout');
   var coachingMsg = document.getElementById('coaching-order-msg');
   if (!coachingCheckout) return;
-  coachingCheckout.addEventListener('click', function(){
+  coachingCheckout.addEventListener('click', function(e){
     var t = window.EXT_T || {};
     var target = coachingTarget.value.trim();
     var phone = coachingPhone.value.trim();
     if (!target) {
+      e.preventDefault();
       coachingMsg.textContent = t.coaching_msg_target || 'Tell us your target so we can prep the right protocol.';
       coachingTarget.focus();
       return;
     }
     if (!phone) {
+      e.preventDefault();
       coachingMsg.textContent = t.coaching_msg_phone || 'Add a phone number so the Commander can reach you.';
       coachingPhone.focus();
       return;
@@ -997,7 +1002,7 @@
     var body = 'Hi, I want to reserve a 1:1 Coaching spot.\n' +
       'Target: ' + target + '\n' +
       'Phone: ' + phone;
-    window.location.href = 'mailto:contact@extraction.fit?subject=' + encodeURIComponent('1:1 Coaching reservation') + '&body=' + encodeURIComponent(body);
+    coachingCheckout.href = 'mailto:contact@extraction.fit?subject=' + encodeURIComponent('1:1 Coaching reservation') + '&body=' + encodeURIComponent(body);
   });
 })();
 </script>

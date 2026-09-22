@@ -389,7 +389,7 @@
           </div>
           <div class="protocol-order-form">
             <input id="protocol-phone" type="tel" placeholder="Phone for payment link" autocomplete="tel" inputmode="tel">
-            <button id="protocol-checkout" class="btn-primary" type="button">Get The Protocol</button>
+            <a id="protocol-checkout" class="btn-primary" href="#">Get The Protocol</a>
           </div>
         </div>
         <div id="protocol-order-msg" class="protocol-order-msg"></div>
@@ -857,21 +857,24 @@
   var protocolCheckout = document.getElementById("protocol-checkout");
   var protocolMsg = document.getElementById("protocol-order-msg");
   if (protocolCheckout) {
-    protocolCheckout.addEventListener("click", function () {
+    protocolCheckout.addEventListener("click", function (e) {
       var days = protocolDays.value;
       var type = protocolType.value;
       var phone = protocolPhone.value.trim();
       if (!days) {
+        e.preventDefault();
         protocolMsg.textContent = "Choose your training frequency so we can build the right manual.";
         protocolDays.focus();
         return;
       }
       if (!type) {
+        e.preventDefault();
         protocolMsg.textContent = "Choose your equipment track so we can build the right manual.";
         protocolType.focus();
         return;
       }
       if (!phone) {
+        e.preventDefault();
         protocolMsg.textContent = "Add a phone number so we can send your payment link.";
         protocolPhone.focus();
         return;
@@ -881,7 +884,7 @@
         "Training frequency: " + days + "\n" +
         "Equipment track: " + type + "\n" +
         "Phone (for payment link): " + phone;
-      window.location.href = "mailto:contact@extraction.fit?subject=" + encodeURIComponent("90-Day Extraction Protocol order") + "&body=" + encodeURIComponent(body);
+      protocolCheckout.href = "mailto:contact@extraction.fit?subject=" + encodeURIComponent("90-Day Extraction Protocol order") + "&body=" + encodeURIComponent(body);
     });
   }
 })();
