@@ -62,7 +62,7 @@ function briefingPage() {
     <b>Golden Hour</b> (Wk 4&ndash;7) &mdash; progressive overload begins, volume climbs with load. Tempo 2-1-1-0, 72&ndash;82% 1RM.<br>
     <b>Hold the Line</b> (Wk 8&ndash;11) &mdash; peak intensity, volume trims as load peaks. Tempo 1-0-X-0, 85&ndash;93% 1RM.<br>
     <b>RTB</b> (Wk 12&ndash;13) &mdash; deload, then retest every Week 1 number.</p>
-    <p>Read Safety Briefing and Disclaimer before Week 1, Day 1.</p>
+    <p>Read Safety Briefing and Copyright &amp; Disclaimer before Week 1, Day 1.</p>
   </section>`;
 }
 
@@ -76,14 +76,17 @@ function safetyPage() {
   </section>`;
 }
 
-function disclaimerPage() {
+function disclaimerPage({ buyer }) {
+  const year = String(buyer.issuedDate || "").slice(0, 4) || new Date().getFullYear();
   return `
   <section class="pdf-page">
-    ${pageHead("03", "Disclaimer &amp; Assumption of Risk")}
-    <p>This program involves strenuous physical exercise and heavy external load — kettlebells, steel mace, sandbag, and hanging/pulling work on rings — that carries an inherent risk of injury. Extraction and its coaches are not physicians, and nothing in this manual constitutes medical advice.</p>
-    <p>By training from this manual, you confirm that you are physically able to participate and that you assume full responsibility for your own safety, technique, and load selection at every session. Consult a physician before beginning this or any new exercise program, particularly if you have a pre-existing health condition, are pregnant, or are returning from injury.</p>
-    <p>Extraction, its founder, and its affiliates are not liable for injury, loss, or damage arising from the use of this program. This is a general liability notice provided for clarity, not a substitute for legal advice, and has not been reviewed by a licensed attorney in your jurisdiction.</p>
-    <p class="contact-line">Questions before you start? <b>contact@extraction.fit</b></p>
+    ${pageHead("03", "Copyright &amp; Disclaimer")}
+    <p><b>Copyright.</b> &copy; ${esc(year)} Extraction. All rights reserved. This manual — its program design, phase structure, exercise selection, and written content — is the proprietary, original work of Extraction and is protected by copyright law. It is licensed for the personal use of <b>${esc(buyer.name)}</b> (Order ${esc(buyer.orderId)}) only. It is licensed, not sold, and this license does not transfer to any other person.</p>
+    <p><b>No redistribution.</b> You may not reproduce, copy, distribute, resell, publicly share, post online, or transmit any part of this manual, in whole or in part, in any form, without prior written permission from Extraction. Every copy is watermarked and uniquely tied to the licensed buyer and order number above; unauthorized distribution can be traced back to its source and may result in legal action and immediate revocation of program and portal access.</p>
+    <p><b>Health disclaimer.</b> This program involves strenuous physical exercise and heavy external load — kettlebells, steel mace, sandbag, and hanging/pulling work on rings — that carries an inherent risk of injury. Extraction and its coaches are not physicians, and nothing in this manual constitutes medical advice.</p>
+    <p><b>Assumption of risk.</b> By training from this manual, you confirm that you are physically able to participate and that you assume full responsibility for your own safety, technique, and load selection at every session. Consult a physician before beginning this or any new exercise program, particularly if you have a pre-existing health condition, are pregnant, or are returning from injury.</p>
+    <p><b>Limitation of liability.</b> Extraction, its founder, and its affiliates are not liable for injury, loss, or damage arising from the use of this program. This is a general notice provided for clarity, not a substitute for legal advice, and has not been reviewed by a licensed attorney in your jurisdiction.</p>
+    <p class="contact-line">By continuing past this page, you confirm you have read and accepted the terms above. Questions before you start? <b>contact@extraction.fit</b></p>
   </section>`;
 }
 
@@ -224,7 +227,7 @@ export function renderManualHtml({ program, buyer }) {
 ${coverPage({ program, buyer })}
 ${briefingPage()}
 ${safetyPage()}
-${disclaimerPage()}
+${disclaimerPage({ buyer })}
 ${mobilityPage()}
 ${weekPages}
 </body>
