@@ -19,20 +19,48 @@ const supabase = createClient(
 // this function is needed to pick up a revision.
 const RULES_REGS_PDF_URL = "https://extraction.fit/assets/extraction-rules-and-regulations.pdf";
 
-async function rulesRegsAttachment(): Promise<{ filename: string; content: string }[]> {
+// Fetches one URL and returns it as a Resend-shaped base64 attachment, or null if the fetch
+// fails -- callers decide whether a missing attachment should fail the whole send.
+async function fetchAsAttachment(url: string, filename: string): Promise<{ filename: string; content: string } | null> {
   try {
-    const resp = await fetch(RULES_REGS_PDF_URL);
+    const resp = await fetch(url);
     if (!resp.ok) throw new Error(`fetch ${resp.status}`);
     const bytes = new Uint8Array(await resp.arrayBuffer());
     let binary = "";
     for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
-    return [{ filename: "Extraction-Rules-and-Regulations.pdf", content: btoa(binary) }];
+    return { filename, content: btoa(binary) };
   } catch (e) {
-    // Don't fail the whole welcome email over a missing/unreachable SOP PDF -- log and send
-    // without the attachment. Common cause: the PDF hasn't been pushed to the live site yet.
-    console.error("rules_regs attachment fetch failed:", String(e));
-    return [];
+    console.error(`attachment fetch failed (${filename}):`, String(e));
+    return null;
   }
+}
+
+async function rulesRegsAttachment(): Promise<{ filename: string; content: string }[]> {
+  // Don't fail the whole welcome email over a missing/unreachable SOP PDF -- send without the
+  // attachment. Common cause: the PDF hasn't been pushed to the live site yet.
+  const a = await fetchAsAttachment(RULES_REGS_PDF_URL, "Extraction-Rules-and-Regulations.pdf");
+  return a ? [a] : [];
+}
+
+// Fetches the buyer's personalized manual PDF and their invoice PDF from the short-lived
+// signed Storage URLs tools/fulfill-purchase.mjs put in row.data, and attaches both directly
+// to the pdf_delivery email -- the buyer gets real files in their inbox, not just links.
+async function pdfDeliveryAttachments(row: EmailRow): Promise<{ filename: string; content: string }[]> {
+  const manualUrl = row.data?.downloadUrl ? String(row.data.downloadUrl) : "";
+  const invoiceUrl = row.data?.invoiceUrl ? String(row.data.invoiceUrl) : "";
+  const manualSlug = String(row.data?.manualName ?? "90-Day-Extraction-Protocol").replace(/[^a-zA-Z0-9]+/g, "-");
+  const invoiceNumber = String(row.data?.invoiceNumber ?? row.data?.orderId ?? "invoice");
+
+  const out: { filename: string; content: string }[] = [];
+  if (manualUrl) {
+    const a = await fetchAsAttachment(manualUrl, `${manualSlug}.pdf`);
+    if (a) out.push(a);
+  }
+  if (invoiceUrl) {
+    const a = await fetchAsAttachment(invoiceUrl, `Extraction-${invoiceNumber}.pdf`);
+    if (a) out.push(a);
+  }
+  return out;
 }
 
 type EmailRow = {
@@ -46,8 +74,10 @@ type EmailRow = {
 type Template = {
   subject: string | ((row: EmailRow) => string);
   html: string | ((row: EmailRow) => string);
-  // Attachments this template always sends, beyond anything data-driven.
-  attachments?: () => Promise<{ filename: string; content: string }[]>;
+  // Attachments this template sends. Receives the outbox row so per-send attachments
+  // (e.g. pdf_delivery's manual + invoice, both fetched from row.data URLs) are possible
+  // alongside always-on ones like the Rules & Regs SOP, which ignores the row.
+  attachments?: (row: EmailRow) => Promise<{ filename: string; content: string }[]>;
 };
 
 const TEMPLATES: Record<string, Template> = {
@@ -303,16 +333,21 @@ Coordinates locked. You're on the founding list — here's what that gets you.
 </html>
 `,
   },
-  // Sent by the fulfillment pipeline once a self-serve buyer's personalized manual PDF has
-  // been rendered and uploaded to the private manuals-pdf Storage bucket. row.data carries
-  // { buyerName, manualName, downloadUrl } -- downloadUrl is a short-lived signed URL, not a
-  // permanent public link (see tools/fulfill-purchase.mjs).
+  // Sent by the fulfillment pipeline once a self-serve buyer's personalized manual PDF and
+  // matching invoice PDF have been rendered and uploaded to the private manuals-pdf Storage
+  // bucket. row.data carries { buyerName, manualName, downloadUrl, orderId, invoiceNumber,
+  // invoiceUrl } -- downloadUrl/invoiceUrl are short-lived signed URLs (7 days), not
+  // permanent public links (see tools/fulfill-purchase.mjs). attachments() fetches both and
+  // attaches them directly to the email; the URLs stay in the body too as a re-download path
+  // once the attachments' own signed URLs expire.
   pdf_delivery: {
-    subject: (row) => `Your ${String(row.data?.manualName ?? "90-Day Manual")} Is Ready`,
+    subject: (row) => `Your ${String(row.data?.manualName ?? "90-Day Manual")} + Invoice Are Ready`,
+    attachments: pdfDeliveryAttachments,
     html: (row) => {
       const buyerName = String(row.data?.buyerName ?? row.to_name ?? "Operator");
       const manualName = String(row.data?.manualName ?? "90-Day Extraction Protocol");
       const downloadUrl = String(row.data?.downloadUrl ?? "https://extraction.fit/portal.html");
+      const invoiceNumber = String(row.data?.invoiceNumber ?? "");
       return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -322,7 +357,7 @@ Coordinates locked. You're on the founding list — here's what that gets you.
 </head>
 <body style="margin:0;padding:0;background:#0C0C0A;">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
-Orders are cut. Your personalized manual is ready to download.
+Orders are cut. Your personalized manual and invoice are attached.
 </div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0C0C0A;padding:32px 0;">
 <tr><td align="center">
@@ -338,7 +373,7 @@ Orders are cut. Your personalized manual is ready to download.
   <tr>
     <td align="center" style="padding:22px 32px 0;">
       <div style="display:inline-block;font-family:'Courier New',monospace;font-size:11px;letter-spacing:1.5px;color:#A6926F;text-transform:uppercase;border:1px solid rgba(245,223,184,0.30);padding:8px 16px;">
-        Orders Cut — Manual Ready
+        Orders Cut — Manual + Invoice Attached
       </div>
     </td>
   </tr>
@@ -351,8 +386,9 @@ Orders are cut. Your personalized manual is ready to download.
   </tr>
   <tr>
     <td style="padding:20px 40px 4px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.65;color:#D9CDBB;">
-      <p style="margin:0 0 16px;">Your <strong style="color:#F5DFB8;">${manualName}</strong> is built, watermarked to you, and ready to download — every exercise linked to a form-check video.</p>
-      <p style="margin:0 0 16px;">This link is personal to your order and expires in 7 days. You can always re-download from your portal after that.</p>
+      <p style="margin:0 0 16px;">Your <strong style="color:#F5DFB8;">${manualName}</strong> is built, watermarked to you, and attached to this email as a PDF — every exercise linked to a form-check video.</p>
+      <p style="margin:0 0 16px;">Your invoice${invoiceNumber ? ` (<strong style="color:#F5DFB8;">${invoiceNumber}</strong>)` : ""} is attached too, for your records.</p>
+      <p style="margin:0 0 16px;">Can't find the attachments, or need them again later? The buttons below are personal to your order and expire in 7 days — after that, re-download from your portal anytime.</p>
     </td>
   </tr>
   <tr>
@@ -363,8 +399,10 @@ Orders are cut. Your personalized manual is ready to download.
     </td>
   </tr>
   <tr>
-    <td align="center" style="padding:10px 40px 8px;">
-      <a href="https://extraction.fit/portal.html" style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#A6926F;">Or sign in to your portal</a>
+    <td align="center" style="padding:6px 40px 8px;">
+      <a href="${String(row.data?.invoiceUrl ?? "https://extraction.fit/portal.html")}" style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#A6926F;">Download your invoice</a>
+      &nbsp;&middot;&nbsp;
+      <a href="https://extraction.fit/portal.html" style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#A6926F;">Sign in to your portal</a>
     </td>
   </tr>
   <tr>
@@ -547,7 +585,7 @@ Deno.serve(async (req: Request) => {
 
     const subject = typeof tpl.subject === "function" ? tpl.subject(row) : tpl.subject;
     const html = typeof tpl.html === "function" ? tpl.html(row) : tpl.html;
-    const attachments = tpl.attachments ? await tpl.attachments() : undefined;
+    const attachments = tpl.attachments ? await tpl.attachments(row) : undefined;
 
     const resendResp = await fetch("https://api.resend.com/emails", {
       method: "POST",

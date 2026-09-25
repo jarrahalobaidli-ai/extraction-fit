@@ -1,11 +1,12 @@
 // fulfill-purchase.mjs
 //
 // Turns one paid $97 self-serve sale into: a purchases row, a self-serve operator account
-// (auth user + profiles + clients, no coach involvement), a personalized watermarked PDF
-// in private Storage, and the two delivery emails (operator_welcome with the Rules & Regs
-// SOP attached, then pdf_delivery with a signed download link) -- via the existing
-// email_outbox table, which a DB trigger (on_email_outbox_created) auto-sends through the
-// send-email edge function.
+// (auth user + profiles + clients, no coach involvement), a personalized watermarked manual
+// PDF and a matching invoice PDF in private Storage, and the two delivery emails
+// (operator_welcome with the Rules & Regs SOP attached, then pdf_delivery with the manual
+// AND the invoice attached directly, plus signed download links as a 7-day backup) -- via
+// the existing email_outbox table, which a DB trigger (on_email_outbox_created) auto-sends
+// through the send-email edge function.
 //
 // WHERE THIS RUNS: this needs Node + a real Chromium (Playwright) to render the PDF, which
 // a Supabase Edge Function (Deno, no persistent browser) cannot do. So this is NOT deployed
@@ -34,6 +35,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildFullProgram, manualNameFor } from "../program-generator.mjs";
 import { generateManualPdf } from "./generate-manual-pdfs.mjs";
+import { generateInvoicePdf } from "./generate-invoice-pdf.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, "..");
@@ -171,19 +173,71 @@ export async function fulfillPurchase(purchase) {
     .update({ pdf_storage_path: storagePath, status: "fulfilled" })
     .eq("id", purchaseRow.id);
 
+  // 4b. Render the matching invoice PDF and upload it next to the manual. Invoice number is
+  // deterministic (INV-<orderId>) so it never needs its own DB column -- re-running fulfillment
+  // for the same order just re-renders the same invoice.
+  const priceMajor = (purchaseRow.amount_cents ?? 9700) / 100;
+  const invoiceCurrency = purchaseRow.currency ?? "USD";
+  const invoiceNumber = `INV-${orderId}`;
+  const invoiceBytes = await generateInvoicePdf({
+    invoice: {
+      number: invoiceNumber,
+      issuedDate,
+      currency: invoiceCurrency,
+      status: "PAID",
+      items: [
+        {
+          description: `${manual.name} — Digital Manual + Lifetime Portal Access`,
+          qty: 1,
+          unitPrice: priceMajor,
+          total: priceMajor,
+        },
+      ],
+      total: priceMajor,
+    },
+    buyer: { name, email, orderId, logoDataUri: logoDataUri() },
+  });
+  const invoiceStoragePath = `${client.id}/${orderId}-invoice.pdf`;
+  const { error: invoiceUploadErr } = await supabase.storage
+    .from("manuals-pdf")
+    .upload(invoiceStoragePath, invoiceBytes, { contentType: "application/pdf", upsert: true });
+  if (invoiceUploadErr) throw invoiceUploadErr;
+
+  const { data: invoiceSigned, error: invoiceSignErr } = await supabase.storage
+    .from("manuals-pdf")
+    .createSignedUrl(invoiceStoragePath, 60 * 60 * 24 * 7); // 7 days
+  if (invoiceSignErr) throw invoiceSignErr;
+
   // 5. Queue delivery -- inserting into email_outbox is enough; on_email_outbox_created
-  // fires the send-email edge function automatically for both rows.
+  // fires the send-email edge function automatically for both rows. pdf_delivery's
+  // attachments() fetches both downloadUrl and invoiceUrl and attaches them directly to the
+  // email -- the buyer gets the manual and the invoice together, not just links.
   await supabase.from("email_outbox").insert([
     { template: "operator_welcome", to_email: email, to_name: name },
     {
       template: "pdf_delivery",
       to_email: email,
       to_name: name,
-      data: { buyerName: name, manualName: manual.name, downloadUrl: signed.signedUrl },
+      data: {
+        buyerName: name,
+        manualName: manual.name,
+        downloadUrl: signed.signedUrl,
+        orderId,
+        invoiceNumber,
+        invoiceUrl: invoiceSigned.signedUrl,
+      },
     },
   ]);
 
-  return { ok: true, purchaseId: purchaseRow.id, clientId: client.id, manualId: manual.id, storagePath };
+  return {
+    ok: true,
+    purchaseId: purchaseRow.id,
+    clientId: client.id,
+    manualId: manual.id,
+    storagePath,
+    invoiceNumber,
+    invoiceStoragePath,
+  };
 }
 
 /* ---------- CLI entrypoint: node tools/fulfill-purchase.mjs '<purchase JSON>' ---------- */
