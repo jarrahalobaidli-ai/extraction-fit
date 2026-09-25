@@ -7,13 +7,14 @@
 // NOT MyFatoorah's own notification email, so every email an operator gets looks like it
 // came from the same system.
 //
-// SCOPE: this only generates + emails the payment link. It does NOT confirm payment, does
-// NOT create a purchases/clients row, and does NOT trigger fulfillment -- the shop owner
-// still confirms the MyFatoorah payment themselves (dashboard or bank alert) and runs
-// `node tools/fulfill-purchase.mjs '<purchase JSON>'` by hand, same as today. The
-// CustomerReference/UserDefinedField sent to MyFatoorah carry a ready-to-paste JSON blob
-// (visible in the MyFatoorah dashboard on the invoice) so that CLI call is a copy/paste,
-// not manual re-typing.
+// SCOPE: this generates + emails the payment link and records a `pending` purchases row so
+// the order isn't only visible inside MyFatoorah's own dashboard. It does NOT confirm
+// payment and does NOT trigger fulfillment -- confirmation is myfatoorah-webhook's job
+// (flips the row to 'paid' and alerts the owner), and the shop owner still runs
+// `node tools/fulfill-purchase.mjs '<purchase JSON>'` by hand once they've actually checked
+// the order. The CustomerReference/UserDefinedField sent to MyFatoorah carry a ready-to-paste
+// JSON blob (visible in the MyFatoorah dashboard on the invoice, and in the paid-order alert
+// email) so that CLI call is a copy/paste, not manual re-typing.
 //
 // REQUIRED SECRETS (Supabase project settings -> Edge Functions -> Secrets):
 //   MYFATOORAH_API_KEY    -- MyFatoorah API token (test or live, matching MYFATOORAH_BASE_URL)
@@ -145,6 +146,28 @@ Deno.serve(async (req: Request) => {
     }
 
     const paymentUrl = String(mfJson.Data.InvoiceURL);
+    const invoiceId = mfJson.Data.InvoiceId ?? null;
+
+    // Record the order as pending so it's visible in our own table, not just MyFatoorah's
+    // dashboard. myfatoorah-webhook flips this to 'paid' by matching order_id back to
+    // CustomerReference once the customer actually pays. Not fatal if this fails -- the
+    // customer still gets their payment link either way, and the invoice is still traceable
+    // via CustomerReference/UserDefinedField on the MyFatoorah side.
+    const { error: purchaseErr } = await supabase.from("purchases").upsert(
+      {
+        order_id: orderId,
+        email,
+        name,
+        equipment,
+        days_per_week: daysPerWeek,
+        amount_cents: Math.round(PRICE_USD * 100),
+        currency: MYFATOORAH_CURRENCY,
+        status: "pending",
+        myfatoorah_invoice_id: invoiceId,
+      },
+      { onConflict: "order_id" }
+    );
+    if (purchaseErr) console.error("purchases upsert failed:", purchaseErr.message);
 
     const { error: outboxErr } = await supabase.from("email_outbox").insert({
       template: "payment_link",

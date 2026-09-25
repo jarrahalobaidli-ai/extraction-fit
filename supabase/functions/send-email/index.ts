@@ -516,6 +516,85 @@ Your order is staged. Complete payment to get your orders cut.
 `;
     },
   },
+  // Sent by myfatoorah-webhook the moment a pending purchase flips to 'paid' -- internal,
+  // goes to the shop owner (OWNER_NOTIFY_EMAIL), not the customer. row.data.purchaseJson is
+  // paste-ready for `node tools/fulfill-purchase.mjs '<...>'`; fulfillment still doesn't run
+  // automatically, this just makes sure a paid order doesn't sit unnoticed in the MyFatoorah
+  // dashboard.
+  order_paid_alert: {
+    subject: (row) => `Order Paid — ${String(row.data?.orderId ?? "")} — run fulfillment`,
+    html: (row) => {
+      const orderId = String(row.data?.orderId ?? "");
+      const buyerName = String(row.data?.buyerName ?? "-");
+      const buyerEmail = String(row.data?.buyerEmail ?? "-");
+      const equipment = String(row.data?.equipment ?? "-");
+      const daysPerWeek = String(row.data?.daysPerWeek ?? "-");
+      const amount = String(row.data?.amount ?? "97.00");
+      const currency = String(row.data?.currency ?? "USD");
+      const purchaseJson = String(row.data?.purchaseJson ?? "{}");
+      const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c] as string));
+      return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Extraction — Order Paid</title>
+</head>
+<body style="margin:0;padding:0;background:#0C0C0A;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">
+${esc(buyerName)} paid for ${esc(equipment)}, ${esc(daysPerWeek)} days/week. Run fulfillment.
+</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0C0C0A;padding:32px 0;">
+<tr><td align="center">
+<table role="presentation" width="560" cellpadding="0" cellspacing="0" style="width:560px;max-width:92%;background:#17140F;border:1px solid rgba(245,223,184,0.14);">
+  <tr>
+    <td align="center" style="padding:36px 32px 20px;border-bottom:1px solid rgba(245,223,184,0.14);">
+      <img src="https://extraction.fit/assets/logo-circle.png" width="56" height="56" alt="Extraction" style="display:block;margin:0 auto 14px;">
+      <div style="font-family:Arial,Helvetica,sans-serif;font-weight:800;font-size:20px;letter-spacing:2px;color:#F5DFB8;text-transform:uppercase;">
+        EXTRACTION<span style="color:#C0451D;">.</span>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="padding:22px 32px 0;">
+      <div style="display:inline-block;font-family:'Courier New',monospace;font-size:11px;letter-spacing:1.5px;color:#C0451D;text-transform:uppercase;border:1px solid rgba(192,69,29,0.5);padding:8px 16px;">
+        Order Paid — Fulfillment Needed
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="padding:24px 32px 0;">
+      <div style="font-family:Arial,Helvetica,sans-serif;font-weight:800;font-size:24px;line-height:1.3;color:#F5DFB8;text-transform:uppercase;letter-spacing:0.5px;">
+        ${esc(buyerName)} — ${esc(amount)} ${esc(currency)}
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:20px 40px 4px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.65;color:#D9CDBB;">
+      <p style="margin:0 0 8px;"><strong style="color:#F5DFB8;">Order:</strong> ${esc(orderId)}</p>
+      <p style="margin:0 0 8px;"><strong style="color:#F5DFB8;">Buyer:</strong> ${esc(buyerName)} · ${esc(buyerEmail)}</p>
+      <p style="margin:0 0 8px;"><strong style="color:#F5DFB8;">Program:</strong> ${esc(equipment)}, ${esc(daysPerWeek)} days/week</p>
+      <p style="margin:16px 0 8px;">MyFatoorah confirmed this payment. Run fulfillment when you're ready:</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:4px 40px 20px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.6;color:#F5DFB8;background:#0C0C0A;border:1px solid rgba(245,223,184,0.20);padding:14px 16px;word-break:break-all;white-space:pre-wrap;">node tools/fulfill-purchase.mjs '${esc(purchaseJson)}'</div>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:8px 40px 32px;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.6;color:#A6926F;">
+      <p style="margin:0;">This only confirms payment — it does not run fulfillment for you.</p>
+    </td>
+  </tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>
+`;
+    },
+  },
 };
 
 const MAYDAY_EQUIPMENT_LABELS: Record<string, string> = {
