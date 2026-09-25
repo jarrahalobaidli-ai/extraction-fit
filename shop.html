@@ -207,6 +207,7 @@
     border: 1px solid var(--oxide); transition: background 0.2s ease, color 0.2s ease;
   }
   .btn-primary:hover{ background: transparent; color: var(--oxide); }
+  .btn-primary.is-disabled{ pointer-events:none; opacity:0.55; }
   .btn-ghost{
     font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:0.78rem; letter-spacing:0.08em;
     color: var(--paper-dim); border-bottom: 1px solid var(--line-strong); padding-bottom:2px;
@@ -388,12 +389,14 @@
             <span class="note">One-time investment</span>
           </div>
           <div class="protocol-order-form">
-            <input id="protocol-phone" type="tel" placeholder="Phone for payment link" autocomplete="tel" inputmode="tel">
+            <input id="protocol-name" type="text" placeholder="Full name" autocomplete="name">
+            <input id="protocol-email" type="email" placeholder="Email for your payment link" autocomplete="email" inputmode="email">
+            <input id="protocol-phone" type="tel" placeholder="Phone (optional)" autocomplete="tel" inputmode="tel">
             <a id="protocol-checkout" class="btn-primary" href="#">Get The Protocol</a>
           </div>
         </div>
         <div id="protocol-order-msg" class="protocol-order-msg"></div>
-        <div class="protocol-order-note">Self-serve checkout is being wired up — email Ops Freq now for instant manual access while it finishes rolling out.</div>
+        <div class="protocol-order-note">We'll email you a secure payment link — pay there and your manual + invoice land in your inbox once we confirm it.</div>
         <div class="protocol-order-note">This is the self-serve manual, personalized by your picks above — not your injury history. Want it fully built around you instead? <a href="index.html#one-on-one" style="color:var(--oxide);">Reserve a 1:1 Coaching spot</a>.</div>
       </div>
     </div>
@@ -853,38 +856,65 @@
 
   var protocolDays = document.getElementById("protocol-days");
   var protocolType = document.getElementById("protocol-type");
+  var protocolName = document.getElementById("protocol-name");
+  var protocolEmail = document.getElementById("protocol-email");
   var protocolPhone = document.getElementById("protocol-phone");
   var protocolCheckout = document.getElementById("protocol-checkout");
   var protocolMsg = document.getElementById("protocol-order-msg");
   if (protocolCheckout) {
+    var protocolBusy = false;
     protocolCheckout.addEventListener("click", function (e) {
+      e.preventDefault();
+      if (protocolBusy) return;
       var days = protocolDays.value;
       var type = protocolType.value;
+      var name = protocolName.value.trim();
+      var email = protocolEmail.value.trim();
       var phone = protocolPhone.value.trim();
       if (!days) {
-        e.preventDefault();
         protocolMsg.textContent = "Choose your training frequency so we can build the right manual.";
         protocolDays.focus();
         return;
       }
       if (!type) {
-        e.preventDefault();
         protocolMsg.textContent = "Choose your equipment track so we can build the right manual.";
         protocolType.focus();
         return;
       }
-      if (!phone) {
-        e.preventDefault();
-        protocolMsg.textContent = "Add a phone number so we can send your payment link.";
-        protocolPhone.focus();
+      if (!name) {
+        protocolMsg.textContent = "Add your name so we can build the right manual.";
+        protocolName.focus();
         return;
       }
-      protocolMsg.textContent = "";
-      var body = "Hi, I want to get the 90-Day Extraction Protocol ($97).\n" +
-        "Training frequency: " + days + "\n" +
-        "Equipment track: " + type + "\n" +
-        "Phone (for payment link): " + phone;
-      protocolCheckout.href = "mailto:contact@extraction.fit?subject=" + encodeURIComponent("90-Day Extraction Protocol order") + "&body=" + encodeURIComponent(body);
+      if (!email || email.indexOf("@") === -1) {
+        protocolMsg.textContent = "Add a valid email so we can send your payment link.";
+        protocolEmail.focus();
+        return;
+      }
+      if (!window.sb) {
+        protocolMsg.textContent = "Checkout is temporarily unavailable — email Ops Freq instead.";
+        return;
+      }
+      protocolBusy = true;
+      protocolMsg.textContent = "Generating your payment link…";
+      protocolCheckout.classList.add("is-disabled");
+      window.sb.functions.invoke("create-payment-link", {
+        body: { name: name, email: email, phone: phone, equipment: type, daysPerWeek: days }
+      }).then(function (res) {
+        protocolBusy = false;
+        protocolCheckout.classList.remove("is-disabled");
+        var data = res && res.data;
+        var err = res && (res.error || (data && data.error));
+        if (err) {
+          protocolMsg.textContent = (data && data.error) || "Couldn't generate a payment link — email Ops Freq instead.";
+          return;
+        }
+        protocolMsg.textContent = "Check your email — your payment link is on its way.";
+      }).catch(function () {
+        protocolBusy = false;
+        protocolCheckout.classList.remove("is-disabled");
+        protocolMsg.textContent = "Couldn't reach the armory — email Ops Freq instead.";
+      });
     });
   }
 })();

@@ -7,6 +7,8 @@
 <link rel="icon" type="image/png" href="assets/logo-circle.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Black+Ops+One&family=Oswald:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/supabase-client.js"></script>
 <style>
   :root{
     --bg: #0C0C0A;
@@ -215,6 +217,8 @@
     animation: ctaPulseRing 2.6s ease-out infinite;
   }
   .btn-primary:hover::after{ animation-play-state: paused; opacity:0; }
+  .btn-primary.is-disabled{ pointer-events:none; opacity:0.55; }
+  .btn-primary.is-disabled::after{ animation-play-state: paused; opacity:0; }
   .btn-primary:hover{ background: transparent; color: var(--oxide); }
 
   .ops-freq{
@@ -606,7 +610,9 @@
           </div>
         </div>
         <div class="offer-phone-row">
-          <input id="offer-phone" type="tel" data-i18n-placeholder="offer_phone_placeholder" placeholder="Phone for payment link" autocomplete="tel" inputmode="tel">
+          <input id="offer-name" type="text" data-i18n-placeholder="offer_name_placeholder" placeholder="Full name" autocomplete="name">
+          <input id="offer-email" type="email" data-i18n-placeholder="offer_email_placeholder" placeholder="Email for your payment link" autocomplete="email" inputmode="email">
+          <input id="offer-phone" type="tel" data-i18n-placeholder="offer_phone_placeholder" placeholder="Phone (optional)" autocomplete="tel" inputmode="tel">
           <a id="offer-checkout" class="btn-primary" href="#" data-i18n="offer_cta">Get The Protocol</a>
         </div>
         <div id="offer-order-msg" class="offer-order-msg"></div>
@@ -740,10 +746,18 @@
       offer_days_3: "3 days / week", offer_days_4: "4 days / week", offer_days_5: "5 days / week", offer_days_6: "6 days / week",
       offer_type_label: "Equipment track", offer_type_placeholder: "Choose program type",
       offer_type_fullgym: "Full Gym", offer_type_functional: "Functional Training", offer_type_bodyweight: "Bodyweight Only", offer_type_bands: "Bands Only",
-      offer_phone_placeholder: "Phone for payment link",
+      offer_name_placeholder: "Full name",
+      offer_email_placeholder: "Email for your payment link",
+      offer_phone_placeholder: "Phone (optional)",
       offer_msg_days: "Choose your training frequency so we can build the right manual.",
       offer_msg_type: "Choose your equipment track so we can build the right manual.",
+      offer_msg_name: "Add your name so we can build the right manual.",
+      offer_msg_email: "Add a valid email so we can send your payment link.",
       offer_msg_phone: "Add a phone number so we can send your payment link.",
+      offer_msg_unavailable: "Checkout is temporarily unavailable — email Ops Freq instead.",
+      offer_msg_generating: "Generating your payment link…",
+      offer_msg_sent: "Check your email — your payment link is on its way.",
+      offer_msg_failed: "Couldn't generate a payment link — email Ops Freq instead.",
       offer_tier_note: "This is the self-serve manual, personalized by your picks above — not your injury history. Want it fully built around you instead? <a href=\"#one-on-one\">Reserve a 1:1 Coaching spot</a>.",
       sec06_code: "06 / COMMAND STRUCTURE",
       sec06_intro: "A quick familiarization before you go further. The Extraction Protocol isn't one man shouting instructions from the sideline — it's a chain of command built to run it, a roster who executes it, a philosophy that outlasts the 90 days, and a rhythm that keeps you honest after RTB. Discipline gets you out of the wreckage. This is where your compass starts pointing to what comes next.",
@@ -798,10 +812,18 @@
       offer_days_3: "Haftada 3 gün", offer_days_4: "Haftada 4 gün", offer_days_5: "Haftada 5 gün", offer_days_6: "Haftada 6 gün",
       offer_type_label: "Ekipman parkuru", offer_type_placeholder: "Program türünü seç",
       offer_type_fullgym: "Tam Donanımlı Salon", offer_type_functional: "Fonksiyonel Antrenman", offer_type_bodyweight: "Sadece Vücut Ağırlığı", offer_type_bands: "Sadece Direnç Bandı",
-      offer_phone_placeholder: "Ödeme bağlantısı için telefon",
+      offer_name_placeholder: "Ad soyad",
+      offer_email_placeholder: "Ödeme bağlantın için e-posta",
+      offer_phone_placeholder: "Telefon (isteğe bağlı)",
       offer_msg_days: "Doğru kılavuzu hazırlayabilmemiz için antrenman sıklığını seç.",
       offer_msg_type: "Doğru kılavuzu hazırlayabilmemiz için ekipman parkurunu seç.",
+      offer_msg_name: "Doğru kılavuzu hazırlayabilmemiz için adını ekle.",
+      offer_msg_email: "Ödeme bağlantını gönderebilmemiz için geçerli bir e-posta ekle.",
       offer_msg_phone: "Ödeme bağlantısını gönderebilmemiz için telefon numaranı ekle.",
+      offer_msg_unavailable: "Ödeme şu anda kullanılamıyor — bunun yerine Ops Freq'e e-posta gönder.",
+      offer_msg_generating: "Ödeme bağlantın oluşturuluyor…",
+      offer_msg_sent: "E-postanı kontrol et — ödeme bağlantın yolda.",
+      offer_msg_failed: "Ödeme bağlantısı oluşturulamadı — bunun yerine Ops Freq'e e-posta gönder.",
       offer_tier_note: "Bu, yukarıdaki seçimlerine göre kişiselleştirilen kendin-seç-kendin-al kılavuzdur — yaralanma geçmişine göre değil. Tamamen sana özel inşa edilsin istiyorsan? <a href=\"#one-on-one\">Birebir Koçluk için yer ayırt</a>.",
       sec06_code: "06 / KOMUTA YAPISI",
       sec06_intro: "Devam etmeden önce kısa bir tanışma. Extraction Protokolü, kenardan talimat bağıran tek bir adam değil — onu yürütecek bir komuta zinciri, onu uygulayacak bir kadro, 90 günü aşan bir felsefe ve Üsse Dönüş'ten sonra seni dürüst tutan bir ritim. Disiplin seni enkazdan çıkarır. Burası pusulanın sıradakine işaret etmeye başladığı yer.",
@@ -856,10 +878,18 @@
       offer_days_3: "3 أيام في الأسبوع", offer_days_4: "4 أيام في الأسبوع", offer_days_5: "5 أيام في الأسبوع", offer_days_6: "6 أيام في الأسبوع",
       offer_type_label: "مسار المعدات", offer_type_placeholder: "اختر نوع البرنامج",
       offer_type_fullgym: "نادي رياضي متكامل", offer_type_functional: "تدريب وظيفي", offer_type_bodyweight: "وزن الجسم فقط", offer_type_bands: "أحزمة مقاومة فقط",
-      offer_phone_placeholder: "رقم الهاتف لإرسال رابط الدفع",
+      offer_name_placeholder: "الاسم الكامل",
+      offer_email_placeholder: "البريد الإلكتروني لإرسال رابط الدفع",
+      offer_phone_placeholder: "رقم الهاتف (اختياري)",
       offer_msg_days: "اختر وتيرة تدريبك حتى نتمكن من إعداد الدليل المناسب.",
       offer_msg_type: "اختر مسار المعدات حتى نتمكن من إعداد الدليل المناسب.",
+      offer_msg_name: "أضف اسمك حتى نتمكن من إعداد الدليل المناسب.",
+      offer_msg_email: "أضف بريدًا إلكترونيًا صحيحًا حتى نتمكن من إرسال رابط الدفع.",
       offer_msg_phone: "أضف رقم هاتفك حتى نتمكن من إرسال رابط الدفع.",
+      offer_msg_unavailable: "الدفع غير متاح مؤقتًا — راسل Ops Freq عبر البريد الإلكتروني بدلاً من ذلك.",
+      offer_msg_generating: "جاري إنشاء رابط الدفع…",
+      offer_msg_sent: "تحقق من بريدك الإلكتروني — رابط الدفع في طريقه إليك.",
+      offer_msg_failed: "تعذر إنشاء رابط الدفع — راسل Ops Freq عبر البريد الإلكتروني بدلاً من ذلك.",
       offer_tier_note: "هذا هو الدليل ذاتي الخدمة، المخصص حسب اختياراتك أعلاه — وليس حسب تاريخك الطبي أو الإصابات. تريده مبنيًا بالكامل حولك؟ <a href=\"#one-on-one\">احجز مكانك في التدريب الفردي</a>.",
       sec06_code: "06 / هيكل القيادة",
       sec06_intro: "تعريف سريع قبل أن تُكمل. بروتوكول الإخلاء ليس رجلًا واحدًا يصرخ بالتعليمات من الهامش — إنه سلسلة قيادة بُنيت لتشغيله، وكادر يُنفذه، وفلسفة تدوم بعد التسعين يومًا، وإيقاع يبقيك صادقًا بعد العودة للقاعدة. الانضباط ينتشلك من الحطام. هنا تبدأ بوصلتك بالإشارة إلى ما يليه.",
@@ -914,10 +944,18 @@
       offer_days_3: "3 jours / semaine", offer_days_4: "4 jours / semaine", offer_days_5: "5 jours / semaine", offer_days_6: "6 jours / semaine",
       offer_type_label: "Filière d'équipement", offer_type_placeholder: "Choisis le type de programme",
       offer_type_fullgym: "Salle Complète", offer_type_functional: "Entraînement Fonctionnel", offer_type_bodyweight: "Poids du Corps Uniquement", offer_type_bands: "Élastiques Uniquement",
-      offer_phone_placeholder: "Téléphone pour le lien de paiement",
+      offer_name_placeholder: "Nom complet",
+      offer_email_placeholder: "E-mail pour ton lien de paiement",
+      offer_phone_placeholder: "Téléphone (facultatif)",
       offer_msg_days: "Choisis ta fréquence d'entraînement pour qu'on puisse préparer le bon manuel.",
       offer_msg_type: "Choisis ta filière d'équipement pour qu'on puisse préparer le bon manuel.",
+      offer_msg_name: "Ajoute ton nom pour qu'on puisse préparer le bon manuel.",
+      offer_msg_email: "Ajoute un e-mail valide pour qu'on puisse t'envoyer ton lien de paiement.",
       offer_msg_phone: "Ajoute un numéro de téléphone pour qu'on puisse t'envoyer ton lien de paiement.",
+      offer_msg_unavailable: "Le paiement est temporairement indisponible — écris plutôt à Ops Freq par e-mail.",
+      offer_msg_generating: "Génération de ton lien de paiement…",
+      offer_msg_sent: "Vérifie ton e-mail — ton lien de paiement arrive.",
+      offer_msg_failed: "Impossible de générer un lien de paiement — écris plutôt à Ops Freq par e-mail.",
       offer_tier_note: "Ceci est le manuel en libre-service, personnalisé selon tes choix ci-dessus — pas selon ton historique de blessures. Tu le veux entièrement construit autour de toi ? <a href=\"#one-on-one\">Réserve une place en Coaching 1:1</a>.",
       sec06_code: "06 / STRUCTURE DE COMMANDEMENT",
       sec06_intro: "Une brève familiarisation avant d'aller plus loin. Le Protocole Extraction, ce n'est pas un seul homme qui crie des instructions depuis la touche — c'est une chaîne de commandement bâtie pour l'exécuter, un effectif qui la met en œuvre, une philosophie qui dépasse les 90 jours, et un rythme qui te garde honnête après le RTB. La discipline te sort de l'épave. C'est ici que ta boussole commence à pointer vers ce qui vient ensuite.",
@@ -997,39 +1035,66 @@
 (function(){
   var offerDays = document.getElementById('offer-days');
   var offerType = document.getElementById('offer-type');
+  var offerName = document.getElementById('offer-name');
+  var offerEmail = document.getElementById('offer-email');
   var offerPhone = document.getElementById('offer-phone');
   var offerCheckout = document.getElementById('offer-checkout');
   var offerMsg = document.getElementById('offer-order-msg');
   if (!offerCheckout) return;
+  var offerBusy = false;
   offerCheckout.addEventListener('click', function(e){
+    e.preventDefault();
+    if (offerBusy) return;
     var t = window.EXT_T || {};
     var days = offerDays.value;
     var type = offerType.value;
+    var name = offerName.value.trim();
+    var email = offerEmail.value.trim();
     var phone = offerPhone.value.trim();
     if (!days) {
-      e.preventDefault();
       offerMsg.textContent = t.offer_msg_days || 'Choose your training frequency so we can build the right manual.';
       offerDays.focus();
       return;
     }
     if (!type) {
-      e.preventDefault();
       offerMsg.textContent = t.offer_msg_type || 'Choose your equipment track so we can build the right manual.';
       offerType.focus();
       return;
     }
-    if (!phone) {
-      e.preventDefault();
-      offerMsg.textContent = t.offer_msg_phone || 'Add a phone number so we can send your payment link.';
-      offerPhone.focus();
+    if (!name) {
+      offerMsg.textContent = t.offer_msg_name || 'Add your name so we can build the right manual.';
+      offerName.focus();
       return;
     }
-    offerMsg.textContent = '';
-    var body = 'Hi, I want to get the 90-Day Extraction Protocol ($97).\n' +
-      'Training frequency: ' + days + '\n' +
-      'Equipment track: ' + type + '\n' +
-      'Phone (for payment link): ' + phone;
-    offerCheckout.href = 'mailto:contact@extraction.fit?subject=' + encodeURIComponent('90-Day Extraction Protocol order') + '&body=' + encodeURIComponent(body);
+    if (!email || email.indexOf('@') === -1) {
+      offerMsg.textContent = t.offer_msg_email || 'Add a valid email so we can send your payment link.';
+      offerEmail.focus();
+      return;
+    }
+    if (!window.sb) {
+      offerMsg.textContent = t.offer_msg_unavailable || 'Checkout is temporarily unavailable — email Ops Freq instead.';
+      return;
+    }
+    offerBusy = true;
+    offerMsg.textContent = t.offer_msg_generating || 'Generating your payment link…';
+    offerCheckout.classList.add('is-disabled');
+    window.sb.functions.invoke('create-payment-link', {
+      body: { name: name, email: email, phone: phone, equipment: type, daysPerWeek: days }
+    }).then(function (res) {
+      offerBusy = false;
+      offerCheckout.classList.remove('is-disabled');
+      var data = res && res.data;
+      var err = res && (res.error || (data && data.error));
+      if (err) {
+        offerMsg.textContent = (data && data.error) || t.offer_msg_failed || "Couldn't generate a payment link — email Ops Freq instead.";
+        return;
+      }
+      offerMsg.textContent = t.offer_msg_sent || 'Check your email — your payment link is on its way.';
+    }).catch(function () {
+      offerBusy = false;
+      offerCheckout.classList.remove('is-disabled');
+      offerMsg.textContent = t.offer_msg_failed || "Couldn't reach the armory — email Ops Freq instead.";
+    });
   });
 })();
 </script>

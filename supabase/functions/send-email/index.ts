@@ -429,6 +429,93 @@ Orders are cut. Your personalized manual and invoice are attached.
 `;
     },
   },
+  // Sent by create-payment-link right after a visitor submits the $97 Protocol checkout form.
+  // row.data carries { buyerName, itemDescription, amount, currency, orderId, paymentUrl } --
+  // paymentUrl is a MyFatoorah-hosted invoice page (NotificationOption: LNK -- MyFatoorah
+  // itself never emails the customer, we do, so this looks like every other Extraction email).
+  // Paying it does NOT auto-fulfill anything: the shop owner still confirms the payment and
+  // runs tools/fulfill-purchase.mjs by hand, same as before this was automated.
+  payment_link: {
+    subject: (row) => `Your Payment Link — ${String(row.data?.itemDescription ?? "90-Day Extraction Protocol")}`,
+    html: (row) => {
+      const buyerName = String(row.data?.buyerName ?? row.to_name ?? "Operator");
+      const itemDescription = String(row.data?.itemDescription ?? "90-Day Extraction Protocol");
+      const amount = String(row.data?.amount ?? "97.00");
+      const currency = String(row.data?.currency ?? "USD");
+      const paymentUrl = String(row.data?.paymentUrl ?? "https://extraction.fit/shop.html");
+      const orderId = String(row.data?.orderId ?? "");
+      return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Extraction — Your Payment Link</title>
+</head>
+<body style="margin:0;padding:0;background:#0C0C0A;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">
+Your order is staged. Complete payment to get your orders cut.
+</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0C0C0A;padding:32px 0;">
+<tr><td align="center">
+<table role="presentation" width="560" cellpadding="0" cellspacing="0" style="width:560px;max-width:92%;background:#17140F;border:1px solid rgba(245,223,184,0.14);">
+  <tr>
+    <td align="center" style="padding:36px 32px 20px;border-bottom:1px solid rgba(245,223,184,0.14);">
+      <img src="https://extraction.fit/assets/logo-circle.png" width="56" height="56" alt="Extraction" style="display:block;margin:0 auto 14px;">
+      <div style="font-family:Arial,Helvetica,sans-serif;font-weight:800;font-size:20px;letter-spacing:2px;color:#F5DFB8;text-transform:uppercase;">
+        EXTRACTION<span style="color:#C0451D;">.</span>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="padding:22px 32px 0;">
+      <div style="display:inline-block;font-family:'Courier New',monospace;font-size:11px;letter-spacing:1.5px;color:#A6926F;text-transform:uppercase;border:1px solid rgba(245,223,184,0.30);padding:8px 16px;">
+        Order Staged — Payment Pending
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="padding:24px 32px 0;">
+      <div style="font-family:Arial,Helvetica,sans-serif;font-weight:800;font-size:24px;line-height:1.3;color:#F5DFB8;text-transform:uppercase;letter-spacing:0.5px;">
+        ${buyerName}, Complete Your Order.
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:20px 40px 4px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.65;color:#D9CDBB;">
+      <p style="margin:0 0 16px;">Your order for <strong style="color:#F5DFB8;">${itemDescription}</strong> is staged at <strong style="color:#F5DFB8;">${amount} ${currency}</strong>. Complete payment below to get your orders cut — your manual and invoice land in your inbox right after we confirm it.</p>
+      <p style="margin:0 0 16px;">This link is secure and hosted by MyFatoorah. No account needed — card or local payment methods accepted.</p>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="padding:16px 40px 8px;">
+      <a href="${paymentUrl}" style="display:inline-block;background:#C0451D;color:#0C0C0A;font-family:Arial,Helvetica,sans-serif;font-weight:800;font-size:14px;letter-spacing:1px;text-transform:uppercase;text-decoration:none;padding:15px 30px;border:1px solid #C0451D;">
+        Complete Payment
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:28px 40px 8px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6;color:#A6926F;">
+      <p style="margin:0;">Designate your heading.<br>— Extraction</p>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="padding:24px 32px 32px;border-top:1px solid rgba(245,223,184,0.14);">
+      <div style="font-family:'Courier New',monospace;font-size:10px;letter-spacing:1.5px;color:#7A6E5C;text-transform:uppercase;margin-bottom:10px;">
+        EXTRACTION // FROM MEDIOCRITY // NO ONE IS COMING
+      </div>
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#5C544A;">
+        Order ${orderId} · Questions? <a href="mailto:contact@extraction.fit" style="color:#7A6E5C;">contact@extraction.fit</a>
+      </div>
+    </td>
+  </tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>
+`;
+    },
+  },
 };
 
 const MAYDAY_EQUIPMENT_LABELS: Record<string, string> = {
