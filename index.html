@@ -181,27 +181,6 @@
     max-width: 560px;
     margin-bottom: 32px;
   }
-  .stamp{
-    position:absolute;
-    top: 42px; right: clamp(18px,5vw,50px);
-    width: 118px; height:118px;
-    border: 3px solid var(--oxide);
-    border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    transform: rotate(-16deg);
-    opacity: 0;
-    animation: stampIn 0.4s ease-out 0.6s forwards;
-  }
-  @keyframes stampIn{
-    0%{opacity:0; transform: rotate(-16deg) scale(1.6);}
-    60%{opacity:1;}
-    100%{opacity:0.9; transform: rotate(-16deg) scale(1);}
-  }
-  .stamp span{
-    font-family:'Black Ops One',sans-serif; font-weight:400; color: var(--oxide);
-    font-size: 0.78rem; text-align:center; letter-spacing:0.06em; line-height:1.35;
-    text-transform: uppercase;
-  }
   .cta-row{display:flex; gap:16px; flex-wrap:wrap; align-items:center;}
   .btn-primary{
     position: relative;
@@ -446,7 +425,6 @@
 
   @media (prefers-reduced-motion: reduce){
     .ticker-inner{animation:none;}
-    .stamp{animation:none; opacity:0.9;}
     .btn-primary::after{animation:none; opacity:0;}
     .reveal, .phase, .cadre-card, .roster-card, .dossier-col{ opacity:1 !important; transform:none !important; transition:none !important; }
     nav{ transition:none; }
@@ -478,7 +456,6 @@
 <div class="hero">
   <div class="hero-mark"></div>
   <div class="doc-frame">
-    <div class="stamp"><span data-i18n-html="hero_stamp">Extraction<br>Authorized</span></div>
     <div class="classification">
       <span class="label" data-i18n="hero_order">Order No. 90-EXT-01</span>
       <span class="label" data-i18n="hero_status">Status: Open Enrollment</span>
@@ -707,7 +684,7 @@
       nav_coaching: "1:1 Coaching", nav_leadership: "Leadership", nav_shop: "Shop", nav_portal: "Operator Login", nav_request: "Request Extraction",
       ticker_phrases: ["NO ONE IS COMING", "90 DAYS", "EXTRACTION IS EARNED, NOT GRANTED", "DISCIPLINE EQUALS DISTANCE FROM WRECKAGE"],
       boot_lines: ["UPLINK ESTABLISHED", "CLEARANCE VERIFIED", "EXTRACTION PROTOCOL — STANDING BY"],
-      hero_stamp: "Extraction<br>Authorized", hero_order: "Order No. 90-EXT-01", hero_status: "Status: Open Enrollment",
+      hero_order: "Order No. 90-EXT-01", hero_status: "Status: Open Enrollment",
       hero_h1: "The Extraction<br><span class=\"accent\">Protocol.</span>",
       hero_sub: "You don't need motivation. You need extraction. A 90-day operation to pull yourself out of stagnation and rebuild under a standard — not a slogan.",
       hero_briefing: "Read the briefing ↓",
@@ -773,7 +750,7 @@
       nav_coaching: "Birebir Koçluk", nav_leadership: "Liderlik", nav_shop: "Mağaza", nav_portal: "Operatör Girişi", nav_request: "Extraction Talep Et",
       ticker_phrases: ["KİMSE GELMİYOR", "90 GÜN", "EXTRACTION KAZANILIR, VERİLMEZ", "DİSİPLİN, ENKAZDAN UZAKLIKTIR"],
       boot_lines: ["BAĞLANTI KURULDU", "YETKİ DOĞRULANDI", "EXTRACTION PROTOKOLÜ — BEKLEMEDE"],
-      hero_stamp: "Extraction<br>Onaylandı", hero_order: "Emir No. 90-EXT-01", hero_status: "Durum: Kayıtlar Açık",
+      hero_order: "Emir No. 90-EXT-01", hero_status: "Durum: Kayıtlar Açık",
       hero_h1: "The Extraction<br><span class=\"accent\">Protokolü.</span>",
       hero_sub: "Motivasyona ihtiyacın yok. Extraction'a ihtiyacın var. Durgunluktan kendini çıkarıp bir slogan değil, bir standart üzerine yeniden inşa etmek için 90 günlük bir operasyon.",
       hero_briefing: "Brifingi oku ↓",
@@ -839,7 +816,7 @@
       nav_coaching: "التدريب الفردي", nav_leadership: "القيادة", nav_shop: "المتجر", nav_portal: "دخول المتدرب", nav_request: "اطلب الإخلاء",
       ticker_phrases: ["لا أحد قادم", "٩٠ يومًا", "الإخلاء يُكتسب، لا يُمنح", "الانضباط يساوي المسافة عن الحطام"],
       boot_lines: ["تم إنشاء الاتصال", "تم التحقق من التصريح", "بروتوكول الإخلاء — في وضع الاستعداد"],
-      hero_stamp: "الإخلاء<br>مصرّح به", hero_order: "أمر رقم 90-EXT-01", hero_status: "الحالة: التسجيل مفتوح",
+      hero_order: "أمر رقم 90-EXT-01", hero_status: "الحالة: التسجيل مفتوح",
       hero_h1: "بروتوكول<br><span class=\"accent\">الإخلاء.</span>",
       hero_sub: "أنت لا تحتاج إلى تحفيز. أنت تحتاج إلى الإخلاء. عملية مدتها ٩٠ يومًا لانتشالك من الركود وإعادة بنائك وفق معيار — لا شعار.",
       hero_briefing: "اقرأ الإحاطة ↓",
@@ -905,7 +882,7 @@
       nav_coaching: "Coaching 1:1", nav_leadership: "Leadership", nav_shop: "Boutique", nav_portal: "Connexion Opérateur", nav_request: "Demander l'Extraction",
       ticker_phrases: ["PERSONNE NE VIENDRA", "90 JOURS", "L'EXTRACTION SE MÉRITE, ELLE NE S'ACCORDE PAS", "LA DISCIPLINE T'ÉLOIGNE DE L'ÉPAVE"],
       boot_lines: ["LIAISON ÉTABLIE", "HABILITATION VÉRIFIÉE", "PROTOCOLE EXTRACTION — EN ATTENTE"],
-      hero_stamp: "Extraction<br>Autorisée", hero_order: "Ordre N° 90-EXT-01", hero_status: "Statut : Inscriptions Ouvertes",
+      hero_order: "Ordre N° 90-EXT-01", hero_status: "Statut : Inscriptions Ouvertes",
       hero_h1: "Le Protocole<br><span class=\"accent\">Extraction.</span>",
       hero_sub: "Tu n'as pas besoin de motivation. Tu as besoin d'extraction. Une opération de 90 jours pour te sortir de la stagnation et te reconstruire selon un standard — pas un slogan.",
       hero_briefing: "Lire le briefing ↓",
