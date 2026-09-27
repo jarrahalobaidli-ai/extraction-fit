@@ -1,0 +1,218 @@
+<title>Extraction — Quote Post Backgrounds</title>
+<style>
+  :root{
+    --kraft:#D3BE93;
+    --kraft-edge:#BFA778;
+    --ink:#171410;
+    --ink-dim:#6B5D45;
+    --cream:#F3E9D2;
+    --cream-dim:#C9BC9E;
+    --oxide:#C0451D;
+    --oxide-dim:#7A2C12;
+    --black:#0C0C0A;
+    --olive:#15150F;
+    --olive-line:rgba(192,69,29,0.55);
+  }
+  *{box-sizing:border-box;}
+  html,body{ margin:0; padding:0; background:#3a3a3a; }
+  .stage{ display:flex; flex-direction:column; align-items:flex-start; gap:40px; padding:40px; }
+  .row{ display:flex; gap:40px; align-items:flex-start; }
+
+  .frame{
+    position:relative;
+    overflow:hidden;
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    flex:none;
+  }
+  .frame .tick{ position:absolute; width:46px; height:46px; }
+  .frame .tick.tl{ top:56px; left:56px; border-top:3px solid; border-left:3px solid; }
+  .frame .tick.tr{ top:56px; right:56px; border-top:3px solid; border-right:3px solid; }
+  .frame .tick.bl{ bottom:56px; left:56px; border-bottom:3px solid; border-left:3px solid; }
+  .frame .tick.br{ bottom:56px; right:56px; border-bottom:3px solid; border-right:3px solid; }
+
+  .lockup{
+    position:absolute; left:50%; transform:translateX(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+  }
+  .lockup img{ height:44px; width:auto; display:block; }
+  .lockup .word{ font-family:'Oswald',sans-serif; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; font-size:30px; display:flex; align-items:center; gap:8px; }
+  .lockup .word .dot{ width:7px; height:7px; border-radius:50%; background:var(--oxide); display:inline-block; }
+
+  .tagline{
+    position:absolute; left:50%; transform:translateX(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:14px;
+  }
+  .tagline .rule{ width:64px; height:2px; background:var(--oxide); }
+  .tagline .txt{ font-family:'IBM Plex Mono',monospace; font-size:17px; letter-spacing:0.16em; text-transform:uppercase; }
+
+  .watermark{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); }
+
+  .reticle{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); }
+  .reticle .h, .reticle .v{ position:absolute; background:var(--olive-line); }
+  .reticle .h{ top:50%; left:50%; height:1px; transform:translate(-50%,-50%); }
+  .reticle .v{ left:50%; top:50%; width:1px; transform:translate(-50%,-50%); }
+  .reticle .tick{ position:absolute; background:var(--olive-line); }
+  .reticle .ring{ position:absolute; left:50%; top:50%; border:1px solid var(--olive-line); border-radius:50%; transform:translate(-50%,-50%); }
+
+  .label{ font-family:'IBM Plex Mono',monospace; font-size:15px; color:#ddd; margin-bottom:10px; letter-spacing:0.04em; }
+  .col{ display:flex; flex-direction:column; }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<div class="stage">
+
+  <!-- ============ STORIES / REELS — 1080x1920 ============ -->
+  <div class="row">
+
+    <div class="col">
+      <div class="label">Stories / Reels — Black Tactical — 1080x1920</div>
+      <div class="frame" id="story-black" style="width:1080px;height:1920px;background:var(--black);">
+        <div class="tick tl" style="border-color:var(--oxide);"></div>
+        <div class="tick tr" style="border-color:var(--oxide);"></div>
+        <div class="tick bl" style="border-color:var(--oxide);"></div>
+        <div class="tick br" style="border-color:var(--oxide);"></div>
+        <img class="watermark" src="assets/compass-mark.png" style="height:640px; opacity:0.07;">
+        <div class="lockup" style="top:280px; color:var(--cream);">
+          <img src="assets/compass-mark.png" style="height:52px;">
+          <div class="word">Extraction<span class="dot"></span></div>
+        </div>
+        <div class="tagline" style="bottom:280px; color:var(--cream-dim);">
+          <div class="rule"></div>
+          <div class="txt">Designate Your Heading</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="label">Stories / Reels — Kraft Field — 1080x1920</div>
+      <div class="frame" id="story-kraft" style="width:1080px;height:1920px;background:var(--kraft);">
+        <svg class="watermark" width="1080" height="1920" style="position:absolute;top:0;left:0;opacity:0.35;" viewBox="0 0 1080 1920">
+          <g fill="none" stroke="var(--kraft-edge)" stroke-width="2">
+            <path d="M -200 300 C 200 220, 700 380, 1280 260"></path>
+            <path d="M -200 520 C 200 440, 700 600, 1280 480"></path>
+            <path d="M -200 1400 C 200 1320, 700 1480, 1280 1360"></path>
+            <path d="M -200 1620 C 200 1540, 700 1700, 1280 1580"></path>
+          </g>
+        </svg>
+        <img class="watermark" src="assets/compass-mark.png" style="height:640px; opacity:0.16; mix-blend-mode:multiply;">
+        <div class="tick tl" style="border-color:var(--ink);"></div>
+        <div class="tick tr" style="border-color:var(--ink);"></div>
+        <div class="tick bl" style="border-color:var(--ink);"></div>
+        <div class="tick br" style="border-color:var(--ink);"></div>
+        <div class="lockup" style="top:280px; color:var(--ink);">
+          <img src="assets/compass-mark.png" style="height:52px;">
+          <div class="word">Extraction<span class="dot"></span></div>
+        </div>
+        <div class="tagline" style="bottom:280px; color:var(--ink-dim);">
+          <div class="rule"></div>
+          <div class="txt">Designate Your Heading</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="label">Stories / Reels — Field Grid — 1080x1920</div>
+      <div class="frame" id="story-grid" style="width:1080px;height:1920px;background:var(--olive);">
+        <div class="reticle" style="width:900px;height:900px;">
+          <div class="ring" style="width:900px;height:900px;"></div>
+          <div class="ring" style="width:620px;height:620px;"></div>
+          <div class="ring" style="width:340px;height:340px;"></div>
+          <div class="h" style="width:900px;"></div>
+          <div class="v" style="height:900px;"></div>
+        </div>
+        <div class="tick tl" style="border-color:var(--oxide);"></div>
+        <div class="tick tr" style="border-color:var(--oxide);"></div>
+        <div class="tick bl" style="border-color:var(--oxide);"></div>
+        <div class="tick br" style="border-color:var(--oxide);"></div>
+        <div class="lockup" style="top:280px; color:var(--cream);">
+          <img src="assets/compass-mark.png" style="height:52px;">
+          <div class="word">Extraction<span class="dot"></span></div>
+        </div>
+        <div class="tagline" style="bottom:280px; color:var(--cream-dim);">
+          <div class="rule"></div>
+          <div class="txt">No One Is Coming</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============ CAROUSEL / FEED — 1080x1350 (4:5) ============ -->
+  <div class="row">
+
+    <div class="col">
+      <div class="label">Carousel / Feed — Black Tactical — 1080x1350</div>
+      <div class="frame" id="feed-black" style="width:1080px;height:1350px;background:var(--black);">
+        <div class="tick tl" style="border-color:var(--oxide);"></div>
+        <div class="tick tr" style="border-color:var(--oxide);"></div>
+        <div class="tick bl" style="border-color:var(--oxide);"></div>
+        <div class="tick br" style="border-color:var(--oxide);"></div>
+        <img class="watermark" src="assets/compass-mark.png" style="height:480px; opacity:0.07;">
+        <div class="lockup" style="top:150px; color:var(--cream);">
+          <img src="assets/compass-mark.png" style="height:44px;">
+          <div class="word" style="font-size:26px;">Extraction<span class="dot"></span></div>
+        </div>
+        <div class="tagline" style="bottom:130px; color:var(--cream-dim);">
+          <div class="rule"></div>
+          <div class="txt">Designate Your Heading</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="label">Carousel / Feed — Kraft Field — 1080x1350</div>
+      <div class="frame" id="feed-kraft" style="width:1080px;height:1350px;background:var(--kraft);">
+        <svg class="watermark" width="1080" height="1350" style="position:absolute;top:0;left:0;opacity:0.35;" viewBox="0 0 1080 1350">
+          <g fill="none" stroke="var(--kraft-edge)" stroke-width="2">
+            <path d="M -200 220 C 200 160, 700 280, 1280 190"></path>
+            <path d="M -200 380 C 200 320, 700 440, 1280 350"></path>
+            <path d="M -200 980 C 200 920, 700 1040, 1280 950"></path>
+            <path d="M -200 1140 C 200 1080, 700 1200, 1280 1110"></path>
+          </g>
+        </svg>
+        <img class="watermark" src="assets/compass-mark.png" style="height:480px; opacity:0.16; mix-blend-mode:multiply;">
+        <div class="tick tl" style="border-color:var(--ink);"></div>
+        <div class="tick tr" style="border-color:var(--ink);"></div>
+        <div class="tick bl" style="border-color:var(--ink);"></div>
+        <div class="tick br" style="border-color:var(--ink);"></div>
+        <div class="lockup" style="top:150px; color:var(--ink);">
+          <img src="assets/compass-mark.png" style="height:44px;">
+          <div class="word" style="font-size:26px;">Extraction<span class="dot"></span></div>
+        </div>
+        <div class="tagline" style="bottom:130px; color:var(--ink-dim);">
+          <div class="rule"></div>
+          <div class="txt">Designate Your Heading</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="label">Carousel / Feed — Field Grid — 1080x1350</div>
+      <div class="frame" id="feed-grid" style="width:1080px;height:1350px;background:var(--olive);">
+        <div class="reticle" style="width:760px;height:760px;">
+          <div class="ring" style="width:760px;height:760px;"></div>
+          <div class="ring" style="width:520px;height:520px;"></div>
+          <div class="ring" style="width:280px;height:280px;"></div>
+          <div class="h" style="width:760px;"></div>
+          <div class="v" style="height:760px;"></div>
+        </div>
+        <div class="tick tl" style="border-color:var(--oxide);"></div>
+        <div class="tick tr" style="border-color:var(--oxide);"></div>
+        <div class="tick bl" style="border-color:var(--oxide);"></div>
+        <div class="tick br" style="border-color:var(--oxide);"></div>
+        <div class="lockup" style="top:150px; color:var(--cream);">
+          <img src="assets/compass-mark.png" style="height:44px;">
+          <div class="word" style="font-size:26px;">Extraction<span class="dot"></span></div>
+        </div>
+        <div class="tagline" style="bottom:130px; color:var(--cream-dim);">
+          <div class="rule"></div>
+          <div class="txt">No One Is Coming</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

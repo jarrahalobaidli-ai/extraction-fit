@@ -34,6 +34,13 @@ const LOGO_PATH = path.join(REPO_ROOT, "assets", "logo-rectangle-transparent.png
 const logoDataUri = () =>
   `data:image/png;base64,${fs.readFileSync(LOGO_PATH).toString("base64")}`;
 
+// Compass watermark reused throughout the manual (cover + a small corner mark on every
+// content page) for the same brand texture as the product labels / sticker sheets. Computed
+// once here (not buyer-supplied) so fulfill-purchase.mjs needs no changes.
+const COMPASS_PATH = path.join(REPO_ROOT, "assets", "compass-mark.png");
+const compassDataUri = () =>
+  `data:image/png;base64,${fs.readFileSync(COMPASS_PATH).toString("base64")}`;
+
 const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
 function footerTemplate(buyer) {
@@ -49,7 +56,7 @@ function footerTemplate(buyer) {
 // (the sample-batch runner below, or a fulfillment handler) decide where it goes.
 export async function generateManualPdf({ level, daysPerWeek, buyer }) {
   const program = { ...buildFullProgram(level, daysPerWeek), level };
-  const html = renderManualHtml({ program, buyer });
+  const html = renderManualHtml({ program, buyer, compassDataUri: compassDataUri() });
 
   const browser = await chromium.launch({ executablePath: CHROMIUM_PATH });
   try {
