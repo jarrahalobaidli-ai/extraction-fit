@@ -9,6 +9,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Black+Ops+One&family=Oswald:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/supabase-client.js"></script>
+<script>
+  // Enables the hero's hidden-until-animated state. Failsafe: if the entrance script never
+  // runs (error, blocked script), the hero still reveals itself after 4s instead of staying blank.
+  document.documentElement.classList.add('js');
+  setTimeout(function(){ var h = document.querySelector('.hero'); if(h) h.classList.add('hero-in'); }, 4000);
+</script>
 <style>
   :root{
     --bg: #0C0C0A;
@@ -181,6 +187,27 @@
     max-width: 560px;
     margin-bottom: 32px;
   }
+  .hero h1 .hl{ display:block; }
+
+  /* Hero entrance: brackets lock on, frame draws, then each .hs item rises in order of --i.
+     Hidden state only applies once JS has tagged <html class="js">, so no-JS visitors see it static. */
+  .js .hero .hs{ opacity:0; transform:translateY(26px); }
+  .js .hero .hero-mark{ opacity:0; transform:translateY(-50%) scale(0.9); }
+  .js .hero .doc-frame{ border-color:transparent; }
+  .js .hero .doc-frame::before{ transform:scale(0); transform-origin:top left; }
+  .js .hero .doc-frame::after{ transform:scale(0); transform-origin:bottom right; }
+  .hero.hero-in .hs{
+    opacity:1; transform:none;
+    transition:opacity 0.75s cubic-bezier(.2,.7,.3,1), transform 0.75s cubic-bezier(.2,.7,.3,1);
+    transition-delay:calc(260ms + var(--i, 0) * 120ms);
+  }
+  .hero.hero-in .hero-mark{
+    opacity:0.06; transform:translateY(-50%) scale(1);
+    transition:opacity 1.8s ease 0.2s, transform 2.2s cubic-bezier(.2,.7,.3,1) 0.2s;
+  }
+  .hero.hero-in .doc-frame{ border-color:var(--line-strong); transition:border-color 0.9s ease 0.15s; }
+  .hero.hero-in .doc-frame::before,
+  .hero.hero-in .doc-frame::after{ transform:scale(1); transition:transform 0.45s cubic-bezier(.3,1.5,.5,1); }
   .cta-row{display:flex; gap:16px; flex-wrap:wrap; align-items:center;}
   .btn-primary{
     position: relative;
@@ -369,20 +396,21 @@
   .reveal{ opacity:0; transform:translateY(26px); transition:opacity 0.7s cubic-bezier(.2,.7,.3,1), transform 0.7s cubic-bezier(.2,.7,.3,1); }
   .reveal.is-visible{ opacity:1; transform:translateY(0); }
 
-  .phase{ opacity:0; transform:translateY(22px); transition:opacity 0.6s ease, transform 0.6s ease; }
+  .phase{ opacity:0; transform:translateY(26px); transition:opacity 0.75s cubic-bezier(.2,.7,.3,1), transform 0.75s cubic-bezier(.2,.7,.3,1); }
   .phases.is-visible .phase{ opacity:1; transform:translateY(0); }
   .phases.is-visible .phase:nth-child(1){transition-delay:0ms;}
-  .phases.is-visible .phase:nth-child(2){transition-delay:90ms;}
-  .phases.is-visible .phase:nth-child(3){transition-delay:180ms;}
-  .phases.is-visible .phase:nth-child(4){transition-delay:270ms;}
+  .phases.is-visible .phase:nth-child(2){transition-delay:120ms;}
+  .phases.is-visible .phase:nth-child(3){transition-delay:240ms;}
+  .phases.is-visible .phase:nth-child(4){transition-delay:360ms;}
 
-  .cadre-card{ opacity:0; transform:translateY(22px); transition:opacity 0.6s ease, transform 0.6s ease, background 0.25s ease, box-shadow 0.25s ease; }
+  .cadre-card{ opacity:0; transform:translateY(26px); transition:opacity 0.75s cubic-bezier(.2,.7,.3,1), transform 0.75s cubic-bezier(.2,.7,.3,1), background 0.25s ease, box-shadow 0.25s ease; }
   .cadre-grid.is-visible .cadre-card{ opacity:1; transform:translateY(0); }
-  .cadre-grid.is-visible .cadre-card:nth-child(1){transition-delay:0ms;}
-  .cadre-grid.is-visible .cadre-card:nth-child(2){transition-delay:90ms;}
-  .cadre-grid.is-visible .cadre-card:nth-child(3){transition-delay:180ms;}
-  .cadre-grid.is-visible .cadre-card:nth-child(4){transition-delay:270ms;}
-  .cadre-grid.is-visible .cadre-card:nth-child(5){transition-delay:360ms;}
+  /* Delay only the entrance (opacity, transform) — not the hover background/shadow. */
+  .cadre-grid.is-visible .cadre-card:nth-child(1){transition-delay:0ms, 0ms, 0s, 0s;}
+  .cadre-grid.is-visible .cadre-card:nth-child(2){transition-delay:120ms, 120ms, 0s, 0s;}
+  .cadre-grid.is-visible .cadre-card:nth-child(3){transition-delay:240ms, 240ms, 0s, 0s;}
+  .cadre-grid.is-visible .cadre-card:nth-child(4){transition-delay:360ms, 360ms, 0s, 0s;}
+  .cadre-grid.is-visible .cadre-card:nth-child(5){transition-delay:480ms, 480ms, 0s, 0s;}
   .cadre-card:hover{ background:rgba(192,69,29,0.07); box-shadow:0 14px 32px rgba(0,0,0,0.35); }
   .cadre-badge{ transition: transform 0.3s ease, box-shadow 0.3s ease; }
   .cadre-card:hover .cadre-badge{ transform: scale(1.07) rotate(-2deg); box-shadow:0 0 0 1px var(--oxide), 0 0 26px rgba(192,69,29,0.5); }
@@ -427,6 +455,9 @@
     .ticker-inner{animation:none;}
     .btn-primary::after{animation:none; opacity:0;}
     .reveal, .phase, .cadre-card, .roster-card, .dossier-col{ opacity:1 !important; transform:none !important; transition:none !important; }
+    .js .hero .hs, .js .hero .doc-frame::before, .js .hero .doc-frame::after{ opacity:1 !important; transform:none !important; transition:none !important; }
+    .js .hero .hero-mark{ opacity:0.06 !important; transform:translateY(-50%) !important; transition:none !important; }
+    .js .hero .doc-frame{ border-color:var(--line-strong) !important; transition:none !important; }
     nav{ transition:none; }
   }
 </style>
@@ -456,13 +487,13 @@
 <div class="hero">
   <div class="hero-mark"></div>
   <div class="doc-frame">
-    <div class="classification">
+    <div class="classification hs" style="--i:0">
       <span class="label" data-i18n="hero_order">Order No. 90-EXT-01</span>
       <span class="label" data-i18n="hero_status">Status: Open Enrollment</span>
     </div>
     <h1 data-i18n-html="hero_h1">The Extraction<br><span class="accent">Protocol.</span></h1>
-    <p class="sub" data-i18n="hero_sub">You don't need motivation. You need extraction. A 90-day operation to pull yourself out of stagnation and rebuild under a standard — not a slogan.</p>
-    <div class="cta-row">
+    <p class="sub hs" style="--i:3" data-i18n="hero_sub">You don't need motivation. You need extraction. A 90-day operation to pull yourself out of stagnation and rebuild under a standard — not a slogan.</p>
+    <div class="cta-row hs" style="--i:4">
       <a href="#situation" class="btn-ghost" data-i18n="hero_briefing">Read the briefing ↓</a>
     </div>
   </div>
@@ -1115,9 +1146,27 @@
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var seen = false;
   try{ seen = sessionStorage.getItem('extractionBootSeen'); }catch(e){}
+
+  // Hero entrance. The headline's lines are split here (after i18n has filled it in) so each
+  // line staggers on its own; a later language switch rewrites the h1 with plain, visible text.
+  var hero = document.querySelector('.hero');
+  var heroH1 = hero && hero.querySelector('h1');
+  if(heroH1){
+    heroH1.innerHTML = heroH1.innerHTML.split(/<br\s*\/?>/i).map(function(line, n){
+      return '<span class="hl hs" style="--i:' + (n + 1) + '">' + line + '</span>';
+    }).join('');
+  }
+  function heroIn(){
+    if(!hero) return;
+    // Two frames so the hidden start state is painted before the transition kicks in.
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ hero.classList.add('hero-in'); }); });
+  }
+
+  if(!boot) heroIn();
   if(boot){
     if(reduced || seen){
       boot.remove();
+      heroIn();
     } else {
       try{ sessionStorage.setItem('extractionBootSeen','1'); }catch(e){}
       var lines = (window.EXT_T && window.EXT_T.boot_lines) || [
@@ -1131,6 +1180,7 @@
         if(stopped) return;
         stopped = true;
         boot.classList.add('boot-done');
+        setTimeout(heroIn, 250); // let the overlay's 0.5s fade mostly clear before the hero starts
         setTimeout(function(){ if(boot.parentNode) boot.remove(); }, 450);
       }
       function tick(){
