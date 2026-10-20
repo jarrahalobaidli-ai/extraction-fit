@@ -1153,7 +1153,6 @@
     });
     window.EXT_LANG = lang;
     window.EXT_T = t;
-    try{ localStorage.setItem('extraction:lang', lang); }catch(e){}
   }
 
   function initLangSwitch(){
@@ -1164,21 +1163,19 @@
       btn.type = 'button';
       btn.textContent = l.label;
       btn.setAttribute('data-lang', l.code);
-      btn.addEventListener('click', function(){ applyLang(l.code); });
+      btn.addEventListener('click', function(){
+        applyLang(l.code);
+        try{ localStorage.setItem('extraction:lang-choice', l.code); }catch(e){}
+      });
       mount.appendChild(btn);
     });
   }
 
-  // A remembered choice wins; otherwise open in Arabic for visitors whose phone/browser is set
-  // to Arabic (most arrive from Arabic Instagram content), English for everyone else.
+  // English for everyone; only a language the visitor picked by hand is remembered.
   var savedLang = null;
-  try{ savedLang = localStorage.getItem('extraction:lang'); }catch(e){}
-  if(!savedLang){
-    var prefs = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || ''];
-    savedLang = String(prefs[0] || '').toLowerCase().indexOf('ar') === 0 ? 'ar' : 'en';
-  }
+  try{ savedLang = localStorage.getItem('extraction:lang-choice'); }catch(e){}
   initLangSwitch();
-  applyLang(savedLang);
+  applyLang(TRANSLATIONS[savedLang] ? savedLang : 'en');
 })();
 </script>
 
