@@ -7,6 +7,10 @@
 // NOT MyFatoorah's own notification email, so every email an operator gets looks like it
 // came from the same system.
 //
+// REQUEST MODE: while MYFATOORAH_API_KEY is unset, the same call records a pending order and
+// emails the buyer (order_request_received) and the owner (order_request_alert) instead of
+// generating a link -- so the buy button works before the gateway is live.
+//
 // SCOPE: this generates + emails the payment link and records a `pending` purchases row so
 // the order isn't only visible inside MyFatoorah's own dashboard. It does NOT confirm
 // payment and does NOT trigger fulfillment -- confirmation is myfatoorah-webhook's job
@@ -82,13 +86,6 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    if (!MYFATOORAH_API_KEY) {
-      return new Response(
-        JSON.stringify({ error: "Payment links aren't configured yet -- email contact@extraction.fit instead." }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
     const body = await req.json().catch(() => ({}));
     const name = String(body.name ?? "").trim();
     const email = String(body.email ?? "").trim();
@@ -107,6 +104,45 @@ Deno.serve(async (req: Request) => {
     const itemDescription = `90-Day Extraction Protocol — ${equipment}, ${daysPerWeek} days/week`;
     // Paste-ready for `node tools/fulfill-purchase.mjs '<...>'` once the owner confirms payment.
     const purchaseJson = JSON.stringify({ orderId, email, name, equipment, daysPerWeek });
+
+    // Request mode: no payment gateway yet, so record the order as pending and email both
+    // sides -- the owner collects payment (WhatsApp / bank transfer) and fulfills by hand with
+    // tools/generate-client-manual.mjs. Every order is tracked even if the buyer never follows up.
+    if (!MYFATOORAH_API_KEY) {
+      const { error: reqPurchaseErr } = await supabase.from("purchases").insert({
+        order_id: orderId,
+        email,
+        name,
+        equipment,
+        days_per_week: daysPerWeek,
+        amount_cents: Math.round(PRICE_USD * 100),
+        currency: MYFATOORAH_CURRENCY,
+        status: "pending",
+      });
+      if (reqPurchaseErr) {
+        console.error("purchases insert (request mode) failed:", reqPurchaseErr.message);
+        return new Response(
+          JSON.stringify({ error: "Couldn't record your order -- message us on WhatsApp (+965 9999 2990) or email contact@extraction.fit." }),
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      const lang = String(body.lang ?? "en").slice(0, 5);
+      const common = { buyerName: name, orderId, itemDescription, amount: PRICE_USD.toFixed(2), currency: MYFATOORAH_CURRENCY, lang };
+      const { error: reqOutboxErr } = await supabase.from("email_outbox").insert([
+        { template: "order_request_received", to_email: email, to_name: name, data: common },
+        {
+          template: "order_request_alert",
+          to_email: "contact@extraction.fit",
+          to_name: "Extraction Command",
+          data: { ...common, buyerEmail: email, buyerPhone: phone, equipment, daysPerWeek, purchaseJson },
+        },
+      ]);
+      if (reqOutboxErr) console.error("email_outbox insert (request mode) failed:", reqOutboxErr.message);
+      return new Response(JSON.stringify({ ok: true, orderId, mode: "request" }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const mfPayload: Record<string, unknown> = {
       NotificationOption: "LNK", // link-only -- MyFatoorah does not email/SMS it, we do
@@ -190,7 +226,7 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    return new Response(JSON.stringify({ ok: true, orderId }), {
+    return new Response(JSON.stringify({ ok: true, orderId, mode: "link" }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

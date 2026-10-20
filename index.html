@@ -144,6 +144,8 @@
     max-width: 1200px; margin: 0 auto;
     position: relative;
   }
+  /* Below 1200px the hero spans the viewport, so clip the bleeding mark to stop sideways scroll on phones. */
+  @media (max-width: 1200px){ .hero{ overflow-x: clip; } }
   .hero-mark{
     position: absolute;
     top: 50%; right: -60px;
@@ -303,14 +305,53 @@
   .coaching-config-row{ display:flex; flex-direction:column; gap:6px; }
   .coaching-config-row label{ font-family:'IBM Plex Mono',monospace; font-size:0.62rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--paper-dim); }
   .coaching-config-row input[type=text],
-  .coaching-phone-row input[type=tel]{
+  .coaching-phone-row input{
     background:var(--bg); border:1px solid var(--line-strong); color:var(--paper);
     padding:13px 14px; font-family:'Inter',sans-serif; font-size:0.9rem; width:100%;
   }
   .coaching-config-row input[type=text]:focus,
-  .coaching-phone-row input[type=tel]:focus{ outline:none; border-color:var(--oxide); }
+  .coaching-phone-row input:focus{ outline:none; border-color:var(--oxide); }
   .coaching-phone-row{ display:flex; gap:10px; flex-wrap:wrap; }
-  .coaching-phone-row input[type=tel]{ flex:1 1 160px; width:auto; }
+  .coaching-phone-row input{ flex:1 1 160px; width:auto; }
+
+  /* Secondary hero button + email capture (hero and Book section) */
+  .btn-outline{
+    display:inline-block; border:1px solid var(--oxide); color:var(--oxide);
+    font-family:'Oswald',sans-serif; font-weight:700; text-transform:uppercase;
+    letter-spacing:0.07em; padding:16px 26px; font-size:0.9rem; text-decoration:none;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .btn-outline:hover{ background:var(--oxide); color:var(--bg); }
+  .capture-form{ display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; max-width:520px; }
+  .capture-form input{
+    flex:1 1 240px; min-width:0; background:var(--bg); border:1px solid var(--line-strong); color:var(--paper);
+    padding:13px 14px; font-family:'Inter',sans-serif; font-size:0.9rem;
+  }
+  .capture-form input:focus{ outline:none; border-color:var(--oxide); }
+  .capture-form button{
+    background:transparent; border:1px solid var(--paper-dim); color:var(--paper);
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:0.72rem; letter-spacing:0.08em;
+    text-transform:uppercase; padding:0 18px; min-height:46px; cursor:pointer;
+  }
+  .capture-form button:hover{ border-color:var(--oxide); color:var(--oxide); }
+  .capture-form button[disabled]{ opacity:0.55; pointer-events:none; }
+  body.lang-ar .capture-form input::placeholder,
+  body.lang-ar .coaching-phone-row input::placeholder{ direction:rtl; text-align:right; }
+  body.lang-ar .capture-msg{ direction:rtl; text-align:right; }
+  .capture-msg{ flex-basis:100%; font-family:'IBM Plex Mono',monospace; font-size:0.68rem; letter-spacing:0.04em; color:var(--oxide); min-height:1em; }
+
+  .book-section{ border-top:1px solid var(--line); }
+  .book-grid{ display:grid; grid-template-columns:1.15fr 0.85fr; gap:48px; align-items:center; }
+  .book-h2{ font-family:'Anton',sans-serif; font-size:clamp(1.9rem,4.2vw,2.7rem); text-transform:uppercase; line-height:1.05; margin-bottom:18px; }
+  .book-p{ color:var(--paper-dim); font-size:1.02rem; max-width:520px; margin-bottom:14px; }
+  .book-section .tier-note{ margin-top:12px; }
+  .book-visual{ display:flex; justify-content:center; }
+  .book-visual img{ width:100%; max-width:300px; border-radius:50%; filter:drop-shadow(0 0 24px rgba(192,69,29,0.28)); }
+  @media (max-width:820px){
+    .book-grid{ grid-template-columns:1fr; gap:28px; }
+    .book-visual{ order:-1; }
+    .book-visual img{ max-width:180px; }
+  }
   .coaching-order-msg{ font-family:'IBM Plex Mono',monospace; font-size:0.68rem; letter-spacing:0.04em; color:var(--oxide); min-height:1em; }
   @media (max-width:640px){ .coaching-order{ max-width:100%; } }
 
@@ -475,6 +516,7 @@
     <div class="logo">EXTRACT<span>ION</span></div>
   </div>
   <div class="nav-links">
+    <a href="#book" class="portal-link" data-i18n="nav_book">The Book</a>
     <a href="#one-on-one" class="portal-link" data-i18n="nav_coaching">1:1 Coaching</a>
     <a href="#leadership" class="portal-link" data-i18n="nav_leadership">Leadership</a>
     <a href="shop.html" class="portal-link" data-i18n="nav_shop">Shop</a>
@@ -494,10 +536,36 @@
     <h1 data-i18n-html="hero_h1">The Extraction<br><span class="accent">Protocol.</span></h1>
     <p class="sub hs" style="--i:3" data-i18n="hero_sub">You don't need motivation. You need extraction. A 90-day operation to pull yourself out of stagnation and rebuild under a standard — not a slogan.</p>
     <div class="cta-row hs" style="--i:4">
-      <a href="#situation" class="btn-ghost" data-i18n="hero_briefing">Read the briefing ↓</a>
+      <a href="#offer" class="btn-primary" data-i18n="hero_cta_protocol">Get The Protocol — $97</a>
+      <a href="#book" class="btn-outline" data-i18n="hero_cta_book">The Book — Coming Soon</a>
     </div>
+    <form class="capture-form hs" style="--i:5" data-capture-source="book" novalidate>
+      <input type="email" name="email" required autocomplete="email" inputmode="email" data-i18n-placeholder="hero_capture_placeholder" placeholder="Your email — first word when the book drops">
+      <button type="submit" data-i18n="capture_btn">Join the list</button>
+      <div class="capture-msg" aria-live="polite"></div>
+    </form>
   </div>
 </div>
+
+<section id="book" class="book-section">
+  <div class="wrap book-grid">
+    <div class="reveal">
+      <div class="sec-head" style="margin-bottom:24px;"><span class="code" data-i18n="book_code">00 / THE BOOK</span><div class="rule"></div></div>
+      <h2 class="book-h2" data-i18n-html="book_h2">Leadership.<br><span style="color:var(--oxide);">Earned, Not Ranked.</span></h2>
+      <p class="book-p" data-i18n="book_p1">Discipline gets you out of the wreckage. This book is about what comes next — leading yourself, your family, and the people who follow you, at home and in the field.</p>
+      <p class="book-p" data-i18n="book_p2">In the works now. Join the list and you'll hear the moment it's ready — before anyone else, with launch pricing.</p>
+      <form class="capture-form" data-capture-source="book" novalidate>
+        <input type="email" name="email" required autocomplete="email" inputmode="email" data-i18n-placeholder="book_capture_placeholder" placeholder="Your email">
+        <button type="submit" data-i18n="book_capture_btn">Notify me</button>
+        <div class="capture-msg" aria-live="polite"></div>
+      </form>
+      <p class="tier-note" data-i18n="book_note">One email when it's ready. No spam.</p>
+    </div>
+    <div class="reveal book-visual" style="transition-delay:120ms;">
+      <img src="assets/badge-leadership.jpg" alt="The Commander Program — Leadership" data-i18n-alt="alt_leadership">
+    </div>
+  </div>
+</section>
 
 <section id="one-on-one">
   <div class="wrap" style="display:grid; grid-template-columns:1.15fr 0.85fr; gap:48px; align-items:center;">
@@ -512,7 +580,11 @@
           <input id="coaching-target" type="text" data-i18n-placeholder="coaching_target_placeholder" placeholder="What are you training to hit?" autocomplete="off">
         </div>
         <div class="coaching-phone-row">
-          <input id="coaching-phone" type="tel" data-i18n-placeholder="coaching_phone_placeholder" placeholder="Phone" autocomplete="tel" inputmode="tel">
+          <input id="coaching-name" type="text" data-i18n-placeholder="coaching_name_placeholder" placeholder="Full name" autocomplete="name">
+          <input id="coaching-email" type="email" data-i18n-placeholder="coaching_email_placeholder" placeholder="Email" autocomplete="email" inputmode="email">
+        </div>
+        <div class="coaching-phone-row">
+          <input id="coaching-phone" type="tel" data-i18n-placeholder="coaching_phone_placeholder" placeholder="WhatsApp / phone" autocomplete="tel" inputmode="tel">
           <a id="coaching-checkout" class="btn-primary" href="#" data-i18n="sec01_cta">Contact TAC-FREQ to Reserve a Spot</a>
         </div>
         <div id="coaching-order-msg" class="coaching-order-msg"></div>
@@ -718,14 +790,29 @@
       hero_order: "Order No. 90-EXT-01", hero_status: "Status: Open Enrollment",
       hero_h1: "The Extraction<br><span class=\"accent\">Protocol.</span>",
       hero_sub: "You don't need motivation. You need extraction. A 90-day operation to pull yourself out of stagnation and rebuild under a standard — not a slogan.",
-      hero_briefing: "Read the briefing ↓",
+      nav_book: "The Book",
+      hero_cta_protocol: "Get The Protocol — $97", hero_cta_book: "The Book — Coming Soon",
+      hero_capture_placeholder: "Your email — first word when the book drops", capture_btn: "Join the list",
+      capture_msg_invalid: "Enter a valid email.", capture_msg_sending: "Locking in…",
+      capture_msg_ok: "You're on the list — check your inbox.", capture_msg_dup: "You're already on the list.",
+      capture_msg_err: "Couldn't save that — try again or message us on WhatsApp.",
+      book_code: "00 / THE BOOK",
+      book_h2: "Leadership.<br><span style=\"color:var(--oxide);\">Earned, Not Ranked.</span>",
+      book_p1: "Discipline gets you out of the wreckage. This book is about what comes next — leading yourself, your family, and the people who follow you, at home and in the field.",
+      book_p2: "In the works now. Join the list and you'll hear the moment it's ready — before anyone else, with launch pricing.",
+      book_capture_placeholder: "Your email", book_capture_btn: "Notify me", book_note: "One email when it's ready. No spam.",
       sec01_code: "01 / ON TARGET",
       sec01_h2: "1:1 Coaching.<br><span style=\"color:var(--oxide);\">Built On Your Target.</span>",
       sec01_p1: "No off-the-shelf programming. Every 1:1 protocol is built and run around <strong style=\"color:var(--paper);\">you</strong> — the HVA, the High-Value Asset — and the specific target you're training to hit. Your data, your terrain, your mission profile.",
       sec01_p2: "Direct access to the Commander. Limited roster, filled on a first-contact basis.",
       sec01_cta: "Contact TAC-FREQ to Reserve a Spot", alt_ontarget: "On Target — 1:1 Coaching",
       coaching_target_label: "Your target", coaching_target_placeholder: "What are you training to hit?",
-      coaching_phone_placeholder: "Phone",
+      coaching_phone_placeholder: "WhatsApp / phone",
+      coaching_name_placeholder: "Full name", coaching_email_placeholder: "Email",
+      coaching_msg_name: "Add your name.", coaching_msg_email: "Add a valid email so we can confirm your request.",
+      coaching_msg_sending: "Sending your request…",
+      coaching_msg_sent: "Request received — check your email. The Commander will reach out within 48 hours.",
+      coaching_msg_failed: "Couldn't send that — message us on WhatsApp (+965 9999 2990).",
       coaching_msg_target: "Tell us your target so we can prep the right protocol.",
       coaching_msg_phone: "Add a phone number so the Commander can reach you.",
       coaching_tier_note: "Want it instant instead of guided? Skip the intake and grab the self-serve <a href=\"#offer\">90-Day Protocol manual</a> — no screening required.",
@@ -755,17 +842,18 @@
       offer_type_label: "Equipment track", offer_type_placeholder: "Choose program type",
       offer_type_fullgym: "Full Gym", offer_type_functional: "Functional Training", offer_type_bodyweight: "Bodyweight Only", offer_type_bands: "Bands Only",
       offer_name_placeholder: "Full name",
-      offer_email_placeholder: "Email for your payment link",
-      offer_phone_placeholder: "Phone (optional)",
+      offer_email_placeholder: "Email for your order confirmation",
+      offer_phone_placeholder: "WhatsApp number (optional)",
       offer_msg_days: "Choose your training frequency so we can build the right manual.",
       offer_msg_type: "Choose your equipment track so we can build the right manual.",
       offer_msg_name: "Add your name so we can build the right manual.",
-      offer_msg_email: "Add a valid email so we can send your payment link.",
+      offer_msg_email: "Add a valid email so we can confirm your order.",
       offer_msg_phone: "Add a phone number so we can send your payment link.",
       offer_msg_unavailable: "Checkout is temporarily unavailable — email Ops Freq instead.",
-      offer_msg_generating: "Generating your payment link…",
+      offer_msg_generating: "Placing your order…",
+      offer_msg_request: "Order received — check your email. We'll message you on WhatsApp within 24 hours with payment details.",
       offer_msg_sent: "Check your email — your payment link is on its way.",
-      offer_msg_failed: "Couldn't generate a payment link — email Ops Freq instead.",
+      offer_msg_failed: "Couldn't place the order — message us on WhatsApp (+965 9999 2990).",
       offer_tier_note: "This is the self-serve manual, personalized by your picks above — not your injury history. Want it fully built around you instead? <a href=\"#one-on-one\">Reserve a 1:1 Coaching spot</a>.",
       sec06_code: "06 / COMMAND STRUCTURE",
       sec06_intro: "A quick familiarization before you go further. The Extraction Protocol isn't one man shouting instructions from the sideline — it's a chain of command built to run it, a roster who executes it, a philosophy that outlasts the 90 days, and a rhythm that keeps you honest after RTB. Discipline gets you out of the wreckage. This is where your compass starts pointing to what comes next.",
@@ -784,14 +872,29 @@
       hero_order: "Emir No. 90-EXT-01", hero_status: "Durum: Kayıtlar Açık",
       hero_h1: "The Extraction<br><span class=\"accent\">Protokolü.</span>",
       hero_sub: "Motivasyona ihtiyacın yok. Extraction'a ihtiyacın var. Durgunluktan kendini çıkarıp bir slogan değil, bir standart üzerine yeniden inşa etmek için 90 günlük bir operasyon.",
-      hero_briefing: "Brifingi oku ↓",
+      nav_book: "Kitap",
+      hero_cta_protocol: "Protokolü Al — $97", hero_cta_book: "Kitap — Yakında",
+      hero_capture_placeholder: "E-postan — kitap çıkınca ilk sen öğren", capture_btn: "Listeye katıl",
+      capture_msg_invalid: "Geçerli bir e-posta gir.", capture_msg_sending: "Kaydediliyor…",
+      capture_msg_ok: "Listedesin — gelen kutunu kontrol et.", capture_msg_dup: "Zaten listedesin.",
+      capture_msg_err: "Kaydedilemedi — tekrar dene ya da WhatsApp'tan yaz.",
+      book_code: "00 / KİTAP",
+      book_h2: "Liderlik.<br><span style=\"color:var(--oxide);\">Rütbeyle Değil, Hak Ederek.</span>",
+      book_p1: "Disiplin seni enkazdan çıkarır. Bu kitap sonrasını anlatıyor — kendine, ailene ve seni takip edenlere liderlik etmeyi; evde ve sahada.",
+      book_p2: "Şu an hazırlanıyor. Listeye katıl; hazır olduğu an, herkesten önce ve lansman fiyatıyla haber al.",
+      book_capture_placeholder: "E-postan", book_capture_btn: "Bana haber ver", book_note: "Hazır olduğunda tek bir e-posta. Spam yok.",
       sec01_code: "01 / HEDEFTE",
       sec01_h2: "Birebir Koçluk.<br><span style=\"color:var(--oxide);\">Hedefine Göre İnşa Edildi.</span>",
       sec01_p1: "Hazır program yok. Her birebir protokol <strong style=\"color:var(--paper);\">senin</strong> etrafında inşa edilir ve yürütülür — Yüksek Değerli Hedef sensin — ve vurmak için antrenman yaptığın belirli hedef etrafında. Senin verilerin, senin arazin, senin görev profilin.",
       sec01_p2: "Komutan'a doğrudan erişim. Sınırlı kadro, ilk temas esasına göre doldurulur.",
       sec01_cta: "Yer Ayırtmak İçin TAC-FREQ İle İletişime Geç", alt_ontarget: "Hedefte — Birebir Koçluk",
       coaching_target_label: "Hedefin", coaching_target_placeholder: "Ne için antrenman yapıyorsun?",
-      coaching_phone_placeholder: "Telefon",
+      coaching_phone_placeholder: "WhatsApp / telefon",
+      coaching_name_placeholder: "Ad soyad", coaching_email_placeholder: "E-posta",
+      coaching_msg_name: "Adını ekle.", coaching_msg_email: "Talebini onaylayabilmemiz için geçerli bir e-posta ekle.",
+      coaching_msg_sending: "Talebin gönderiliyor…",
+      coaching_msg_sent: "Talep alındı — e-postanı kontrol et. Komutan 48 saat içinde sana ulaşacak.",
+      coaching_msg_failed: "Gönderilemedi — WhatsApp'tan yaz (+965 9999 2990).",
       coaching_msg_target: "Doğru protokolü hazırlayabilmemiz için hedefini yaz.",
       coaching_msg_phone: "Komutanın sana ulaşabilmesi için telefon numaranı ekle.",
       coaching_tier_note: "Rehberlik yerine anında mı istiyorsun? Kabul sürecini atla, kendin seç kendin al <a href=\"#offer\">90 Günlük Protokol kılavuzunu</a> edin — tarama gerekmez.",
@@ -821,17 +924,18 @@
       offer_type_label: "Ekipman parkuru", offer_type_placeholder: "Program türünü seç",
       offer_type_fullgym: "Tam Donanımlı Salon", offer_type_functional: "Fonksiyonel Antrenman", offer_type_bodyweight: "Sadece Vücut Ağırlığı", offer_type_bands: "Sadece Direnç Bandı",
       offer_name_placeholder: "Ad soyad",
-      offer_email_placeholder: "Ödeme bağlantın için e-posta",
-      offer_phone_placeholder: "Telefon (isteğe bağlı)",
+      offer_email_placeholder: "Sipariş onayı için e-posta",
+      offer_phone_placeholder: "WhatsApp numarası (isteğe bağlı)",
       offer_msg_days: "Doğru kılavuzu hazırlayabilmemiz için antrenman sıklığını seç.",
       offer_msg_type: "Doğru kılavuzu hazırlayabilmemiz için ekipman parkurunu seç.",
       offer_msg_name: "Doğru kılavuzu hazırlayabilmemiz için adını ekle.",
-      offer_msg_email: "Ödeme bağlantını gönderebilmemiz için geçerli bir e-posta ekle.",
+      offer_msg_email: "Siparişini onaylayabilmemiz için geçerli bir e-posta ekle.",
       offer_msg_phone: "Ödeme bağlantısını gönderebilmemiz için telefon numaranı ekle.",
       offer_msg_unavailable: "Ödeme şu anda kullanılamıyor — bunun yerine Ops Freq'e e-posta gönder.",
-      offer_msg_generating: "Ödeme bağlantın oluşturuluyor…",
+      offer_msg_generating: "Siparişin veriliyor…",
+      offer_msg_request: "Sipariş alındı — e-postanı kontrol et. Ödeme bilgileri için 24 saat içinde WhatsApp'tan yazacağız.",
       offer_msg_sent: "E-postanı kontrol et — ödeme bağlantın yolda.",
-      offer_msg_failed: "Ödeme bağlantısı oluşturulamadı — bunun yerine Ops Freq'e e-posta gönder.",
+      offer_msg_failed: "Sipariş verilemedi — WhatsApp'tan yaz (+965 9999 2990).",
       offer_tier_note: "Bu, yukarıdaki seçimlerine göre kişiselleştirilen kendin-seç-kendin-al kılavuzdur — yaralanma geçmişine göre değil. Tamamen sana özel inşa edilsin istiyorsan? <a href=\"#one-on-one\">Birebir Koçluk için yer ayırt</a>.",
       sec06_code: "06 / KOMUTA YAPISI",
       sec06_intro: "Devam etmeden önce kısa bir tanışma. Extraction Protokolü, kenardan talimat bağıran tek bir adam değil — onu yürütecek bir komuta zinciri, onu uygulayacak bir kadro, 90 günü aşan bir felsefe ve Üsse Dönüş'ten sonra seni dürüst tutan bir ritim. Disiplin seni enkazdan çıkarır. Burası pusulanın sıradakine işaret etmeye başladığı yer.",
@@ -850,14 +954,29 @@
       hero_order: "أمر رقم 90-EXT-01", hero_status: "الحالة: التسجيل مفتوح",
       hero_h1: "بروتوكول<br><span class=\"accent\">الإخلاء.</span>",
       hero_sub: "أنت لا تحتاج إلى تحفيز. أنت تحتاج إلى الإخلاء. عملية مدتها ٩٠ يومًا لانتشالك من الركود وإعادة بنائك وفق معيار — لا شعار.",
-      hero_briefing: "اقرأ الإحاطة ↓",
+      nav_book: "الكتاب",
+      hero_cta_protocol: "احصل على البروتوكول — ‎$97", hero_cta_book: "الكتاب — قريبًا",
+      hero_capture_placeholder: "بريدك — أول من يعلم بصدور الكتاب", capture_btn: "انضم للقائمة",
+      capture_msg_invalid: "أدخل بريدًا إلكترونيًا صحيحًا.", capture_msg_sending: "جارٍ التسجيل…",
+      capture_msg_ok: "أنت على القائمة — تحقق من بريدك.", capture_msg_dup: "أنت مسجّل بالفعل في القائمة.",
+      capture_msg_err: "تعذّر الحفظ — حاول مجددًا أو راسلنا على واتساب.",
+      book_code: "00 / الكتاب",
+      book_h2: "القيادة.<br><span style=\"color:var(--oxide);\">تُكتسب ولا تُمنح بالرتبة.</span>",
+      book_p1: "الانضباط يُخرجك من الحطام. هذا الكتاب عمّا يأتي بعد ذلك — أن تقود نفسك وعائلتك ومن يتبعك، في البيت وفي الميدان.",
+      book_p2: "قيد الإعداد الآن. انضم إلى القائمة لتعلم لحظة صدوره — قبل الجميع، وبسعر الإطلاق.",
+      book_capture_placeholder: "بريدك الإلكتروني", book_capture_btn: "أبلغني", book_note: "رسالة واحدة عند صدوره. بلا إزعاج.",
       sec01_code: "01 / الهدف المحدد",
       sec01_h2: "تدريب فردي.<br><span style=\"color:var(--oxide);\">مبني على هدفك.</span>",
       sec01_p1: "لا برامج جاهزة. كل بروتوكول فردي يُبنى ويُدار حول <strong style=\"color:var(--paper);\">أنت</strong> — الهدف عالي القيمة — والهدف المحدد الذي تتدرب لإصابته. بياناتك، أرضك، ملف مهمتك.",
       sec01_p2: "وصول مباشر إلى القائد. عدد محدود، يُملأ حسب أولوية التواصل.",
       sec01_cta: "تواصل عبر تردد العمليات لحجز مكانك", alt_ontarget: "الهدف المحدد — تدريب فردي",
       coaching_target_label: "هدفك", coaching_target_placeholder: "ما الذي تتدرب لتحقيقه؟",
-      coaching_phone_placeholder: "رقم الهاتف",
+      coaching_phone_placeholder: "واتساب / رقم الهاتف",
+      coaching_name_placeholder: "الاسم الكامل", coaching_email_placeholder: "البريد الإلكتروني",
+      coaching_msg_name: "أضف اسمك.", coaching_msg_email: "أضف بريدًا إلكترونيًا صحيحًا حتى نؤكد طلبك.",
+      coaching_msg_sending: "جارٍ إرسال طلبك…",
+      coaching_msg_sent: "تم استلام طلبك — تحقق من بريدك. سيتواصل معك القائد خلال ٤٨ ساعة.",
+      coaching_msg_failed: "تعذّر الإرسال — راسلنا على واتساب ‎(+965 9999 2990).",
       coaching_msg_target: "اكتب هدفك حتى نُجهّز البروتوكول المناسب.",
       coaching_msg_phone: "أضف رقم هاتفك حتى يتمكن القائد من التواصل معك.",
       coaching_tier_note: "تريده فوريًا بدلاً من موجَّه؟ تخطَّ نموذج الاستقبال واحصل على <a href=\"#offer\">دليل بروتوكول التسعين يومًا</a> ذاتي الخدمة — دون فحص.",
@@ -887,17 +1006,18 @@
       offer_type_label: "مسار المعدات", offer_type_placeholder: "اختر نوع البرنامج",
       offer_type_fullgym: "نادي رياضي متكامل", offer_type_functional: "تدريب وظيفي", offer_type_bodyweight: "وزن الجسم فقط", offer_type_bands: "أحزمة مقاومة فقط",
       offer_name_placeholder: "الاسم الكامل",
-      offer_email_placeholder: "البريد الإلكتروني لإرسال رابط الدفع",
-      offer_phone_placeholder: "رقم الهاتف (اختياري)",
+      offer_email_placeholder: "البريد الإلكتروني لتأكيد الطلب",
+      offer_phone_placeholder: "رقم واتساب (اختياري)",
       offer_msg_days: "اختر وتيرة تدريبك حتى نتمكن من إعداد الدليل المناسب.",
       offer_msg_type: "اختر مسار المعدات حتى نتمكن من إعداد الدليل المناسب.",
       offer_msg_name: "أضف اسمك حتى نتمكن من إعداد الدليل المناسب.",
-      offer_msg_email: "أضف بريدًا إلكترونيًا صحيحًا حتى نتمكن من إرسال رابط الدفع.",
+      offer_msg_email: "أضف بريدًا إلكترونيًا صحيحًا حتى نؤكد طلبك.",
       offer_msg_phone: "أضف رقم هاتفك حتى نتمكن من إرسال رابط الدفع.",
       offer_msg_unavailable: "الدفع غير متاح مؤقتًا — راسل Ops Freq عبر البريد الإلكتروني بدلاً من ذلك.",
-      offer_msg_generating: "جاري إنشاء رابط الدفع…",
+      offer_msg_generating: "جارٍ تسجيل طلبك…",
+      offer_msg_request: "تم استلام طلبك — تحقق من بريدك. سنراسلك على واتساب خلال ٢٤ ساعة بتفاصيل الدفع.",
       offer_msg_sent: "تحقق من بريدك الإلكتروني — رابط الدفع في طريقه إليك.",
-      offer_msg_failed: "تعذر إنشاء رابط الدفع — راسل Ops Freq عبر البريد الإلكتروني بدلاً من ذلك.",
+      offer_msg_failed: "تعذّر تسجيل الطلب — راسلنا على واتساب ‎(+965 9999 2990).",
       offer_tier_note: "هذا هو الدليل ذاتي الخدمة، المخصص حسب اختياراتك أعلاه — وليس حسب تاريخك الطبي أو الإصابات. تريده مبنيًا بالكامل حولك؟ <a href=\"#one-on-one\">احجز مكانك في التدريب الفردي</a>.",
       sec06_code: "06 / هيكل القيادة",
       sec06_intro: "تعريف سريع قبل أن تُكمل. بروتوكول الإخلاء ليس رجلًا واحدًا يصرخ بالتعليمات من الهامش — إنه سلسلة قيادة بُنيت لتشغيله، وكادر يُنفذه، وفلسفة تدوم بعد التسعين يومًا، وإيقاع يبقيك صادقًا بعد العودة للقاعدة. الانضباط ينتشلك من الحطام. هنا تبدأ بوصلتك بالإشارة إلى ما يليه.",
@@ -916,14 +1036,29 @@
       hero_order: "Ordre N° 90-EXT-01", hero_status: "Statut : Inscriptions Ouvertes",
       hero_h1: "Le Protocole<br><span class=\"accent\">Extraction.</span>",
       hero_sub: "Tu n'as pas besoin de motivation. Tu as besoin d'extraction. Une opération de 90 jours pour te sortir de la stagnation et te reconstruire selon un standard — pas un slogan.",
-      hero_briefing: "Lire le briefing ↓",
+      nav_book: "Le Livre",
+      hero_cta_protocol: "Obtenir le Protocole — 97 $", hero_cta_book: "Le Livre — Bientôt",
+      hero_capture_placeholder: "Ton e-mail — sois prévenu à la sortie du livre", capture_btn: "Rejoindre la liste",
+      capture_msg_invalid: "Saisis un e-mail valide.", capture_msg_sending: "Enregistrement…",
+      capture_msg_ok: "Tu es sur la liste — vérifie ta boîte mail.", capture_msg_dup: "Tu es déjà sur la liste.",
+      capture_msg_err: "Impossible d'enregistrer — réessaie ou écris-nous sur WhatsApp.",
+      book_code: "00 / LE LIVRE",
+      book_h2: "Le Leadership.<br><span style=\"color:var(--oxide);\">Mérité, Pas Attribué.</span>",
+      book_p1: "La discipline te sort des décombres. Ce livre parle de la suite — te diriger toi-même, ta famille et ceux qui te suivent, à la maison comme sur le terrain.",
+      book_p2: "En cours d'écriture. Rejoins la liste pour être prévenu dès sa sortie — avant tout le monde, au prix de lancement.",
+      book_capture_placeholder: "Ton e-mail", book_capture_btn: "Préviens-moi", book_note: "Un seul e-mail à sa sortie. Pas de spam.",
       sec01_code: "01 / SUR CIBLE",
       sec01_h2: "Coaching 1:1.<br><span style=\"color:var(--oxide);\">Construit Sur Ta Cible.</span>",
       sec01_p1: "Aucun programme préfabriqué. Chaque protocole 1:1 est construit et mené autour de <strong style=\"color:var(--paper);\">toi</strong> — la Cible de Haute Valeur — et l'objectif précis que tu t'entraînes à atteindre. Tes données, ton terrain, ton profil de mission.",
       sec01_p2: "Accès direct au Commandant. Effectif limité, pourvu au premier contact.",
       sec01_cta: "Contacter TAC-FREQ pour Réserver une Place", alt_ontarget: "Sur Cible — Coaching 1:1",
       coaching_target_label: "Ta cible", coaching_target_placeholder: "Qu'est-ce que tu t'entraînes à atteindre ?",
-      coaching_phone_placeholder: "Téléphone",
+      coaching_phone_placeholder: "WhatsApp / téléphone",
+      coaching_name_placeholder: "Nom complet", coaching_email_placeholder: "E-mail",
+      coaching_msg_name: "Ajoute ton nom.", coaching_msg_email: "Ajoute un e-mail valide pour qu'on confirme ta demande.",
+      coaching_msg_sending: "Envoi de ta demande…",
+      coaching_msg_sent: "Demande reçue — vérifie tes e-mails. Le Commandant te contacte sous 48 h.",
+      coaching_msg_failed: "Envoi impossible — écris-nous sur WhatsApp (+965 9999 2990).",
       coaching_msg_target: "Indique-nous ta cible pour qu'on prépare le bon protocole.",
       coaching_msg_phone: "Ajoute un numéro de téléphone pour que le Commandant puisse te joindre.",
       coaching_tier_note: "Tu le veux immédiat plutôt qu'accompagné ? Passe l'admission et prends directement le <a href=\"#offer\">manuel du Protocole 90 Jours</a> en libre-service — aucune évaluation requise.",
@@ -953,17 +1088,18 @@
       offer_type_label: "Filière d'équipement", offer_type_placeholder: "Choisis le type de programme",
       offer_type_fullgym: "Salle Complète", offer_type_functional: "Entraînement Fonctionnel", offer_type_bodyweight: "Poids du Corps Uniquement", offer_type_bands: "Élastiques Uniquement",
       offer_name_placeholder: "Nom complet",
-      offer_email_placeholder: "E-mail pour ton lien de paiement",
-      offer_phone_placeholder: "Téléphone (facultatif)",
+      offer_email_placeholder: "E-mail pour la confirmation de commande",
+      offer_phone_placeholder: "Numéro WhatsApp (facultatif)",
       offer_msg_days: "Choisis ta fréquence d'entraînement pour qu'on puisse préparer le bon manuel.",
       offer_msg_type: "Choisis ta filière d'équipement pour qu'on puisse préparer le bon manuel.",
       offer_msg_name: "Ajoute ton nom pour qu'on puisse préparer le bon manuel.",
-      offer_msg_email: "Ajoute un e-mail valide pour qu'on puisse t'envoyer ton lien de paiement.",
+      offer_msg_email: "Ajoute un e-mail valide pour qu'on confirme ta commande.",
       offer_msg_phone: "Ajoute un numéro de téléphone pour qu'on puisse t'envoyer ton lien de paiement.",
       offer_msg_unavailable: "Le paiement est temporairement indisponible — écris plutôt à Ops Freq par e-mail.",
-      offer_msg_generating: "Génération de ton lien de paiement…",
+      offer_msg_generating: "Commande en cours…",
+      offer_msg_request: "Commande reçue — vérifie tes e-mails. On t'écrit sur WhatsApp sous 24 h avec les détails de paiement.",
       offer_msg_sent: "Vérifie ton e-mail — ton lien de paiement arrive.",
-      offer_msg_failed: "Impossible de générer un lien de paiement — écris plutôt à Ops Freq par e-mail.",
+      offer_msg_failed: "Commande impossible — écris-nous sur WhatsApp (+965 9999 2990).",
       offer_tier_note: "Ceci est le manuel en libre-service, personnalisé selon tes choix ci-dessus — pas selon ton historique de blessures. Tu le veux entièrement construit autour de toi ? <a href=\"#one-on-one\">Réserve une place en Coaching 1:1</a>.",
       sec06_code: "06 / STRUCTURE DE COMMANDEMENT",
       sec06_intro: "Une brève familiarisation avant d'aller plus loin. Le Protocole Extraction, ce n'est pas un seul homme qui crie des instructions depuis la touche — c'est une chaîne de commandement bâtie pour l'exécuter, un effectif qui la met en œuvre, une philosophie qui dépasse les 90 jours, et un rythme qui te garde honnête après le RTB. La discipline te sort de l'épave. C'est ici que ta boussole commence à pointer vers ce qui vient ensuite.",
@@ -1005,6 +1141,7 @@
     if(offerMsgEl) offerMsgEl.textContent = '';
     var coachingMsgEl = document.getElementById('coaching-order-msg');
     if(coachingMsgEl) coachingMsgEl.textContent = '';
+    document.querySelectorAll('.capture-msg').forEach(function(el){ el.textContent = ''; });
     var tickerEl = document.getElementById('ticker-inner');
     if(tickerEl && t.ticker_phrases){
       var dot = ' <span class="dot">•</span> ';
@@ -1032,8 +1169,14 @@
     });
   }
 
-  var savedLang = 'en';
-  try{ savedLang = localStorage.getItem('extraction:lang') || 'en'; }catch(e){}
+  // A remembered choice wins; otherwise open in Arabic for visitors whose phone/browser is set
+  // to Arabic (most arrive from Arabic Instagram content), English for everyone else.
+  var savedLang = null;
+  try{ savedLang = localStorage.getItem('extraction:lang'); }catch(e){}
+  if(!savedLang){
+    var prefs = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || ''];
+    savedLang = String(prefs[0] || '').toLowerCase().indexOf('ar') === 0 ? 'ar' : 'en';
+  }
   initLangSwitch();
   applyLang(savedLang);
 })();
@@ -1087,21 +1230,23 @@
     offerMsg.textContent = t.offer_msg_generating || 'Generating your payment link…';
     offerCheckout.classList.add('is-disabled');
     window.sb.functions.invoke('create-payment-link', {
-      body: { name: name, email: email, phone: phone, equipment: type, daysPerWeek: days }
+      body: { name: name, email: email, phone: phone, equipment: type, daysPerWeek: days, lang: window.EXT_LANG || 'en' }
     }).then(function (res) {
       offerBusy = false;
       offerCheckout.classList.remove('is-disabled');
       var data = res && res.data;
       var err = res && (res.error || (data && data.error));
       if (err) {
-        offerMsg.textContent = (data && data.error) || t.offer_msg_failed || "Couldn't generate a payment link — email Ops Freq instead.";
+        offerMsg.textContent = t.offer_msg_failed || "Couldn't place the order — message us on WhatsApp (+965 9999 2990).";
         return;
       }
-      offerMsg.textContent = t.offer_msg_sent || 'Check your email — your payment link is on its way.';
+      offerMsg.textContent = (data && data.mode === 'request')
+        ? (t.offer_msg_request || "Order received — check your email. We'll message you on WhatsApp within 24 hours with payment details.")
+        : (t.offer_msg_sent || 'Check your email — your payment link is on its way.');
     }).catch(function () {
       offerBusy = false;
       offerCheckout.classList.remove('is-disabled');
-      offerMsg.textContent = t.offer_msg_failed || "Couldn't reach the armory — email Ops Freq instead.";
+      offerMsg.textContent = t.offer_msg_failed || "Couldn't place the order — message us on WhatsApp (+965 9999 2990).";
     });
   });
 })();
@@ -1109,32 +1254,91 @@
 
 <script>
 (function(){
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // 1:1 coaching request: saved to coaching_requests; a DB trigger emails the Commander and
+  // sends the requester a confirmation.
   var coachingTarget = document.getElementById('coaching-target');
+  var coachingName = document.getElementById('coaching-name');
+  var coachingEmail = document.getElementById('coaching-email');
   var coachingPhone = document.getElementById('coaching-phone');
   var coachingCheckout = document.getElementById('coaching-checkout');
   var coachingMsg = document.getElementById('coaching-order-msg');
-  if (!coachingCheckout) return;
-  coachingCheckout.addEventListener('click', function(e){
-    var t = window.EXT_T || {};
-    var target = coachingTarget.value.trim();
-    var phone = coachingPhone.value.trim();
-    if (!target) {
+  if (coachingCheckout) {
+    var coachingBusy = false;
+    coachingCheckout.addEventListener('click', function(e){
       e.preventDefault();
-      coachingMsg.textContent = t.coaching_msg_target || 'Tell us your target so we can prep the right protocol.';
-      coachingTarget.focus();
-      return;
-    }
-    if (!phone) {
+      if (coachingBusy) return;
+      var t = window.EXT_T || {};
+      var target = coachingTarget.value.trim();
+      var name = coachingName.value.trim();
+      var email = coachingEmail.value.trim();
+      var phone = coachingPhone.value.trim();
+      if (!target) {
+        coachingMsg.textContent = t.coaching_msg_target || 'Tell us your target so we can prep the right protocol.';
+        coachingTarget.focus(); return;
+      }
+      if (!name) {
+        coachingMsg.textContent = t.coaching_msg_name || 'Add your name.';
+        coachingName.focus(); return;
+      }
+      if (!EMAIL_RE.test(email)) {
+        coachingMsg.textContent = t.coaching_msg_email || 'Add a valid email so we can confirm your request.';
+        coachingEmail.focus(); return;
+      }
+      if (!phone) {
+        coachingMsg.textContent = t.coaching_msg_phone || 'Add a phone number so the Commander can reach you.';
+        coachingPhone.focus(); return;
+      }
+      var failed = t.coaching_msg_failed || "Couldn't send that — message us on WhatsApp (+965 9999 2990).";
+      if (!window.sb) { coachingMsg.textContent = failed; return; }
+      coachingBusy = true;
+      coachingCheckout.classList.add('is-disabled');
+      coachingMsg.textContent = t.coaching_msg_sending || 'Sending your request…';
+      window.sb.from('coaching_requests')
+        .insert({ name: name, email: email, phone: phone, target: target, lang: window.EXT_LANG || 'en' })
+        .then(function (res) {
+          coachingBusy = false;
+          coachingCheckout.classList.remove('is-disabled');
+          if (res.error) { coachingMsg.textContent = failed; return; }
+          coachingMsg.textContent = t.coaching_msg_sent || 'Request received — check your email. The Commander will reach out within 48 hours.';
+          [coachingTarget, coachingName, coachingEmail, coachingPhone].forEach(function (el) { el.value = ''; });
+        }, function () {
+          coachingBusy = false;
+          coachingCheckout.classList.remove('is-disabled');
+          coachingMsg.textContent = failed;
+        });
+    });
+  }
+
+  // Email capture (hero + Book section) -> waitlist, tagged with its list and site language.
+  document.querySelectorAll('form[data-capture-source]').forEach(function (form) {
+    var input = form.querySelector('input[type=email]');
+    var button = form.querySelector('button');
+    var msg = form.querySelector('.capture-msg');
+    form.addEventListener('submit', function (e) {
       e.preventDefault();
-      coachingMsg.textContent = t.coaching_msg_phone || 'Add a phone number so the Commander can reach you.';
-      coachingPhone.focus();
-      return;
-    }
-    coachingMsg.textContent = '';
-    var body = 'Hi, I want to reserve a 1:1 Coaching spot.\n' +
-      'Target: ' + target + '\n' +
-      'Phone: ' + phone;
-    coachingCheckout.href = 'mailto:contact@extraction.fit?subject=' + encodeURIComponent('1:1 Coaching reservation') + '&body=' + encodeURIComponent(body);
+      var t = window.EXT_T || {};
+      var email = input.value.trim();
+      if (!EMAIL_RE.test(email)) { msg.textContent = t.capture_msg_invalid || 'Enter a valid email.'; input.focus(); return; }
+      var err = t.capture_msg_err || "Couldn't save that — try again or message us on WhatsApp.";
+      if (!window.sb) { msg.textContent = err; return; }
+      button.disabled = true;
+      msg.textContent = t.capture_msg_sending || 'Locking in…';
+      window.sb.from('waitlist')
+        .insert({ email: email, source: form.getAttribute('data-capture-source'), lang: window.EXT_LANG || 'en' })
+        .then(function (res) {
+          button.disabled = false;
+          if (res.error) {
+            msg.textContent = res.error.code === '23505'
+              ? (t.capture_msg_dup || "You're already on the list.")
+              : err;
+            return;
+          }
+          input.value = '';
+          msg.textContent = t.capture_msg_ok || "You're on the list — check your inbox.";
+        }, function () { button.disabled = false; msg.textContent = err; });
+    });
   });
 })();
 </script>

@@ -80,6 +80,82 @@ type Template = {
   attachments?: (row: EmailRow) => Promise<{ filename: string; content: string }[]>;
 };
 
+const WHATSAPP_URL = "https://wa.me/96599992990";
+
+const escHtml = (v: unknown) =>
+  String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c] as string));
+
+const isArabic = (row: EmailRow) => String(row.data?.lang ?? "").toLowerCase().startsWith("ar");
+
+// Shared branded layout for the newer templates (same look as the hand-built ones above).
+// Every interpolated value must already be escaped by the caller.
+function brandedEmail(opts: {
+  title: string; preview: string; strip: string; headline: string; bodyHtml: string;
+  cta?: { href: string; label: string }; signoff: string; footer: string; rtl?: boolean;
+}): string {
+  const dir = opts.rtl ? "rtl" : "ltr";
+  const align = opts.rtl ? "right" : "left";
+  const font = opts.rtl ? "Tahoma,Arial,Helvetica,sans-serif" : "Arial,Helvetica,sans-serif";
+  return `<!DOCTYPE html>
+<html lang="${opts.rtl ? "ar" : "en"}" dir="${dir}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${opts.title}</title>
+</head>
+<body style="margin:0;padding:0;background:#0C0C0A;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">${opts.preview}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0C0C0A;padding:32px 0;">
+<tr><td align="center">
+<table role="presentation" width="560" cellpadding="0" cellspacing="0" dir="${dir}" style="width:560px;max-width:92%;background:#17140F;border:1px solid rgba(245,223,184,0.14);">
+  <tr>
+    <td align="center" style="padding:36px 32px 20px;border-bottom:1px solid rgba(245,223,184,0.14);">
+      <img src="https://extraction.fit/assets/logo-circle.png" width="56" height="56" alt="Extraction" style="display:block;margin:0 auto 14px;">
+      <div style="font-family:Arial,Helvetica,sans-serif;font-weight:800;font-size:20px;letter-spacing:2px;color:#F5DFB8;text-transform:uppercase;">EXTRACTION<span style="color:#C0451D;">.</span></div>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="padding:22px 32px 0;">
+      <div style="display:inline-block;font-family:'Courier New',${font};font-size:11px;letter-spacing:1.5px;color:#A6926F;text-transform:uppercase;border:1px solid rgba(245,223,184,0.30);padding:8px 16px;">${opts.strip}</div>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="padding:24px 32px 0;">
+      <div style="font-family:${font};font-weight:800;font-size:24px;line-height:1.35;color:#F5DFB8;text-transform:uppercase;letter-spacing:0.5px;">${opts.headline}</div>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:20px 40px 4px;font-family:${font};font-size:15px;line-height:1.75;color:#D9CDBB;text-align:${align};">${opts.bodyHtml}</td>
+  </tr>
+  ${opts.cta ? `<tr>
+    <td align="center" style="padding:16px 40px 8px;">
+      <a href="${opts.cta.href}" style="display:inline-block;background:#C0451D;color:#0C0C0A;font-family:${font};font-weight:800;font-size:14px;letter-spacing:1px;text-transform:uppercase;text-decoration:none;padding:15px 30px;border:1px solid #C0451D;">${opts.cta.label}</a>
+    </td>
+  </tr>` : ""}
+  <tr>
+    <td style="padding:28px 40px 8px;font-family:${font};font-size:14px;line-height:1.6;color:#A6926F;text-align:${align};"><p style="margin:0;">${opts.signoff}</p></td>
+  </tr>
+  <tr>
+    <td align="center" style="padding:24px 32px 32px;border-top:1px solid rgba(245,223,184,0.14);">
+      <div style="font-family:'Courier New',monospace;font-size:10px;letter-spacing:1.5px;color:#7A6E5C;text-transform:uppercase;margin-bottom:10px;">EXTRACTION // FROM MEDIOCRITY // NO ONE IS COMING</div>
+      <div style="font-family:${font};font-size:11px;color:#5C544A;">${opts.footer}</div>
+    </td>
+  </tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>
+`;
+}
+
+// Owner-facing alert rows: label / value pairs, values already escaped.
+const alertRows = (rows: [string, string][]) =>
+  rows.map(([k, v]) => `<p style="margin:0 0 8px;"><strong style="color:#F5DFB8;">${k}:</strong> ${v}</p>`).join("");
+
+const contactFooterEn = `Questions? <a href="mailto:contact@extraction.fit" style="color:#7A6E5C;">contact@extraction.fit</a> · WhatsApp +965 9999 2990`;
+const contactFooterAr = `لأي استفسار: <a href="mailto:contact@extraction.fit" style="color:#7A6E5C;">contact@extraction.fit</a> · واتساب ‎+965 9999 2990`;
+
 const TEMPLATES: Record<string, Template> = {
   operator_welcome: {
     subject: "Welcome To The Field, Operator.",
@@ -593,6 +669,162 @@ ${esc(buyerName)} paid for ${esc(equipment)}, ${esc(daysPerWeek)} days/week. Run
 </body>
 </html>
 `;
+    },
+  },
+
+  // Book list sign-up (waitlist.source = 'book') -- from the hero email field or the Book section.
+  book_waitlist_welcome: {
+    subject: (row) => (isArabic(row) ? "أنت على القائمة — الكتاب" : "You're On The List — The Book"),
+    html: (row) =>
+      isArabic(row)
+        ? brandedEmail({
+            rtl: true,
+            title: "Extraction — الكتاب",
+            preview: "تم تثبيت الإحداثيات. ستعرف أولًا عند صدور الكتاب.",
+            strip: "تم تثبيت الإحداثيات — قائمة الكتاب",
+            headline: "أنت على القائمة.",
+            bodyHtml: `<p style="margin:0 0 16px;">كتاب عن القيادة قيد الإعداد — عن القيادة والانضباط، وعن ما يأتي بعد الخروج من الحطام.</p>
+<p style="margin:0 0 16px;">ستكون من أوائل من يعلم لحظة صدوره، مع أولوية الوصول وسعر الإطلاق.</p>`,
+            signoff: "حدّد وجهتك.<br>— Extraction",
+            footer: contactFooterAr,
+          })
+        : brandedEmail({
+            title: "Extraction — The Book",
+            preview: "Coordinates locked. You'll hear first when the book drops.",
+            strip: "Coordinates Locked — Book List",
+            headline: "You're On The List.",
+            bodyHtml: `<p style="margin:0 0 16px;">The book on leadership is in the works — command, discipline, and what you do once you're standing on solid ground.</p>
+<p style="margin:0 0 16px;">You'll hear the moment it's ready, before anyone else, with first access and launch pricing.</p>`,
+            signoff: "Designate your heading.<br>— Extraction",
+            footer: contactFooterEn,
+          }),
+  },
+
+  // Buyer confirmation while checkout runs in request mode (no payment gateway yet).
+  order_request_received: {
+    subject: (row) =>
+      isArabic(row) ? `تم استلام طلبك — ${String(row.data?.orderId ?? "")}` : `Order Received — ${String(row.data?.orderId ?? "")}`,
+    html: (row) => {
+      const name = escHtml(row.data?.buyerName ?? row.to_name ?? "");
+      const orderId = escHtml(row.data?.orderId);
+      const item = escHtml(row.data?.itemDescription ?? "90-Day Extraction Protocol");
+      const price = `${escHtml(row.data?.amount ?? "97.00")} ${escHtml(row.data?.currency ?? "USD")}`;
+      const wa = `${WHATSAPP_URL}?text=${encodeURIComponent(`Order ${String(row.data?.orderId ?? "")}`)}`;
+      return isArabic(row)
+        ? brandedEmail({
+            rtl: true,
+            title: "Extraction — تم استلام الطلب",
+            preview: "طلبك مسجّل. سنتواصل معك على واتساب خلال ٢٤ ساعة.",
+            strip: "تم تسجيل الطلب — بانتظار الدفع",
+            headline: `${name}، تم تسجيل طلبك.`,
+            bodyHtml: `<p style="margin:0 0 16px;">رقم الطلب <strong style="color:#F5DFB8;">${orderId}</strong>: ${item} — <strong style="color:#F5DFB8;">${price}</strong>.</p>
+<p style="margin:0 0 16px;"><strong style="color:#C0451D;">الخطوة التالية:</strong> سنراسلك على واتساب خلال ٢٤ ساعة بتفاصيل الدفع (تحويل بنكي). بعد تأكيد الدفع يصلك دليلك المخصّص والفاتورة على هذا البريد.</p>
+<p style="margin:0;">لا تريد الانتظار؟ راسلنا الآن برقم طلبك.</p>`,
+            cta: { href: wa, label: "راسلنا على واتساب" },
+            signoff: "حدّد وجهتك.<br>— Extraction",
+            footer: contactFooterAr,
+          })
+        : brandedEmail({
+            title: "Extraction — Order Received",
+            preview: "Your order is logged. We'll message you on WhatsApp within 24 hours.",
+            strip: "Order Logged — Payment Pending",
+            headline: `${name}, Your Order Is Logged.`,
+            bodyHtml: `<p style="margin:0 0 16px;">Order <strong style="color:#F5DFB8;">${orderId}</strong>: ${item} — <strong style="color:#F5DFB8;">${price}</strong>.</p>
+<p style="margin:0 0 16px;"><strong style="color:#C0451D;">Next step:</strong> we'll message you on WhatsApp within 24 hours with payment details (bank transfer). Once payment is confirmed, your personalized manual and invoice land in this inbox.</p>
+<p style="margin:0;">Don't want to wait? Message us now with your order number.</p>`,
+            cta: { href: wa, label: "Message Us On WhatsApp" },
+            signoff: "Designate your heading.<br>— Extraction",
+            footer: contactFooterEn,
+          });
+    },
+  },
+
+  // Owner alert for a request-mode order: who to contact, and the paste-ready fulfillment
+  // command once payment arrives.
+  order_request_alert: {
+    subject: (row) => `New Order — ${String(row.data?.orderId ?? "")} — collect payment`,
+    html: (row) => {
+      const phone = String(row.data?.buyerPhone ?? "");
+      const phoneDigits = phone.replace(/[^\d]/g, "");
+      const purchaseJson = String(row.data?.purchaseJson ?? "{}");
+      return brandedEmail({
+        title: "Extraction — New Order",
+        preview: `${String(row.data?.buyerName ?? "")} ordered the Protocol. Collect payment, then fulfill.`,
+        strip: "New Order — Payment Not Yet Collected",
+        headline: `${escHtml(row.data?.buyerName)} — ${escHtml(row.data?.amount)} ${escHtml(row.data?.currency)}`,
+        bodyHtml: alertRows([
+          ["Order", escHtml(row.data?.orderId)],
+          ["Email", escHtml(row.data?.buyerEmail)],
+          ["Phone", phone ? escHtml(phone) : "not given"],
+          ["Program", `${escHtml(row.data?.equipment)}, ${escHtml(row.data?.daysPerWeek)} days/week`],
+          ["Site language", escHtml(row.data?.lang ?? "en")],
+        ]) + `<p style="margin:16px 0 8px;"><strong style="color:#C0451D;">1.</strong> Send bank-transfer details${phoneDigits ? ` on WhatsApp` : " by email"}. The buyer was told to expect this within 24 hours.</p>
+<p style="margin:0 0 8px;"><strong style="color:#C0451D;">2.</strong> Once paid, generate their manual + invoice and send both:</p>
+<div style="font-family:'Courier New',monospace;font-size:12px;line-height:1.6;color:#F5DFB8;background:#0C0C0A;border:1px solid rgba(245,223,184,0.20);padding:14px 16px;word-break:break-all;white-space:pre-wrap;direction:ltr;text-align:left;">node tools/generate-client-manual.mjs '${escHtml(purchaseJson)}'</div>`,
+        cta: phoneDigits.length >= 7 ? { href: `https://wa.me/${phoneDigits}`, label: "WhatsApp The Buyer" } : undefined,
+        signoff: "The order is saved in Supabase → purchases (status: pending).",
+        footer: "Internal alert — not sent to the buyer.",
+      });
+    },
+  },
+
+  // 1:1 coaching request confirmation (to the requester).
+  coaching_request_received: {
+    subject: (row) => (isArabic(row) ? "تم استلام طلبك — التدريب الفردي" : "Request Received — 1:1 Coaching"),
+    html: (row) => {
+      const name = escHtml(row.data?.name ?? row.to_name ?? "");
+      const target = escHtml(row.data?.target);
+      return isArabic(row)
+        ? brandedEmail({
+            rtl: true,
+            title: "Extraction — التدريب الفردي",
+            preview: "تم استلام طلب التدريب الفردي. سنتواصل معك خلال ٤٨ ساعة.",
+            strip: "تم استلام الطلب — التدريب الفردي",
+            headline: `${name}، تم استلام طلبك.`,
+            bodyHtml: `<p style="margin:0 0 16px;">هدفك: <strong style="color:#F5DFB8;">«${target}»</strong>.</p>
+<p style="margin:0 0 16px;">القائد يراجع كل طلب بنفسه وسيتواصل معك خلال ٤٨ ساعة لترتيب أول مكالمة. المقاعد محدودة وتُملأ بالترتيب.</p>`,
+            cta: { href: WHATSAPP_URL, label: "راسلنا على واتساب" },
+            signoff: "حدّد وجهتك.<br>— Extraction",
+            footer: contactFooterAr,
+          })
+        : brandedEmail({
+            title: "Extraction — 1:1 Coaching",
+            preview: "Your 1:1 coaching request is in. Expect contact within 48 hours.",
+            strip: "Request Received — 1:1 Coaching",
+            headline: `${name}, Request Received.`,
+            bodyHtml: `<p style="margin:0 0 16px;">Your target: <strong style="color:#F5DFB8;">“${target}”</strong>.</p>
+<p style="margin:0 0 16px;">The Commander reviews every request personally and will reach out within 48 hours to set up a first call. Spots are limited and filled in order.</p>`,
+            cta: { href: WHATSAPP_URL, label: "Message Us On WhatsApp" },
+            signoff: "Designate your heading.<br>— Extraction",
+            footer: contactFooterEn,
+          });
+    },
+  },
+
+  // Owner alert for a 1:1 coaching request.
+  coaching_request_alert: {
+    subject: (row) => `1:1 Coaching Request — ${String(row.data?.name ?? "")}`,
+    html: (row) => {
+      const phone = String(row.data?.phone ?? "");
+      const phoneDigits = phone.replace(/[^\d]/g, "");
+      return brandedEmail({
+        title: "Extraction — Coaching Request",
+        preview: `${String(row.data?.name ?? "")} wants a 1:1 coaching spot.`,
+        strip: "1:1 Coaching Request",
+        headline: escHtml(row.data?.name),
+        bodyHtml: alertRows([
+          ["Target", escHtml(row.data?.target)],
+          ["Email", escHtml(row.data?.email)],
+          ["Phone", phone ? escHtml(phone) : "not given"],
+          ["Site language", escHtml(row.data?.lang ?? "en")],
+          ["Submitted", escHtml(row.data?.submittedAt)],
+        ]) + `<p style="margin:16px 0 0;">They were told to expect contact within 48 hours.</p>`,
+        cta: phoneDigits.length >= 7
+          ? { href: `https://wa.me/${phoneDigits}`, label: "WhatsApp Them" }
+          : { href: `mailto:${escHtml(row.data?.email)}`, label: "Email Them" },
+        signoff: "Saved in Supabase → coaching_requests.",
+        footer: "Internal alert — not sent to the requester.",
+      });
     },
   },
 };
